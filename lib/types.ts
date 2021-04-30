@@ -6,6 +6,7 @@ export interface Post {
   Date: number
   Authors: string[]
   Published: 'Yes' | 'No'
+  preview?: any[]
 }
 
 export interface Block {

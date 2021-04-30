@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { Post } from '@lib/types'
 
 import Link from '@components/Link'
+import { textBlock } from '@lib/notion/renderers'
 
 export interface Props {
   post: Post
@@ -29,7 +30,14 @@ const PostItem = ({ post }: Props) => {
 
       <div className="post-info py-4 ml-20 flex flex-col justify-center flex-1">
         <header className="font-bold text-4xl">{post.Page}</header>
-        <div className="text-gray-500 pt-3">{formattedDate}</div>
+        <p className="text-gray-400 mt-3">
+          {(!post.preview || post.preview.length === 0) &&
+            'No preview available'}
+          {(post.preview || []).map((block, idx) =>
+            textBlock(block, true, `${post.Slug}${idx}`)
+          )}
+        </p>
+        <div className="text-gray-600 mt-3">{formattedDate}</div>
       </div>
     </Link>
   )
