@@ -5,6 +5,7 @@
       "@components/*": ["components/*"],
       "@layouts/*": ["layouts/*"],
       "@lib/*": ["lib/*"],
+      "@hooks/*": ["hooks/*"],
       "@styles/*": ["styles/*"]
     },
     "target": "es5",
