@@ -19,9 +19,9 @@ const PostItem = ({ post }: Props) => {
 
   return (
     <Link href={`/p/${post.Slug}`} className="flex items-center mb-16">
-      <div className="post-item transform lg:hover:scale-105 transition-transform flex-1">
+      <div className="transform lg:hover:scale-105 transition-transform flex-1">
         <Image
-          className="rounded hover:scale-50"
+          className="rounded-lg bg-gray-100 hover:scale-50"
           src={post.Image}
           width={1440}
           height={720}

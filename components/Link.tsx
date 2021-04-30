@@ -19,7 +19,13 @@ const Link = ({ href, external, children, ...props }: Props) => {
 
   if (isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener" {...props}>
+      <a
+        className="underline"
+        href={href}
+        target="_blank"
+        rel="noreferrer noopener"
+        {...props}
+      >
         {children}
       </a>
     )
