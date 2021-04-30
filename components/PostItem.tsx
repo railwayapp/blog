@@ -18,7 +18,7 @@ const PostItem = ({ post }: Props) => {
   )
 
   return (
-    <Link href={`/p/${post.Slug}`} className="flex mb-16">
+    <Link href={`/p/${post.Slug}`} className="flex items-center mb-16">
       <div className="post-item transform lg:hover:scale-105 transition-transform flex-1">
         <Image
           className="rounded hover:scale-50"
@@ -28,9 +28,9 @@ const PostItem = ({ post }: Props) => {
         />
       </div>
 
-      <div className="post-info py-4 ml-20 flex flex-col justify-center flex-1">
+      <div className="ml-20 flex flex-col justify-center flex-1">
         <header className="font-bold text-4xl">{post.Page}</header>
-        <p className="text-gray-400 mt-3">
+        <p className="text-gray-400 mt-3 line-clamp-4">
           {(!post.preview || post.preview.length === 0) &&
             'No preview available'}
           {(post.preview || []).map((block, idx) =>
