@@ -210,6 +210,10 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
               display_source,
               block_aspect_ratio,
             } = format
+            const caption =
+              value.properties?.caption?.length > 0
+                ? value.properties.caption[0][0]
+                : null
             const baseBlockWidth = 768
             const roundFactor = Math.pow(10, 2)
             // calculate percentages
@@ -260,6 +264,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
                   src={`/api/asset?assetUrl=${encodeURIComponent(
                     display_source as any
                   )}&blockId=${id}`}
+                  className="rounded-xl mb-8 p-0 max-w-full w-full"
                   controls={!isImage}
                   alt={`An ${isImage ? 'image' : 'video'} from Notion`}
                   loop={!isImage}
@@ -271,20 +276,31 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             }
 
             toRender.push(
-              useWrapper ? (
-                <div
-                  style={{
-                    paddingTop: `${Math.round(block_aspect_ratio * 100)}%`,
-                    position: 'relative',
-                  }}
-                  className="asset-wrapper"
-                  key={id}
-                >
-                  {child}
-                </div>
-              ) : (
-                child
-              )
+              <div>
+                {useWrapper ? (
+                  <div
+                    style={{
+                      paddingTop: `${Math.round(block_aspect_ratio * 100)}%`,
+                      position: 'relative',
+                    }}
+                    className="asset-wrapper my-8"
+                    key={id}
+                  >
+                    {child}
+                  </div>
+                ) : (
+                  child
+                )}
+
+                {caption != null && (
+                  <>
+                    <div className="pt-2" />
+                    <div className="text-sm text-gray-600 text-center">
+                      {caption}
+                    </div>
+                  </>
+                )}
+              </div>
             )
             break
           }
