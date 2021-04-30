@@ -18,7 +18,10 @@ const PostItem = ({ post }: Props) => {
   )
 
   return (
-    <Link href={`/p/${post.Slug}`} className="flex items-center mb-16">
+    <Link
+      href={`/p/${post.Slug}`}
+      className="flex flex-col md:flex-row md:items-center mb-16 space-y-5 md:space-y-0"
+    >
       <div className="transform lg:hover:scale-105 transition-transform flex-1">
         <Image
           className="rounded-lg bg-gray-100 hover:scale-50"
@@ -28,9 +31,9 @@ const PostItem = ({ post }: Props) => {
         />
       </div>
 
-      <div className="ml-20 flex flex-col justify-center flex-1">
+      <div className="md:ml-20 flex flex-col justify-center flex-1">
         <header className="font-bold text-4xl">{post.Page}</header>
-        <p className="text-gray-400 mt-3 line-clamp-4">
+        <p className="text-gray-400 mt-3 line-clamp-3">
           {(!post.preview || post.preview.length === 0) &&
             'No preview available'}
           {(post.preview || []).map((block, idx) =>

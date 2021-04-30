@@ -29,9 +29,9 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         <div className="pb-20">
           <article>
             <header className="pt-20 pb-12">
-              <Link href={`/p/${post.Slug}`}>
-                <h1 className="text-6xl font-bold">{post.Page}</h1>
-              </Link>
+              <h1 className="text-5xl md:text-6xl leading-tight font-bold">
+                {post.Page}
+              </h1>
 
               <div className="pt-8 text-gray-400">{formattedDate}</div>
             </header>
