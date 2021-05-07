@@ -266,7 +266,11 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
                   )}&blockId=${id}`}
                   className="rounded-xl mb-8 p-0 max-w-full w-full"
                   controls={!isImage}
-                  alt={`An ${isImage ? 'image' : 'video'} from Notion`}
+                  alt={
+                    caption !== null
+                      ? caption
+                      : `An ${isImage ? 'image' : 'video'} from Notion`
+                  }
                   loop={!isImage}
                   muted={!isImage}
                   autoPlay={!isImage}
@@ -340,11 +344,14 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
           }
           case 'callout': {
             toRender.push(
-              <div className="callout" key={id}>
+              <div
+                className="flex w-full p-4 rounded border border-transparent bg-gray-50"
+                key={id}
+              >
                 {value.format?.page_icon && (
                   <div>{value.format?.page_icon}</div>
                 )}
-                <div className="text">
+                <div className="ml-4 text-black">
                   {textBlock(properties.title, true, id)}
                 </div>
               </div>
