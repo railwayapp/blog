@@ -30,6 +30,10 @@ module.exports = {
               },
             },
 
+            'a code': {
+              color: theme('colors.white'),
+            },
+
             p: {
               a: {
                 textDecoration: 'underline',
