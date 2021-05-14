@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://blog.railway.app/
+
+# Sitemaps
+Sitemap: https://blog.railway.app/sitemap.xml
