@@ -22,6 +22,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     <Page
       seo={{
         title: post.Page,
+        description: post.preview[0],
         image: getImageLinkFromImage(post.Image),
       }}
     >

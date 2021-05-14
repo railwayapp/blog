@@ -118,7 +118,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             <b>Note:</b>
             {` `}Viewing in preview mode{' '}
             <Link href={`/api/clear-preview?slug=${post.Slug}`}>
-              <button>Exit Preview</button>
+              <button className="underline">Exit Preview</button>
             </Link>
           </div>
         </div>
