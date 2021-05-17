@@ -32,3 +32,11 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# dynamically generated files
+public/sitemap.xml
+public/robots.txt
+
+# notion
+.blog_index_data
+.blog_index_data_previews
