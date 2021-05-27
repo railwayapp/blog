@@ -4,10 +4,7 @@ import { ArrowLeft } from 'react-feather'
 import { Post } from '@lib/types'
 
 import Page from '@layouts/Page'
-import { url as baseUrl } from '@components/Seo'
 import Link from '@components/Link'
-
-const getImageLinkFromImage = (path: string) => `${baseUrl}${path}`
 
 export interface Props {
   post: Post
@@ -23,7 +20,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
       seo={{
         title: post.Page,
         description: post.preview[0],
-        image: getImageLinkFromImage(post.Image),
+        image: post.Image,
       }}
     >
       <div className="wrapper">
