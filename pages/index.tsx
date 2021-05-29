@@ -68,7 +68,7 @@ export const getStaticProps: GetStaticProps = async ({ preview }) => {
       preview: preview || false,
       posts,
     },
-    revalidate: 10,
+    revalidate: 30,
   }
 }
 
