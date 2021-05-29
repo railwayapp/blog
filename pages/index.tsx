@@ -12,12 +12,14 @@ export interface Props {
   posts: Post[]
   preview: boolean
 }
-const Home: NextPage<Props> = ({ posts = [], preview }) => {
+const Home: NextPage<Props> = ({ posts = [] }) => {
   return (
     <Page>
       <div className="max-w-4xl px-4 mx-auto">
         <header className="py-16">
-          <h1 className="text-6xl font-bold text-center">Railway Blog</h1>
+          <h1 className="text-6xl font-bold text-center leading-10">
+            Railway Blog
+          </h1>
         </header>
 
         {posts.length === 0 ? (
@@ -50,9 +52,11 @@ export const getStaticProps: GetStaticProps = async ({ preview }) => {
       for (const author of post.Authors) {
         authorsToGet.add(author)
       }
+
       return post
     })
     .filter(Boolean)
+    .sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime())
 
   const { users } = await getNotionUsers([...authorsToGet])
 
