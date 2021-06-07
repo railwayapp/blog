@@ -43,7 +43,7 @@ module.exports = {
     webpack5: true,
   },
   images: {
-    domains: ['user-images.githubusercontent.com'],
+    domains: ['user-images.githubusercontent.com', 'og.railway.app'],
   },
   webpack(cfg, { dev, isServer }) {
     // only compile build-rss in production server build
