@@ -39,9 +39,6 @@ if (!BLOG_INDEX_ID) {
 }
 
 module.exports = {
-  future: {
-    webpack5: true,
-  },
   images: {
     domains: ['user-images.githubusercontent.com', 'og.railway.app'],
   },
