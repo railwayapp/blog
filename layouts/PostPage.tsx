@@ -19,7 +19,8 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     <Page
       seo={{
         title: post.Page,
-        description: post.preview[0],
+        description:
+          (post.preview != null && post.preview.length > 0) ?? post.preview[0],
         image: post.Image,
       }}
     >
