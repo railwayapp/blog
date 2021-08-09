@@ -1,4 +1,4 @@
-# NextJS Typescript Boilerplate
+# Railway Blog
 
 Bootstrap a developer-friendly NextJS app configured with:
 
