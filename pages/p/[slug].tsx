@@ -72,7 +72,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({
       post,
       preview: preview ?? false,
     },
-    revalidate: 30,
+    // revalidate: 30,
   }
 }
 
