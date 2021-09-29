@@ -1,17 +1,17 @@
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
-import { useRouter } from 'next/router'
-import React, { CSSProperties, useEffect } from 'react'
-import components from '@components/dynamic'
-import Heading from '@components/Heading'
-import Link from '@components/Link'
-import Page from '@layouts/Page'
-import { PostPage } from '@layouts/PostPage'
-import { getBlogLink } from '@lib/blog-helpers'
-import getBlogIndex from '@lib/notion/getBlogIndex'
-import getNotionUsers from '@lib/notion/getNotionUsers'
-import getPageData from '@lib/notion/getPageData'
-import { textBlock } from '@lib/notion/renderers'
-import { Block, Post } from '@lib/types'
+import { GetStaticPaths, GetStaticProps, NextPage } from "next"
+import { useRouter } from "next/router"
+import React, { CSSProperties, useEffect } from "react"
+import components from "@components/dynamic"
+import Heading from "@components/Heading"
+import Link from "@components/Link"
+import Page from "@layouts/Page"
+import { PostPage } from "@layouts/PostPage"
+import { getBlogLink } from "@lib/blog-helpers"
+import getBlogIndex from "@lib/notion/getBlogIndex"
+import getNotionUsers from "@lib/notion/getNotionUsers"
+import getPageData from "@lib/notion/getPageData"
+import { textBlock } from "@lib/notion/renderers"
+import { Block, Post } from "@lib/types"
 
 export interface DetailedPost extends Post {
   content: Block[]
@@ -27,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const postsTable = await getBlogIndex()
 
   const paths = Object.keys(postsTable)
-    .filter((post) => postsTable[post].Published === 'Yes')
+    .filter((post) => postsTable[post].Published === "Yes")
     .map((slug) => getBlogLink(slug))
 
   // we fallback for any unpublished posts to save build time
@@ -55,7 +55,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({
     return {
       props: {
         post: null,
-        redirect: '/',
+        redirect: "/",
         preview: false,
       },
       revalidate: 5,
@@ -76,7 +76,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({
   }
 }
 
-const listTypes = new Set(['bulleted_list', 'numbered_list'])
+const listTypes = new Set(["bulleted_list", "numbered_list"])
 
 const RenderPost: React.FC<Props> = ({ post, preview }) => {
   const router = useRouter()
@@ -102,7 +102,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
   // loading one from fallback then  redirect back to the index
   if (!post) {
     return (
-      <div className={''}>
+      <div className={""}>
         <p>
           Woops! didn't find that post, redirecting you back to the blog index
         </p>
@@ -116,7 +116,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
         <div>
           <div>
             <b>Note:</b>
-            {` `}Viewing in preview mode{' '}
+            {` `}Viewing in preview mode{" "}
             <Link href={`/api/clear-preview?slug=${post.Slug}`}>
               <button className="underline">Exit Preview</button>
             </Link>
@@ -133,10 +133,10 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
         const { type, properties, id, parent_id } = value
         const isLast = blockIdx === post.content.length - 1
         const isList = listTypes.has(type)
-        let toRender: Array<React.ReactElement | null> = []
+        const toRender: Array<React.ReactElement | null> = []
 
         if (isList) {
-          listTagName = components[type === 'bulleted_list' ? 'ul' : 'ol']
+          listTagName = components[type === "bulleted_list" ? "ul" : "ol"]
           listLastId = `list${id}`
 
           listMap[id] = {
@@ -161,13 +161,13 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
 
                 const createEl = (item) =>
                   React.createElement(
-                    components.li || 'ul',
+                    components.li || "ul",
                     { key: item.key },
                     item.children,
                     item.nested.length > 0
                       ? React.createElement(
-                          components.ul || 'ul',
-                          { key: item + 'sub-list' },
+                          components.ul || "ul",
+                          { key: item + "sub-list" },
                           item.nested.map((nestedId) =>
                             createEl(listMap[nestedId])
                           )
@@ -192,17 +192,17 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
         }
 
         switch (type) {
-          case 'page':
-          case 'divider':
+          case "page":
+          case "divider":
             break
-          case 'text':
+          case "text":
             if (properties) {
               toRender.push(textBlock(properties.title, false, id))
             }
             break
-          case 'image':
-          case 'video':
-          case 'embed': {
+          case "image":
+          case "video":
+          case "embed": {
             const { format = {} } = value
             const {
               block_width,
@@ -223,25 +223,25 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
                     (block_width / baseBlockWidth) * 100 * roundFactor
                   ) / roundFactor
                 }%`
-              : block_height || '100%'
+              : block_height || "100%"
 
-            const isImage = type === 'image'
-            const Comp = isImage ? 'img' : 'video'
+            const isImage = type === "image"
+            const Comp = isImage ? "img" : "video"
             const useWrapper = block_aspect_ratio && !block_height
             const childStyle: CSSProperties = useWrapper
               ? {
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  position: 'absolute',
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                  position: "absolute",
                   top: 0,
                 }
               : {
                   width,
-                  border: 'none',
+                  border: "none",
                   height: block_height,
-                  display: 'block',
-                  maxWidth: '100%',
+                  display: "block",
+                  maxWidth: "100%",
                 }
 
             let child: React.ReactElement | null = null
@@ -253,7 +253,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
                   style={childStyle}
                   src={display_source}
                   key={!useWrapper ? id : undefined}
-                  className={!useWrapper ? 'asset-wrapper' : undefined}
+                  className={!useWrapper ? "asset-wrapper" : undefined}
                 />
               )
             } else {
@@ -269,7 +269,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
                   alt={
                     caption !== null
                       ? caption
-                      : `An ${isImage ? 'image' : 'video'} from Notion`
+                      : `An ${isImage ? "image" : "video"} from Notion`
                   }
                   loop={!isImage}
                   muted={!isImage}
@@ -280,12 +280,12 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             }
 
             toRender.push(
-              <div>
+              <div className="mb-8">
                 {useWrapper ? (
                   <div
                     style={{
                       paddingTop: `${Math.round(block_aspect_ratio * 100)}%`,
-                      position: 'relative',
+                      position: "relative",
                     }}
                     className="asset-wrapper my-8"
                     key={id}
@@ -308,29 +308,29 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             )
             break
           }
-          case 'header':
-            renderHeading('h1')
+          case "header":
+            renderHeading("h1")
             break
-          case 'sub_header':
-            renderHeading('h2')
+          case "sub_header":
+            renderHeading("h2")
             break
-          case 'sub_sub_header':
-            renderHeading('h3')
+          case "sub_sub_header":
+            renderHeading("h3")
             break
-          case 'code': {
+          case "code": {
             if (properties.title) {
               const content = properties.title[0][0]
               const language = properties.language[0][0]
 
               toRender.push(
-                <components.Code key={id} language={language || ''}>
+                <components.Code key={id} language={language || ""}>
                   {content}
                 </components.Code>
               )
             }
             break
           }
-          case 'quote': {
+          case "quote": {
             if (properties.title) {
               toRender.push(
                 React.createElement(
@@ -342,7 +342,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             }
             break
           }
-          case 'callout': {
+          case "callout": {
             toRender.push(
               <div
                 className="flex w-full p-4 rounded border border-transparent bg-gray-50"
@@ -358,7 +358,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             )
             break
           }
-          case 'tweet': {
+          case "tweet": {
             if (properties.html) {
               toRender.push(
                 <div
@@ -370,8 +370,8 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
             break
           }
           default:
-            if (process.env.NODE_ENV !== 'production' && !listTypes.has(type)) {
-              console.log('unknown type', type)
+            if (process.env.NODE_ENV !== "production" && !listTypes.has(type)) {
+              console.log("unknown type", type)
             }
             break
         }

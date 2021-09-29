@@ -1,19 +1,20 @@
-import dayjs from 'dayjs'
-import React, { useMemo } from 'react'
-import { ArrowLeft } from 'react-feather'
-import { Post } from '@lib/types'
+import dayjs from "dayjs"
+import React, { useMemo } from "react"
+import { ArrowLeft } from "react-feather"
+import { Post } from "@lib/types"
 
-import Page from '@layouts/Page'
-import Link from '@components/Link'
+import Page from "@layouts/Page"
+import Link from "@components/Link"
 
 export interface Props {
   post: Post
 }
 
 export const PostPage: React.FC<Props> = ({ post, children }) => {
-  const formattedDate = useMemo(() => dayjs(post.Date).format('MMM D, YYYY'), [
-    post.Date,
-  ])
+  const formattedDate = useMemo(
+    () => dayjs(post.Date).format("MMM D, YYYY"),
+    [post.Date]
+  )
 
   return (
     <Page
@@ -28,9 +29,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         <div className="pb-20">
           <article>
             <header className="pt-20 pb-12">
-              <h1 className="text-5xl md:text-6xl leading-tight font-bold">
-                {post.Page}
-              </h1>
+              <h1 className="text-5xl font-bold leading-tight">{post.Page}</h1>
 
               <div className="pt-8 text-gray-400">{formattedDate}</div>
             </header>

@@ -6,9 +6,9 @@ export default async function getPageData(pageId: string) {
   const maximumChunckNumer = 100
 
   try {
-    var chunkNumber = 0
-    var data = await loadPageChunk({ pageId, chunkNumber })
-    var blocks = data.recordMap.block
+    let chunkNumber = 0
+    let data = await loadPageChunk({ pageId, chunkNumber })
+    let blocks = data.recordMap.block
 
     while (data.cursor.stack.length !== 0 && chunkNumber < maximumChunckNumer) {
       chunkNumber = chunkNumber + 1
