@@ -1,11 +1,11 @@
-import { useMemo } from 'react'
-import Image from 'next/image'
-import dayjs from 'dayjs'
+import { useMemo } from "react"
+import Image from "next/image"
+import dayjs from "dayjs"
 
-import { Post } from '@lib/types'
+import { Post } from "@lib/types"
 
-import Link from '@components/Link'
-import { textBlock } from '@lib/notion/renderers'
+import Link from "@components/Link"
+import { textBlock } from "@lib/notion/renderers"
 
 export interface Props {
   post: Post
@@ -13,7 +13,7 @@ export interface Props {
 
 const PostItem = ({ post }: Props) => {
   const formattedDate = useMemo(
-    () => dayjs(new Date(post.Date)).format('MMM D, YYYY'),
+    () => dayjs(new Date(post.Date)).format("MMM D, YYYY"),
     [post.Date]
   )
 
@@ -32,15 +32,17 @@ const PostItem = ({ post }: Props) => {
       </div>
 
       <div className="md:ml-20 flex flex-col justify-center flex-1">
-        <header className="font-bold text-4xl">{post.Page}</header>
-        <p className="text-gray-400 mt-3 line-clamp-3">
+        <header className="font-bold text-4xl leading-tight">
+          {post.Page}
+        </header>
+        <p className="text-gray-400 mt-3 line-clamp-3 leading-relaxed">
           {(!post.preview || post.preview.length === 0) &&
-            'No preview available'}
+            "No preview available"}
           {(post.preview || []).map((block, idx) =>
             textBlock(block, true, `${post.Slug}${idx}`)
           )}
         </p>
-        <div className="text-gray-600 mt-3">{formattedDate}</div>
+        <p className="text-gray-600 mt-3">{formattedDate}</p>
       </div>
     </Link>
   )

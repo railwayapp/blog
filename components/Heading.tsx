@@ -10,7 +10,7 @@ const collectText = (el: any, acc: any = []) => {
 
 const Heading = ({ children: component, id }: { children: any; id?: any }) => {
   const children = component.props.children || ''
-  let text = children
+  const text = children
 
   if (null == id) {
     id = collectText(text)

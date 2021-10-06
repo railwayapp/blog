@@ -1,12 +1,12 @@
-import { GetStaticProps, NextPage } from 'next'
+import { GetStaticProps, NextPage } from "next"
 
-import getBlogIndex from '@lib/notion/getBlogIndex'
-import getNotionUsers from '@lib/notion/getNotionUsers'
-import { postIsPublished } from '@lib/blog-helpers'
-import { Post } from '@lib/types'
+import getBlogIndex from "@lib/notion/getBlogIndex"
+import getNotionUsers from "@lib/notion/getNotionUsers"
+import { postIsPublished } from "@lib/blog-helpers"
+import { Post } from "@lib/types"
 
-import Page from '@layouts/Page'
-import PostItem from '@components/PostItem'
+import Page from "@layouts/Page"
+import PostItem from "@components/PostItem"
 
 export interface Props {
   posts: Post[]
@@ -15,8 +15,8 @@ export interface Props {
 const Home: NextPage<Props> = ({ posts = [] }) => {
   return (
     <Page>
-      <div className="max-w-4xl px-4 mx-auto">
-        <header className="py-16">
+      <div className="max-w-5xl px-4 mx-auto">
+        <header className="py-24">
           <h1 className="text-6xl font-bold text-center leading-10">
             Railway Blog
           </h1>
@@ -25,7 +25,7 @@ const Home: NextPage<Props> = ({ posts = [] }) => {
         {posts.length === 0 ? (
           <div className="text-center text-gray-500">Pretty empty here</div>
         ) : (
-          <div className="posts max-w-4xl">
+          <div className="posts max-w-5xl">
             {posts.map((p) => (
               <PostItem key={p.id} post={p} />
             ))}
