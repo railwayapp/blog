@@ -38,20 +38,27 @@ export default async function loadTable(collectionBlock: any, isPosts = false) {
         const type = props[key][0][1][0]
 
         switch (type[0]) {
-          case 'a': // link
+          case 'a': {
+            // link
             val = type[1]
             break
-          case 'u': // user
+          }
+          case 'u': {
+            // user
             val = props[key]
               .filter((arr: any[]) => arr.length > 1)
               .map((arr: any[]) => arr[1][0][1])
             break
-          case 'p': // page (block)
+          }
+          case 'p': {
+            // page (block)
             const page = col.recordMap.block[type[1]]
             row.id = page.value.id
             val = page.value.properties.title[0][0]
             break
-          case 'd': // date
+          }
+          case 'd': {
+            // date
             // start_date: 2019-06-18
             // start_time: 07:00
             // time_zone: Europe/Berlin, America/Los_Angeles
@@ -75,9 +82,11 @@ export default async function loadTable(collectionBlock: any, isPosts = false) {
             // initialize subtracting time zone offset
             val = new Date(providedDate - timezoneOffset).getTime()
             break
-          default:
+          }
+          default: {
             console.error('unknown type', type[0], type)
             break
+          }
         }
       }
 

@@ -51,7 +51,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({
   // if we can't find the post or if it is unpublished and
   // viewed without preview mode then we just redirect to /blog
   if (!post) {
-    console.log(`Failed to find post for slug: ${slug}`)
+    console.error(`Failed to find post for slug: ${slug}`)
     return {
       props: {
         post: null,
@@ -102,9 +102,10 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
   // loading one from fallback then  redirect back to the index
   if (!post) {
     return (
-      <div className={""}>
+      <div>
         <p>
-          Woops! didn't find that post, redirecting you back to the blog index
+          Woops! didn&apos;t find that post, redirecting you back to the blog
+          index
         </p>
       </div>
     )
@@ -371,7 +372,7 @@ const RenderPost: React.FC<Props> = ({ post, preview }) => {
           }
           default:
             if (process.env.NODE_ENV !== "production" && !listTypes.has(type)) {
-              console.log("unknown type", type)
+              console.warn("unknown type", type)
             }
             break
         }

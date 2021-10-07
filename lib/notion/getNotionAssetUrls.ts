@@ -34,7 +34,7 @@ export default async function getNotionAsset(
   if (assetRes.ok) {
     return assetRes.json()
   } else {
-    console.log('bad request', assetRes.status)
+    console.error('bad request', assetRes.status)
     res.json({ status: 'error', message: 'failed to load Notion asset' })
     throw new Error(await getError(assetRes))
   }

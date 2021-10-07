@@ -107,7 +107,6 @@ async function main() {
 
   const outputPath = './public/atom'
   await writeFile(resolve(outputPath), createRSS(blogPosts))
-  console.log(`Atom feed file generated at \`${outputPath}\``)
 }
 
 main().catch((error) => console.error(error))
