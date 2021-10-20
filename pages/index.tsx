@@ -1,15 +1,13 @@
 import { GetStaticProps, NextPage } from "next"
 
-import getBlogIndex from "@lib/notion/getBlogIndex"
-import getNotionUsers from "@lib/notion/getNotionUsers"
-import { postIsPublished } from "@lib/blog-helpers"
-import { Post } from "@lib/types"
+import { PostProps } from "@lib/types"
+import { getDatabase } from "@lib/notion"
 
 import Page from "@layouts/Page"
 import PostItem from "@components/PostItem"
 
 export interface Props {
-  posts: Post[]
+  posts: PostProps[]
   preview: boolean
 }
 const Home: NextPage<Props> = ({ posts = [] }) => {
@@ -36,39 +34,18 @@ const Home: NextPage<Props> = ({ posts = [] }) => {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ preview }) => {
-  const postsTable = await getBlogIndex()
+export const getStaticProps: GetStaticProps = async () => {
+  if (process.env.POSTS_TABLE_ID == null) {
+    return {
+      notFound: true,
+    }
+  }
 
-  const authorsToGet: Set<string> = new Set()
+  const posts = await getDatabase(process.env.POSTS_TABLE_ID)
 
-  const posts: any[] = Object.keys(postsTable)
-    .map((slug) => {
-      const post = postsTable[slug]
-      // remove draft posts in production
-      if (!preview && !postIsPublished(post)) {
-        return null
-      }
-      post.Authors = post.Authors || []
-      for (const author of post.Authors) {
-        authorsToGet.add(author)
-      }
-
-      return post
-    })
-    .filter(Boolean)
-    .sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime())
-
-  const { users } = await getNotionUsers([...authorsToGet])
-
-  posts.map((post) => {
-    post.Authors = post.Authors.map((id) => users[id].full_name)
-  })
   return {
-    props: {
-      preview: preview || false,
-      posts,
-    },
-    // revalidate: 30,
+    props: { posts },
+    revalidate: 900, // 15 minutes
   }
 }
 
