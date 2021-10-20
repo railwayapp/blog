@@ -25,6 +25,10 @@ interface TextProps {
   type: string
 }
 
+const renderContent = (code: boolean, content: string) => {
+  return <>{code ? <code>{content}</code> : <>{content}</>}</>
+}
+
 export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
   text,
 }) => {
@@ -36,7 +40,7 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
     <>
       {text.map((value, idx) => {
         const {
-          annotations: { bold, code, color, italic, strikethrough, underline },
+          annotations: { bold, code, italic, strikethrough, underline },
           text,
         } = value
         if (text == null) {
@@ -53,10 +57,12 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
           <Fragment key={idx}>
             {text.link ? (
               <Link href={text.link.url} className={classes}>
-                {text.content}
+                {renderContent(code, text.content)}
               </Link>
             ) : (
-              <span className={classes}>{text.content}</span>
+              <span className={classes}>
+                {renderContent(code, text.content)}
+              </span>
             )}
           </Fragment>
         )

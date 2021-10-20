@@ -1,8 +1,7 @@
 import { getServerSideSitemap } from "next-sitemap"
 import { GetServerSideProps } from "next"
 
-import { getBlogLink } from "@lib/blog-helpers"
-import { getDatabase } from "@lib/notion"
+import { getDatabase, getBlogLink } from "@lib/notion"
 
 const ROOT_URL = "https://blog.railway.app"
 

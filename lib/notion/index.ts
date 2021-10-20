@@ -81,3 +81,7 @@ export const getMediaProperties = (
 
   return { source, caption }
 }
+
+export const getBlogLink = (slug: string) => {
+  return `/p/${slug}`
+}
