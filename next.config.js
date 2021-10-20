@@ -3,6 +3,10 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ["user-images.githubusercontent.com", "og.railway.app"],
+    domains: [
+      "user-images.githubusercontent.com",
+      "og.railway.app",
+      "s3.us-west-2.amazonaws.com",
+    ],
   },
 }
