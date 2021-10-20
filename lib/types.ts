@@ -15,6 +15,7 @@ export interface PostItem {
   Date: DatePropertyValue
   Authors: PersonUser
   Image: URLPropertyValue
+  Description: RichTextPropertyValue
 }
 
 export interface PostProps extends Omit<Page, "properties"> {

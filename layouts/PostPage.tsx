@@ -21,8 +21,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     <Page
       seo={{
         title: post.properties.Page.title[0].plain_text,
-        // description:
-        //   (post.preview != null && post.preview.length > 0) ?? post.preview[0],
+        description: post.properties.Description.rich_text[0].plain_text,
         image: post.properties.Image.url,
       }}
     >

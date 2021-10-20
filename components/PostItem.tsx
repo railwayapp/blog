@@ -36,13 +36,9 @@ const PostItem = ({ post }: Props) => {
         <header className="font-bold text-4xl leading-tight">
           <NotionText text={post.properties.Page.title} />
         </header>
-        {/* <p className="text-gray-400 mt-3 line-clamp-3 leading-relaxed">
-          {(!post.preview || post.preview.length === 0) &&
-            "No preview available"}
-          {(post.preview || []).map((block, idx) =>
-            textBlock(block, true, `${post.Slug}${idx}`)
-          )}
-        </p> */}
+        <p className="text-gray-400 mt-3 line-clamp-3 leading-relaxed">
+          <NotionText text={post.properties.Description.rich_text} />
+        </p>
         <p className="text-gray-600 mt-3">{formattedDate}</p>
       </div>
     </Link>
