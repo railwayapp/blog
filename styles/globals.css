@@ -14,12 +14,6 @@ body {
   min-height: 100vh;
 }
 
-/* Write your own custom component styles here */
-.btn-primary {
-  @apply px-4 py-2 font-bold text-white bg-primary rounded;
-  @apply hover:text-primary hover:bg-white;
-}
-
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */
@@ -43,4 +37,19 @@ body {
 
 .logo {
   fill: currentColor;
+}
+
+.imageContainer {
+  width: 100%;
+}
+
+.imageContainer > div {
+  position: unset !important;
+}
+
+.nextImage {
+  object-fit: contain;
+  max-width: 100% !important;
+  position: relative !important;
+  height: unset !important;
 }
