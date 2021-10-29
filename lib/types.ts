@@ -1,25 +1,23 @@
-export interface Post {
-  id: string
-  Page: string
-  Slug: string
-  Image: string
-  Date: number
-  Authors: string[]
-  Published: 'Yes' | 'No'
-  preview?: any[]
+import {
+  RichTextPropertyValue,
+  CheckboxPropertyValue,
+  DatePropertyValue,
+  TitlePropertyValue,
+  PersonUser,
+  Page,
+  URLPropertyValue,
+} from "@notionhq/client/build/src/api-types"
+
+export interface PostItem {
+  Page: TitlePropertyValue
+  Slug: RichTextPropertyValue
+  Published: CheckboxPropertyValue
+  Date: DatePropertyValue
+  Authors: PersonUser
+  Image: URLPropertyValue
+  Description: RichTextPropertyValue
 }
 
-export interface Block {
-  role: string
-  value: {
-    id: string
-    version: number
-    type: string
-    created_time: number
-    last_edited_time: number
-    properties: any
-    parent_id: string
-    file_ids?: string
-    format?: any
-  }
+export interface PostProps extends Omit<Page, "properties"> {
+  properties: PostItem
 }

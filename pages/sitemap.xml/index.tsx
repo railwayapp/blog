@@ -1,22 +1,19 @@
-import { getServerSideSitemap } from 'next-sitemap'
-import { GetServerSideProps } from 'next'
+import { getServerSideSitemap } from "next-sitemap"
+import { GetServerSideProps } from "next"
 
-import getBlogIndex from '@lib/notion/getBlogIndex'
-import { getBlogLink } from '@lib/blog-helpers'
+import { getDatabase, getBlogLink } from "@lib/notion"
 
-const ROOT_URL = 'https://blog.railway.app'
+const ROOT_URL = "https://blog.railway.app"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const postsTable = await getBlogIndex()
+  const posts = await getDatabase(process.env.POSTS_TABLE_ID)
 
-  const paths = Object.keys(postsTable)
-    .filter((post) => postsTable[post].Published === 'Yes')
-    .map((slug) => {
-      return {
-        loc: ROOT_URL + getBlogLink(slug),
-        lastmod: new Date().toISOString(),
-      }
-    })
+  const paths = posts.map((post) => {
+    return {
+      loc: ROOT_URL + getBlogLink(post.properties.Slug.rich_text[0].plain_text),
+      lastmod: new Date().toISOString(),
+    }
+  })
 
   const fields = [
     {
@@ -29,8 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return getServerSideSitemap(ctx, fields)
 }
 
-// Default export to prevent next.js errors
-// @ts-ignore
+// @ts-ignore: Default export to prevent next.js errors
 const SitemapPage = () => {
   // Weird NextJS thing
 }
