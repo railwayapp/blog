@@ -1,8 +1,8 @@
-import React from 'react'
-import Footer from '@components/Footer'
-import Nav from '@components/Nav'
-import SEO, { Props as SEOProps } from '@components/Seo'
-import { GoogleFonts } from 'next-google-fonts'
+import React from "react"
+import Footer from "@components/Footer"
+import Nav from "@components/Nav"
+import SEO, { Props as SEOProps } from "@components/Seo"
+import { GoogleFonts } from "next-google-fonts"
 
 export interface Props {
   seo?: SEOProps

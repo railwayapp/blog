@@ -1,6 +1,6 @@
-import * as Fathom from 'fathom-client'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import * as Fathom from "fathom-client"
+import { useRouter } from "next/router"
+import { useEffect } from "react"
 
 const useFathom = (trackingCode: string, siteUrl: string) => {
   const router = useRouter()
@@ -8,7 +8,7 @@ const useFathom = (trackingCode: string, siteUrl: string) => {
   useEffect(() => {
     // Initialize Fathom when the app loads
     Fathom.load(trackingCode, {
-      url: 'https://kiwi.railway.app/script.js',
+      url: "https://kiwi.railway.app/script.js",
       includedDomains: [siteUrl],
     })
 
@@ -16,11 +16,11 @@ const useFathom = (trackingCode: string, siteUrl: string) => {
       Fathom.trackPageview()
     }
     // Record a pageview when route changes
-    router.events.on('routeChangeComplete', onRouteChangeComplete)
+    router.events.on("routeChangeComplete", onRouteChangeComplete)
 
     // Unassign event listener
     return () => {
-      router.events.off('routeChangeComplete', onRouteChangeComplete)
+      router.events.off("routeChangeComplete", onRouteChangeComplete)
     }
   }, [])
 }

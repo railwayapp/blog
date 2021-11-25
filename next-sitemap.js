@@ -1,4 +1,4 @@
 module.exports = {
-  siteUrl: 'https://blog.railway.app/',
+  siteUrl: "https://blog.railway.app/",
   generateRobotsTxt: true,
 }

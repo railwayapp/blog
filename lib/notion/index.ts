@@ -20,8 +20,13 @@ export const getDatabase = async (databaseId: string) => {
   })
 
   const results = response.results as unknown as PostProps[]
-
-  return results.filter((result) => result.properties.Published.checkbox)
+  return results.filter(
+    (r) =>
+      r.properties.Date.date != null &&
+      r.properties.Description.rich_text.length > 0 &&
+      r.properties.Slug.rich_text.length > 0 &&
+      r.properties.Page.title.length > 0
+  )
 }
 
 export const getPage = async (pageId: string) => {

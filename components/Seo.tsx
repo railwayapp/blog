@@ -1,34 +1,38 @@
-import { DefaultSeo, NextSeo, NextSeoProps } from 'next-seo'
-import Head from 'next/head'
-import { DefaultSeoProps } from 'next-seo'
+import { DefaultSeo, NextSeo, NextSeoProps } from "next-seo"
+import Head from "next/head"
+import { DefaultSeoProps } from "next-seo"
 
 export interface Props extends NextSeoProps {
   title?: string
   description?: string
   image?: string
+  author?: string
 }
 
-const title = 'Railway Blog'
-export const url = 'https://blog.railway.app'
-const description = 'Railway developer blog'
-const image = 'https://railway.app/og.png'
+const title = "Railway Blog"
+export const url = "https://blog.railway.app"
+const description = "Railway developer blog"
+const image = "https://railway.app/og.png"
 
 const config: DefaultSeoProps = {
   title,
   description,
   openGraph: {
-    type: 'website',
+    type: "website",
     url,
     site_name: title,
     images: [{ url: image }],
+    article: {
+      authors: [],
+    },
   },
   twitter: {
-    handle: '@Railway_App',
-    cardType: 'summary_large_image',
+    handle: "@Railway_App",
+    cardType: "summary_large_image",
   },
 }
 
-const SEO: React.FC<Props> = ({ image, ...props }) => {
+const SEO: React.FC<Props> = ({ image, author, ...props }) => {
   const title = props.title ?? config.title
   const description = props.description || config.description
 
@@ -43,6 +47,9 @@ const SEO: React.FC<Props> = ({ image, ...props }) => {
           : {
               openGraph: {
                 images: [{ url: image }],
+                article: {
+                  authors: [author],
+                },
               },
             })}
       />

@@ -1,65 +1,65 @@
 module.exports = {
   purge: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    './layouts/**/*.{js,ts,jsx,tsx}',
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./layouts/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // 'media' or 'class'
+  darkMode: "class", // 'media' or 'class'
   theme: {
     fontFamily: {
       sans: `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
     },
     extend: {
       colors: {
-        background: '#100f13',
-        text: '#FFFFFF',
-        primary: '#C049FF',
-        secondary: '#618DFF',
+        background: "#100f13",
+        text: "#FFFFFF",
+        primary: "#C049FF",
+        secondary: "#618DFF",
       },
       typography: (theme) => ({
         DEFAULT: {
           css: {
-            color: theme('colors.text'),
+            color: theme("colors.text"),
 
             a: {
-              color: theme('colors.text'),
-              textDecoration: 'none',
+              color: theme("colors.text"),
+              textDecoration: "none",
 
-              '&:hover': {
-                color: theme('colors.primary'),
+              "&:hover": {
+                color: theme("colors.primary"),
               },
             },
 
-            'a code': {
-              color: theme('colors.white'),
+            "a code": {
+              color: theme("colors.white"),
             },
 
             p: {
               a: {
-                textDecoration: 'underline',
+                textDecoration: "underline",
               },
             },
 
             h1: {
-              color: theme('colors.pink.50'),
+              color: theme("colors.pink.50"),
             },
             h2: {
-              color: theme('colors.text'),
+              color: theme("colors.text"),
             },
             h3: {
-              color: theme('colors.text'),
+              color: theme("colors.text"),
             },
             h4: {
-              color: theme('colors.text'),
+              color: theme("colors.text"),
             },
             img: {
-              borderRadius: '10px',
+              borderRadius: "10px",
             },
             code: {
-              background: theme('colors.gray.800'),
-              color: theme('colors.gray.200'),
-              padding: '2px',
-              borderRadius: '2px',
+              background: theme("colors.gray.800"),
+              color: theme("colors.gray.200"),
+              padding: "2px",
+              borderRadius: "2px",
             },
           },
         },
@@ -70,7 +70,7 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/line-clamp'),
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/line-clamp"),
   ],
 }

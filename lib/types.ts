@@ -1,10 +1,10 @@
 import {
-  RichTextPropertyValue,
   CheckboxPropertyValue,
   DatePropertyValue,
-  TitlePropertyValue,
-  PersonUser,
   Page,
+  PersonUser,
+  RichTextPropertyValue,
+  TitlePropertyValue,
   URLPropertyValue,
 } from "@notionhq/client/build/src/api-types"
 
@@ -13,7 +13,7 @@ export interface PostItem {
   Slug: RichTextPropertyValue
   Published: CheckboxPropertyValue
   Date: DatePropertyValue
-  Authors: PersonUser
+  Authors: { people: PersonUser[] }
   Image: URLPropertyValue
   Description: RichTextPropertyValue
 }

@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import NLink from 'next/link'
+import { useMemo } from "react"
+import NLink from "next/link"
 
 export interface Props {
   href: string
@@ -9,7 +9,7 @@ export interface Props {
 }
 
 const isExternalLink = (href: string) =>
-  href == null || href.startsWith('http://') || href.startsWith('https://')
+  href == null || href.startsWith("http://") || href.startsWith("https://")
 
 const useIsExternalLink = (href: string) =>
   useMemo(() => isExternalLink(href), [href])
