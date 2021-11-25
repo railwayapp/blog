@@ -24,9 +24,11 @@ const Home: NextPage<Props> = ({ posts = [] }) => {
           <div className="text-center text-gray-500">Pretty empty here</div>
         ) : (
           <div className="posts max-w-5xl">
-            {posts.map((p) => (
-              <PostItem key={p.id} post={p} />
-            ))}
+            {posts
+              .filter((p) => p.properties.Published.checkbox)
+              .map((p) => (
+                <PostItem key={p.id} post={p} />
+              ))}
           </div>
         )}
       </div>
