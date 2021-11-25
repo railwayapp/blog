@@ -26,7 +26,13 @@ interface TextProps {
 }
 
 const renderContent = (code: boolean, content: string) => {
-  return <>{code ? <code>{content}</code> : <>{content}</>}</>
+  return code ? (
+    <code>{content}</code>
+  ) : (
+    <span
+      dangerouslySetInnerHTML={{ __html: content.replace("\n", "<br/>") }}
+    />
+  )
 }
 
 export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
