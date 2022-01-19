@@ -39,7 +39,11 @@ module.exports = {
                 textDecoration: "underline",
               },
             },
-
+            li: {
+              a: {
+                textDecoration: "underline",
+              },
+            },
             h1: {
               color: theme("colors.pink.50"),
             },
