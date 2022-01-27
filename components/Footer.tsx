@@ -11,7 +11,7 @@ const Footer = () => (
         <div className="flex items-center justify-between">
           <Logo />
           <div className="pl-4 flex items-center text-sm text-gray-500 font-medium">
-            <Link href="https://twitter.com/Railway_App" className="pr-4">
+            <Link href="https://twitter.com/Railway" className="pr-4">
               <Twitter />
             </Link>
 
