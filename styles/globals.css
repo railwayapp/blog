@@ -9,7 +9,7 @@
 html,
 body {
   @apply antialiased;
-  @apply bg-background text-white;
+  @apply bg-background text-foreground;
 
   min-height: 100vh;
 }

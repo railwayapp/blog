@@ -4462,6 +4462,11 @@ next-sitemap@^1.6.57:
     matcher "^4.0.0"
     minimist "^1.2.5"
 
+next-themes@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.1.1.tgz#122113a458bf1d1be5ffed66778ab924c106f82a"
+  integrity sha512-Iqxt6rhS/KfK/iHJ0tfFjTcdLEAI0AgwFuAFrMwLOPK5e+MI3I+fzyvBoS+VaOS+NldUiazurhgwYhrfV0VXsQ==
+
 next@11.1.2:
   version "11.1.2"
   resolved "https://registry.yarnpkg.com/next/-/next-11.1.2.tgz#527475787a9a362f1bc916962b0c0655cc05bc91"
@@ -6122,6 +6127,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+theme-custom-properties@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/theme-custom-properties/-/theme-custom-properties-1.0.0.tgz#b3d84f90bfd35cd45d539bb2e1a23af4440a78d1"
+  integrity sha512-KewE36NjGNA+p9mMOtQMt22f7qEXwHIW49OS/cu+kWkmY4Nfo1cTbRWchLHWjQZzrgMvRMrinc3E3BkW/a9Z7w==
 
 throat@^5.0.0:
   version "5.0.0"

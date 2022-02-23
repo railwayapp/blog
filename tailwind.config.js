@@ -1,3 +1,27 @@
+// eslint-disable-next-line
+const colors = require("tailwindcss/colors")
+
+const generateColorShades = (name) =>
+  [50, ...Array.from({ length: 9 }).map((_, i) => (i + 1) * 100), 950].reduce(
+    (acc, k) => ({
+      ...acc,
+      [k]: `var(--${name}-${k})`,
+    }),
+    {}
+  )
+
+const customColors = {
+  foreground: `var(--foreground)`,
+  background: `var(--background)`,
+  secondaryBg: `var(--secondaryBg)`,
+  gray: generateColorShades("gray"),
+  pink: generateColorShades("pink"),
+  blue: generateColorShades("blue"),
+  yellow: generateColorShades("yellow"),
+  green: generateColorShades("green"),
+  red: generateColorShades("red"),
+}
+
 module.exports = {
   purge: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -11,10 +35,11 @@ module.exports = {
     },
     extend: {
       colors: {
-        background: "#100f13",
-        text: "#FFFFFF",
-        primary: "#C049FF",
-        secondary: "#618DFF",
+        transparent: "transparent",
+        current: "currentColor",
+        black: colors.black,
+        white: colors.white,
+        ...customColors,
       },
       typography: (theme) => ({
         DEFAULT: {
