@@ -55,6 +55,11 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
       )
     }
     case "bulleted_list_item":
+      return (
+        <li className="mb-2">
+          <NotionText text={value.text} />
+        </li>
+      )
     case "numbered_list_item": {
       return (
         <li className="mb-2">

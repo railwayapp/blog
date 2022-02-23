@@ -38,10 +38,6 @@ body {
   fill: currentColor;
 }
 
-.imageContainer {
-  width: 100%;
-}
-
 .imageContainer > span {
   position: unset !important;
 }

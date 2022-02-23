@@ -23,6 +23,7 @@ export interface Props {
 
 interface ListBlock {
   id: string
+  type: string
   items: Block[]
 }
 
@@ -35,8 +36,13 @@ const Post: NextPage<Props> = ({ page, ...props }) => {
     let currList: ListBlock | null = null
 
     for (const b of props.blocks) {
-      if (b.type === "bulleted_list_item") {
-        if (currList == null) currList = { id: b.id, items: [] }
+      if (b.type === "bulleted_list_item" || b.type === "numbered_list_item") {
+        if (currList == null)
+          currList = {
+            id: b.id,
+            type: b.type === "bulleted_list_item" ? "ul" : "ol",
+            items: [],
+          }
         currList.items.push(b)
       } else {
         if (currList != null) {
@@ -64,7 +70,7 @@ const Post: NextPage<Props> = ({ page, ...props }) => {
       {blocks.map((block) => {
         if ((block as ListBlock).items != null) {
           return (
-            <NotionList key={block.id}>
+            <NotionList key={block.id} type={(block as ListBlock).type}>
               {(block as ListBlock).items.map((block) => (
                 <Fragment key={block.id}>
                   <RenderBlock block={block} />

@@ -90,6 +90,9 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
   )
 }
 
-export const NotionList: React.FC = ({ children }) => (
-  <ul className="list-disc pl-6 mb-6">{children}</ul>
-)
+export const NotionList: React.FC<{ type: string }> = ({ type, children }) =>
+  type === "ul" ? (
+    <ul className="list-disc pl-6 mb-6">{children}</ul>
+  ) : (
+    <ol className="list-decimal pl-6 mb-6">{children}</ol>
+  )
