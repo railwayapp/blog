@@ -9,7 +9,7 @@ const Nav: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <nav className="py-4 px-4 flex justify-between items-center">
+      <nav className="py-4 px-5 md:px-8 flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-4">
           <Logo /> <span className="text-xl font-bold">Blog</span>
         </Link>

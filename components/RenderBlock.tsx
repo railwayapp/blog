@@ -48,7 +48,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
           {value.icon.emoji && (
             <div className="text-yellow-500">{value.icon.emoji}</div>
           )}
-          <div className="ml-4 text-black">
+          <div className="ml-4 text-foreground">
             <NotionText text={value.text} />
           </div>
         </div>

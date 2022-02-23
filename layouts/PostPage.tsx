@@ -3,6 +3,7 @@ import Page from "@layouts/Page"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
+import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
   post: PostProps
@@ -15,17 +16,21 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
   )
 
   const author = post.properties.Authors.people[0]
+  const ogImage = useOgImage({
+    title: post.properties.Page.title[0].plain_text,
+    authorName: author.name,
+  })
 
   return (
     <Page
       seo={{
         title: post.properties.Page.title[0].plain_text,
         description: post.properties.Description.rich_text[0].plain_text,
-        image: post.properties.Image.url,
+        image: ogImage,
         author: author.name,
       }}
     >
-      <div className="wrapper">
+      <div className="wrapper px-5 md:px-8">
         <div className="mb-48">
           <article>
             <header className="mt-12 mb-12 sm:mt-24 sm:mb-16">
