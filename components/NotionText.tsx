@@ -89,3 +89,7 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
     </>
   )
 }
+
+export const NotionList: React.FC = ({ children }) => (
+  <ul className="list-disc pl-6 mb-6">{children}</ul>
+)

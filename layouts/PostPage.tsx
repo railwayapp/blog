@@ -14,13 +14,15 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     [post.properties.Date.date.start]
   )
 
+  const author = post.properties.Authors.people[0]
+
   return (
     <Page
       seo={{
         title: post.properties.Page.title[0].plain_text,
         description: post.properties.Description.rich_text[0].plain_text,
         image: post.properties.Image.url,
-        author: post.properties.Authors.people[0].name,
+        author: author.name,
       }}
     >
       <div className="wrapper">
@@ -30,11 +32,20 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
               <h1 className="text-jumbo font-bold leading-normal">
                 <NotionText text={post.properties.Page.title} />
               </h1>
-              <div className="pt-8 text-gray-400">
+
+              <div className="flex items-center pt-8 text-gray-500 space-x-3">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={author.avatar_url}
+                    alt={`Avatar of ${author.name}`}
+                    className="w-6 h-6 rounded-full overflow-hidden"
+                  />
+                  <span>{author.name}</span>
+                </div>
+                <span>{"·"}</span>
                 <time dateTime={post.properties.Date.date.start}>
                   {formattedDate}
                 </time>
-                &nbsp;&bull;&nbsp;{post.properties.Authors.people[0].name}
               </div>
             </header>
 

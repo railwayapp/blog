@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import { useRouter } from "next/router"
 import { Block } from "@notionhq/client/build/src/api-types"
 import ErrorPage from "next/error"
-import { Fragment } from "react"
+import { Fragment, useMemo } from "react"
 
 import { PostPage } from "@layouts/PostPage"
 import { PostProps } from "@lib/types"
@@ -14,14 +14,42 @@ import {
 
 import { RenderBlock } from "@components/RenderBlock"
 import { FullLoading } from "@components/Loading"
+import { NotionList } from "../../components/NotionText"
 
 export interface Props {
   page: PostProps
   blocks: Block[]
 }
 
-const Post: NextPage<Props> = ({ page, blocks }) => {
+interface ListBlock {
+  id: string
+  items: Block[]
+}
+
+const Post: NextPage<Props> = ({ page, ...props }) => {
   const router = useRouter()
+
+  // Group all list items together so we can group in a <ul />
+  const blocks = useMemo(() => {
+    const updatedBlocks: Array<Block | ListBlock> = []
+    let currList: ListBlock | null = null
+
+    for (const b of props.blocks) {
+      if (b.type === "bulleted_list_item") {
+        if (currList == null) currList = { id: b.id, items: [] }
+        currList.items.push(b)
+      } else {
+        if (currList != null) {
+          updatedBlocks.push(currList)
+          currList = null
+        }
+
+        updatedBlocks.push(b)
+      }
+    }
+
+    return updatedBlocks
+  }, [props.blocks])
 
   if (!router.isFallback && page == null) {
     return <ErrorPage statusCode={404} />
@@ -33,11 +61,25 @@ const Post: NextPage<Props> = ({ page, blocks }) => {
 
   return (
     <PostPage post={page}>
-      {blocks.map((block) => (
-        <Fragment key={block.id}>
-          <RenderBlock block={block} />
-        </Fragment>
-      ))}
+      {blocks.map((block) => {
+        if ((block as ListBlock).items != null) {
+          return (
+            <NotionList key={block.id}>
+              {(block as ListBlock).items.map((block) => (
+                <Fragment key={block.id}>
+                  <RenderBlock block={block} />
+                </Fragment>
+              ))}
+            </NotionList>
+          )
+        }
+
+        return (
+          <Fragment key={block.id}>
+            <RenderBlock block={block as Block} />
+          </Fragment>
+        )
+      })}
     </PostPage>
   )
 }
