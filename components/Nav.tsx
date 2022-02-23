@@ -16,13 +16,14 @@ const Nav: React.FC = () => {
 
         <div className="text-gray-600 flex items-center space-x-6">
           <Link
-            className="text-sm hover:text-primary"
+            className="text-sm hover:text-pink-600"
             href="https://railway.app"
           >
             Go to Homepage
           </Link>
 
           <button
+            className="hover:text-pink-600"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
             {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}

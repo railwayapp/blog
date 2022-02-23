@@ -1,12 +1,8 @@
+import { NotionText } from "@components/NotionText"
+import Page from "@layouts/Page"
+import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
-import { ArrowLeft } from "react-feather"
-
-import { PostProps } from "@lib/types"
-
-import Page from "@layouts/Page"
-import Link from "@components/Link"
-import { NotionText } from "@components/NotionText"
 
 export interface Props {
   post: PostProps
@@ -31,7 +27,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         <div className="pb-20">
           <article>
             <header className="pt-20 pb-12">
-              <h1 className="text-5xl font-bold leading-tight">
+              <h1 className="text-5xl font-bold leading-normal">
                 <NotionText text={post.properties.Page.title} />
               </h1>
               <div className="pt-8 text-gray-400">
@@ -42,15 +38,8 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
               </div>
             </header>
 
-            <section className="prose lg:prose-lg">{children}</section>
+            <section className="post text-lg leading-8">{children}</section>
           </article>
-
-          <div className="pt-12">
-            <Link href="/" className="flex text-gray-500 hover:text-primary">
-              <ArrowLeft className="mr-4" />
-              Back to posts
-            </Link>
-          </div>
         </div>
       </div>
     </Page>

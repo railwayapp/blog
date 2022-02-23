@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import React, { Fragment } from "react"
 import Link from "@components/Link"
 
 /**
@@ -25,15 +25,19 @@ interface TextProps {
   type: string
 }
 
-const renderContent = (code: boolean, content: string) => {
-  return code ? (
+const RenderTextContent: React.FC<{
+  isCode: boolean
+  content: string
+  className?: string
+}> = ({ isCode, content, className }) =>
+  isCode ? (
     <code>{content}</code>
   ) : (
     <span
+      className={className}
       dangerouslySetInnerHTML={{ __html: content.replace("\n", "<br/>") }}
     />
   )
-}
 
 export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
   text,
@@ -62,13 +66,19 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
         return (
           <Fragment key={idx}>
             {text.link ? (
-              <Link href={text.link.url} className={classes}>
-                {renderContent(code, text.content)}
+              <Link href={text.link.url}>
+                <RenderTextContent
+                  isCode={code}
+                  content={text.content}
+                  className={classes}
+                />
               </Link>
             ) : (
-              <span className={classes}>
-                {renderContent(code, text.content)}
-              </span>
+              <RenderTextContent
+                isCode={code}
+                content={text.content}
+                className={classes}
+              />
             )}
           </Fragment>
         )
