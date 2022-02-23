@@ -24,10 +24,10 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
       }}
     >
       <div className="wrapper">
-        <div className="pb-20">
+        <div className="mb-48">
           <article>
-            <header className="pt-20 pb-12">
-              <h1 className="text-5xl font-bold leading-normal">
+            <header className="mt-12 mb-12 sm:mt-24 sm:mb-16">
+              <h1 className="text-jumbo font-bold leading-normal">
                 <NotionText text={post.properties.Page.title} />
               </h1>
               <div className="pt-8 text-gray-400">

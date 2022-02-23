@@ -66,7 +66,10 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
         return (
           <Fragment key={idx}>
             {text.link ? (
-              <Link href={text.link.url}>
+              <Link
+                href={text.link.url}
+                className="underline hover:text-pink-600"
+              >
                 <RenderTextContent
                   isCode={code}
                   content={text.content}

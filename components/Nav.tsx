@@ -8,7 +8,7 @@ const Nav: React.FC = () => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       <nav className="py-4 px-4 flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-4">
           <Logo /> <span className="text-xl font-bold">Blog</span>
