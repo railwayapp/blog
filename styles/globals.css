@@ -43,7 +43,7 @@ body {
   width: 100%;
 }
 
-.imageContainer > div {
+.imageContainer > span {
   position: unset !important;
 }
 
