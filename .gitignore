@@ -34,7 +34,7 @@ yarn-error.log*
 .vercel
 
 # dynamically generated files
-public/sitemap.xml
+public/sitemap*.xml
 public/robots.txt
 
 # notion

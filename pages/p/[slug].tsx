@@ -35,7 +35,7 @@ const Post: NextPage<Props> = ({ page, ...props }) => {
     const updatedBlocks: Array<Block | ListBlock> = []
     let currList: ListBlock | null = null
 
-    for (const b of props.blocks) {
+    for (const b of props.blocks ?? []) {
       if (b.type === "bulleted_list_item" || b.type === "numbered_list_item") {
         if (currList == null)
           currList = {
@@ -107,7 +107,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getStaticProps: GetStaticProps<Props> = async (context) => {
   if (process.env.POSTS_TABLE_ID == null) {
     return {
       notFound: true,

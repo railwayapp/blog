@@ -1,5 +1,5 @@
 {
-  "name": "Railway",
+  "name": "Railway Blog",
   "short_name": "Railway",
   "icons": [
     {
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#100F13",
-  "background_color": "#100F13",
+  "theme_color": "#13111C",
+  "background_color": "#13111C",
   "display": "standalone"
 }
