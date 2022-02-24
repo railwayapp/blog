@@ -44,7 +44,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     // @ts-ignore: Current client version does not support `callout` but API does
     case "callout": {
       return (
-        <div className="flex w-full p-4 my-8 rounded border border-transparent bg-blue-50">
+        <div className="flex w-full p-4 my-8 rounded border border-transparent bg-blue-100">
           {value.icon.emoji && (
             <div className="text-yellow-500">{value.icon.emoji}</div>
           )}
