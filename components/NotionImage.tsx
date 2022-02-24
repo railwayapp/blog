@@ -5,14 +5,14 @@ export const NotionImage: React.FC<{ src: string; alt: string }> = ({
   alt,
 }) => {
   return (
-    <div className="imageContainer">
+    <div className="imageContainer w-full">
       <NextImage
         src={src}
         alt={alt}
         layout="fill"
         objectFit="cover"
         objectPosition="center"
-        className="nextImage rounded-xl mb-8 p-0"
+        className="nextImage mb-8 p-0 rounded overflow-hidden"
         unoptimized={process.env.NODE_ENV !== "production"}
       />
     </div>

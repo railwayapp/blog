@@ -1,12 +1,10 @@
+import { NotionText } from "@components/NotionText"
+import Page from "@layouts/Page"
+import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
-import { ArrowLeft } from "react-feather"
-
-import { PostProps } from "@lib/types"
-
-import Page from "@layouts/Page"
-import Link from "@components/Link"
-import { NotionText } from "@components/NotionText"
+import { Background } from "../components/Background"
+import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
   post: PostProps
@@ -18,41 +16,53 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     [post.properties.Date.date.start]
   )
 
+  const author = post.properties.Authors.people[0]
+  const ogImage = useOgImage({
+    title: post.properties.Page.title[0].plain_text,
+    authorName: author.name,
+  })
+
   return (
     <Page
       seo={{
         title: post.properties.Page.title[0].plain_text,
         description: post.properties.Description.rich_text[0].plain_text,
-        image: post.properties.Image.url,
-        author: post.properties.Authors.people[0].name,
+        image: ogImage,
+        author: author.name,
       }}
     >
-      <div className="wrapper">
-        <div className="pb-20">
+      <div className="wrapper px-5 md:px-8">
+        <div className="mb-48">
           <article>
-            <header className="pt-20 pb-12">
-              <h1 className="text-5xl font-bold leading-tight">
+            <header className="mt-12 mb-12 sm:mt-24 sm:mb-16">
+              <h1 className="text-jumbo font-bold">
                 <NotionText text={post.properties.Page.title} />
               </h1>
-              <div className="pt-8 text-gray-400">
+
+              <div className="flex items-center pt-8 text-gray-500 space-x-3">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={author.avatar_url}
+                    alt={`Avatar of ${author.name}`}
+                    className="w-6 h-6 rounded-full overflow-hidden"
+                  />
+                  <span>{author.name}</span>
+                </div>
+                <span>{"·"}</span>
                 <time dateTime={post.properties.Date.date.start}>
                   {formattedDate}
                 </time>
-                &nbsp;&bull;&nbsp;{post.properties.Authors.people[0].name}
               </div>
             </header>
 
-            <section className="prose lg:prose-lg">{children}</section>
+            <section className="post text-base sm:text-lg leading-8">
+              {children}
+            </section>
           </article>
-
-          <div className="pt-12">
-            <Link href="/" className="flex text-gray-500 hover:text-primary">
-              <ArrowLeft className="mr-4" />
-              Back to posts
-            </Link>
-          </div>
         </div>
       </div>
+
+      <Background />
     </Page>
   )
 }

@@ -9,7 +9,7 @@
 html,
 body {
   @apply antialiased;
-  @apply bg-background text-white;
+  @apply bg-background text-foreground;
 
   min-height: 100vh;
 }
@@ -22,8 +22,7 @@ body {
 
 .wrapper {
   display: grid;
-  grid-template-columns: 1fr min(65ch, 100%) 1fr;
-  @apply px-8;
+  grid-template-columns: 1fr min(736px, 100%) 1fr;
 }
 
 .wrapper > * {
@@ -39,11 +38,7 @@ body {
   fill: currentColor;
 }
 
-.imageContainer {
-  width: 100%;
-}
-
-.imageContainer > div {
+.imageContainer > span {
   position: unset !important;
 }
 
@@ -52,4 +47,8 @@ body {
   max-width: 100% !important;
   position: relative !important;
   height: unset !important;
+}
+
+pre {
+  @apply text-sm px-6 py-4 bg-secondaryBg border border-gray-100 rounded-md overflow-hidden;
 }

@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import React, { Fragment } from "react"
 import Link from "@components/Link"
 
 /**
@@ -25,15 +25,19 @@ interface TextProps {
   type: string
 }
 
-const renderContent = (code: boolean, content: string) => {
-  return code ? (
-    <code>{content}</code>
+const RenderTextContent: React.FC<{
+  isCode: boolean
+  content: string
+  className?: string
+}> = ({ isCode, content, className }) =>
+  isCode ? (
+    <code className="text-pink-600">{content}</code>
   ) : (
     <span
+      className={className}
       dangerouslySetInnerHTML={{ __html: content.replace("\n", "<br/>") }}
     />
   )
-}
 
 export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
   text,
@@ -62,13 +66,22 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
         return (
           <Fragment key={idx}>
             {text.link ? (
-              <Link href={text.link.url} className={classes}>
-                {renderContent(code, text.content)}
+              <Link
+                href={text.link.url}
+                className="underline hover:text-pink-600"
+              >
+                <RenderTextContent
+                  isCode={code}
+                  content={text.content}
+                  className={classes}
+                />
               </Link>
             ) : (
-              <span className={classes}>
-                {renderContent(code, text.content)}
-              </span>
+              <RenderTextContent
+                isCode={code}
+                content={text.content}
+                className={classes}
+              />
             )}
           </Fragment>
         )
@@ -76,3 +89,10 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
     </>
   )
 }
+
+export const NotionList: React.FC<{ type: string }> = ({ type, children }) =>
+  type === "ul" ? (
+    <ul className="list-disc pl-6 mb-6">{children}</ul>
+  ) : (
+    <ol className="list-decimal pl-6 mb-6">{children}</ol>
+  )

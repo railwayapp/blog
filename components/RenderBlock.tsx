@@ -7,11 +7,12 @@ import { getMediaProperties } from "@lib/notion"
 import { NotionText } from "@components/NotionText"
 import { NotionImage } from "@components/NotionImage"
 import { NotionHeading } from "@components/NotionHeading"
-import Code from "@components/Code"
+import { Code } from "@components/Code"
 
 interface Props {
   block: Block
 }
+
 export const RenderBlock: React.FC<Props> = ({ block }) => {
   const { type } = block
   const value = block[type]
@@ -26,10 +27,11 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
   if (value.text != null && value.text.length === 0) {
     return null
   }
+
   switch (type) {
     case "paragraph": {
       return (
-        <p className="leading-extra-relaxed mb-8">
+        <p className="leading-8 mb-6 text-gray-800">
           <NotionText text={value.text} />
         </p>
       )
@@ -42,20 +44,25 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     // @ts-ignore: Current client version does not support `callout` but API does
     case "callout": {
       return (
-        <div className="flex w-full p-4 rounded border border-transparent bg-gray-50">
+        <div className="flex w-full p-4 my-8 rounded border border-transparent bg-blue-100">
           {value.icon.emoji && (
             <div className="text-yellow-500">{value.icon.emoji}</div>
           )}
-          <div className="ml-4 text-black">
+          <div className="ml-4 text-foreground">
             <NotionText text={value.text} />
           </div>
         </div>
       )
     }
     case "bulleted_list_item":
+      return (
+        <li className="mb-2">
+          <NotionText text={value.text} />
+        </li>
+      )
     case "numbered_list_item": {
       return (
-        <li>
+        <li className="mb-2">
           <NotionText text={value.text} />
         </li>
       )
@@ -63,9 +70,9 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     case "image": {
       const { source, caption } = getMediaProperties(value)
       return (
-        <div className="flex flex-col my-8 space-y-2">
+        <div className="flex flex-col my-8 space-y-4">
           <NotionImage src={source} alt={caption} />
-          {caption && <p className="text-gray-500 text-sm">{caption}</p>}
+          {caption && <p className="text-gray-600 text-sm">{caption}</p>}
         </div>
       )
     }
