@@ -13,7 +13,8 @@
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "test": "jest",
     "test-all": "yarn lint && yarn type-check && yarn test",
-    "clean": "rm -rf .next"
+    "clean": "rm -rf .next",
+    "prepare": "husky install"
   },
   "husky": {
     "hooks": {

@@ -14,7 +14,9 @@ const Page: React.FC<Props> = (props) => {
 
       <Nav />
 
-      <div className="min-h-screen">{props.children}</div>
+      <div className="min-h-screen overflow-x-hidden relative">
+        {props.children}
+      </div>
 
       <Footer />
     </>
