@@ -37,10 +37,10 @@ const PostItem: React.FC<Props> = ({ post }) => {
         <header className="font-bold text-4xl leading-normal">
           <NotionText text={post.properties.Page.title} />
         </header>
-        <p className="text-gray-400 mt-3 line-clamp-3 leading-8">
+        <p className="text-gray-600 mt-3 line-clamp-3 leading-8">
           <NotionText text={post.properties.Description.rich_text} />
         </p>
-        <p className="text-gray-600 mt-3">{formattedDate}</p>
+        <p className="text-gray-400 mt-3">{formattedDate}</p>
       </div>
     </Link>
   )

@@ -34,7 +34,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         <div className="mb-48">
           <article>
             <header className="mt-12 mb-12 sm:mt-24 sm:mb-16">
-              <h1 className="text-jumbo font-bold leading-normal">
+              <h1 className="text-jumbo font-bold">
                 <NotionText text={post.properties.Page.title} />
               </h1>
 
@@ -54,7 +54,9 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
               </div>
             </header>
 
-            <section className="post text-lg leading-8">{children}</section>
+            <section className="post text-base sm:text-lg leading-8">
+              {children}
+            </section>
           </article>
         </div>
       </div>

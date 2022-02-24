@@ -5,7 +5,7 @@ export const NotionImage: React.FC<{ src: string; alt: string }> = ({
   alt,
 }) => {
   return (
-    <div className="imageContainer -mx-5 md:mx-0 w-full">
+    <div className="imageContainer w-full">
       <NextImage
         src={src}
         alt={alt}

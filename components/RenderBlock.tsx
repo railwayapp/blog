@@ -7,7 +7,7 @@ import { getMediaProperties } from "@lib/notion"
 import { NotionText } from "@components/NotionText"
 import { NotionImage } from "@components/NotionImage"
 import { NotionHeading } from "@components/NotionHeading"
-import Code from "@components/Code"
+import { Code } from "@components/Code"
 
 interface Props {
   block: Block

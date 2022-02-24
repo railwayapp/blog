@@ -48,3 +48,7 @@ body {
   position: relative !important;
   height: unset !important;
 }
+
+pre {
+  @apply text-sm px-6 py-4 bg-secondaryBg border border-gray-100 rounded-md overflow-hidden;
+}

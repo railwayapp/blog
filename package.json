@@ -42,6 +42,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-feather": "^2.0.9",
+    "shiki": "^0.10.1",
     "theme-custom-properties": "^1.0.0"
   },
   "devDependencies": {

@@ -31,7 +31,7 @@ const RenderTextContent: React.FC<{
   className?: string
 }> = ({ isCode, content, className }) =>
   isCode ? (
-    <code>{content}</code>
+    <code className="text-pink-600">{content}</code>
   ) : (
     <span
       className={className}
