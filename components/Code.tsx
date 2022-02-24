@@ -40,7 +40,7 @@ export const Code: React.FC<{ children: string; language?: string }> = ({
   return (
     <div
       dangerouslySetInnerHTML={{ __html: markupToHighlight }}
-      className="shiki-wrapper"
+      className="shiki-wrapper mb-6"
     />
   )
 }
