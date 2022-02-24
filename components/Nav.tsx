@@ -11,7 +11,8 @@ const Nav: React.FC = () => {
     <div className="max-w-6xl mx-auto">
       <nav className="py-4 px-5 md:px-8 flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-4">
-          <Logo /> <span className="text-xl font-bold">Blog</span>
+          <Logo />
+          {/* <span className="text-xl font-bold">Blog</span> */}
         </Link>
 
         <div className="text-gray-600 flex items-center space-x-6">
