@@ -3,6 +3,7 @@ import Page from "@layouts/Page"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
+import { GridBackground } from "../components/GridBackground"
 import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
@@ -30,6 +31,9 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         author: author.name,
       }}
     >
+      <GridBackground className="absolute top-[72px] left-0 transform scale-x-[-1]" />
+      <GridBackground className="absolute top-[564px] right-0" />
+
       <div className="wrapper px-5 md:px-8">
         <div className="mb-48">
           <article>
