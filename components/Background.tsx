@@ -8,7 +8,7 @@ export const Background = () => (
     <img src="/blog.svg" className="absolute top-[0px] left-[-500px]" />
     <img
       src="/blog.svg"
-      className="absolute top-[350px] right-[-450px] transform scale-x-[-1] rotate-90"
+      className="absolute top-[350px] right-[-450px] transform scale-x-[-1] rotate-[17deg]"
     />
   </div>
 )
