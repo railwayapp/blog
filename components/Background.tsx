@@ -1,5 +1,5 @@
 export const Background = () => (
-  <div className="opacity-50 md:opacity-100 background absolute inset-0 pointer-events-none">
+  <div className="hidden md:block md:opacity-100 background absolute inset-0 pointer-events-none">
     <img
       src="/grid.svg"
       className="absolute top-0 left-0 transform scale-x-[-1] max-w-none"
