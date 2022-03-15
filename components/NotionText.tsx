@@ -1,5 +1,8 @@
 import React, { Fragment } from "react"
 import Link from "@components/Link"
+import Image from "next/image"
+
+const TEMPLATE_PATH = "https://railway.app/new/template"
 
 /**
  * This type is harcoded here as I couldn't really find anything
@@ -65,17 +68,25 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
 
         return (
           <Fragment key={idx}>
-            {text.link ? (
-              <Link
-                href={text.link.url}
-                className="underline hover:text-pink-600"
-              >
-                <RenderTextContent
-                  isCode={code}
-                  content={text.content}
-                  className={classes}
-                />
-              </Link>
+            {text.link != null ? (
+              <>
+                {text.link.url.includes(TEMPLATE_PATH) ? (
+                  <Link href={text.link.url} className="flex justify-center">
+                    <Image src="/button.svg" height={48} width={240} />
+                  </Link>
+                ) : (
+                  <Link
+                    href={text.link.url}
+                    className="underline hover:text-pink-600"
+                  >
+                    <RenderTextContent
+                      isCode={code}
+                      content={text.content}
+                      className={classes}
+                    />
+                  </Link>
+                )}
+              </>
             ) : (
               <RenderTextContent
                 isCode={code}
