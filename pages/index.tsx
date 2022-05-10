@@ -5,6 +5,7 @@ import { getDatabase } from "@lib/notion"
 
 import Page from "@layouts/Page"
 import PostItem from "@components/PostItem"
+import { generateRssFeed } from "@lib/rss"
 
 export interface Props {
   posts: PostProps[]
@@ -44,6 +45,8 @@ export const getStaticProps: GetStaticProps = async () => {
   }
 
   const posts = await getDatabase(process.env.POSTS_TABLE_ID)
+
+  generateRssFeed(posts)
 
   return {
     props: { posts },
