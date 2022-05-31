@@ -8,7 +8,11 @@ export const useOgImage = ({
   authorName: string
 }): string => {
   const { theme } = useTheme()
+
+  const encodedTitle = encodeURIComponent(title)
+  const encodedAuthorName = encodeURIComponent(authorName)
+
   return `https://og.railway.app/api/image?fileType=png&layoutName=Blog&Theme=${
     theme === "light" ? "Light" : "Dark"
-  }&Title=${title}&Author=${authorName}`
+  }&Title=${encodedTitle}&Author=${encodedAuthorName}`
 }
