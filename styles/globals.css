@@ -50,5 +50,5 @@ body {
 }
 
 pre {
-  @apply text-sm px-6 py-4 bg-secondaryBg border border-gray-100 rounded-md overflow-hidden;
+  @apply text-sm px-6 py-4 bg-secondaryBg border border-gray-100 rounded-md overflow-x-auto;
 }
