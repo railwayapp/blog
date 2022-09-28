@@ -19,7 +19,10 @@ const PostItem: React.FC<Props> = ({ post }) => {
     [post.properties.Date.date.start]
   )
 
-  const image = useOgImage({
+  // use image hook to generate image if image is not provided to Image Column
+  let image
+
+  post.properties.Image.url ? image = post.properties.Image.url : image = useOgImage({
     title: post.properties.Page.title[0].plain_text ?? "",
     authorName: post.properties.Authors.people[0].name ?? "",
   })
