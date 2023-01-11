@@ -19,7 +19,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
   const author = post.properties.Authors.people[0]
   const ogImage = useOgImage({
     title: post.properties.Page.title[0].plain_text,
-    authorName: author.name,
+    authorName: author?.name,
   })
 
   return (
@@ -28,7 +28,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         title: post.properties.Page.title[0].plain_text,
         description: post.properties.Description.rich_text[0].plain_text,
         image: ogImage,
-        author: author.name,
+        author: author?.name,
       }}
     >
       <div className="wrapper px-5 md:px-8">
@@ -42,11 +42,11 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
               <div className="flex items-center pt-8 text-gray-500 space-x-3">
                 <div className="flex items-center space-x-3">
                   <img
-                    src={author.avatar_url}
-                    alt={`Avatar of ${author.name}`}
+                    src={author?.avatar_url}
+                    alt={`Avatar of ${author?.name}`}
                     className="w-6 h-6 rounded-full overflow-hidden"
                   />
-                  <span>{author.name}</span>
+                  <span>{author?.name}</span>
                 </div>
                 <span>{"·"}</span>
                 <time dateTime={post.properties.Date.date.start}>
