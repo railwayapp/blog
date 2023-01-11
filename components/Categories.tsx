@@ -3,8 +3,8 @@ import Link from "./Link"
 
 export const Categories: React.FC = () => {
   return (
-    <ul className="flex gap-8 mt-8 mb-12">
-      <CategoryItem item="Everything" slug="/" />
+    <ul className="flex flex-wrap gap-4 md:gap-8 mt-8 mb-12">
+      <CategoryItem item="Everything" slug="/" className="hidden md:block" />
       <CategoryItem item="News" slug="/news" />
       <CategoryItem item="Guides" slug="/guide" />
       <CategoryItem item="Company" slug="/company" />
@@ -13,15 +13,16 @@ export const Categories: React.FC = () => {
   )
 }
 
-const CategoryItem: React.FC<{ item: string; slug: string }> = ({
-  item,
-  slug,
-}) => {
+const CategoryItem: React.FC<{
+  item: string
+  slug: string
+  className?: string
+}> = ({ item, slug, className }) => {
   const { asPath } = useRouter()
   const isActive = asPath === slug
 
   return (
-    <li>
+    <li className={className}>
       <Link
         className={`font-semibold ${
           isActive ? "text-foreground" : "text-gray-500"

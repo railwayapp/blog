@@ -24,11 +24,11 @@ export const PostList: React.FC<{ posts: PostProps[] }> = ({ posts }) => {
 
       <img
         src="/grid.svg"
-        className="absolute top-24 left-0 transform scale-x-[-1] max-w-none opacity-40"
+        className="absolute top-24 left-0 transform scale-x-[-1] max-w-none opacity-40 pointer-events-none"
       />
       <img
         src="/grid.svg"
-        className="hidden lg:block absolute top-24 right-0 max-w-none opacity-40"
+        className="hidden lg:block absolute top-24 right-0 max-w-none opacity-40 pointer-events-none"
       />
     </>
   )

@@ -35,19 +35,11 @@ const PostItem: React.FC<Props> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="relative grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 overflow-hidden group"
+      className="relative grid grid-cols-1 md:grid-cols-3 gap-12 mb-4 md:mb-16 overflow-hidden group"
     >
-      {/* <div className="transform lg:hover:scale-105 transition-transform flex-1 border border-gray-200 rounded-lg overflow-hidden">
-        <Image src={image} width={1200} height={630} />
-      </div> */}
-
-      {/* <div className="hidden sm:block w-full h-full bg-gray-100 rounded-lg" /> */}
-
       <div className="hidden md:flex pt-10 text-sm text-gray-500 items-start">
         {formattedDate}
       </div>
-
-      {/* <p className="text-gray-400 mt-3">{formattedDate}</p> */}
 
       <div className="md:col-span-2 py-8 flex flex-col justify-center flex-1">
         {category != null && (
@@ -82,13 +74,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
             {formattedDate}
           </div>
         </div>
-
-        {/* <p className="text-gray-400 mt-3">{formattedDate}</p> */}
       </div>
-
-      {/* <div className="hidden group-hover:block">
-        <img src="/blog.svg" className="absolute top-[0px] left-[-500px]" />
-      </div> */}
     </Link>
   )
 }
