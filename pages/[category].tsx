@@ -25,7 +25,11 @@ export const getStaticProps: GetStaticProps = async (props) => {
     }
   }
 
-  const category = props.params?.category as string
+  let category = props.params?.category as string
+
+  // Special case for "Guides"
+  category = category === "guides" ? "guide" : category
+
   const posts = (await getDatabase(process.env.POSTS_TABLE_ID)).filter(
     (p) => p.properties.Category.select?.name?.toLowerCase() === category
   )
