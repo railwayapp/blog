@@ -35,16 +35,16 @@ const PostItem: React.FC<Props> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="relative grid grid-cols-1 md:grid-cols-3 gap-12 mb-4 md:mb-16 overflow-hidden group"
+      className="relative flex gap-20 mb-4 px-8 md:mb-16 overflow-hidden group hover:bg-post rounded-lg"
     >
-      <div className="hidden md:flex pt-10 text-sm text-gray-500 items-start">
+      <div className="hidden md:flex pt-8 text-sm text-gray-500 items-start">
         {formattedDate}
       </div>
 
       <div className="md:col-span-2 py-8 flex flex-col justify-center flex-1">
         {category != null && (
           <p
-            className={`mb-3 font-semibold ${
+            className={`mb-3 font-bold text-sm uppercase ${
               categoryToColor[category] ?? "text-gray-500"
             }`}
           >
@@ -56,7 +56,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
           <NotionText text={post.properties.Page.title} />
         </header>
 
-        <p className="text-gray-800 mt-3 line-clamp-3 leading-8">
+        <p className="text-gray-800 mt-2 line-clamp-3 leading-8 max-w-lg">
           <NotionText text={post.properties.Description.rich_text} />
         </p>
 

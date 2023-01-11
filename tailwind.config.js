@@ -41,6 +41,9 @@ module.exports = {
         white: colors.white,
         ...customColors,
       },
+      backgroundImage: {
+        post: "linear-gradient(290.44deg, rgb(182 206 235 / 6%) 27.03%, rgba(204, 219, 235, 0.420833) 59.53%, rgb(215 185 238 / 30%) 86.77%)",
+      },
       fontSize: {
         // Headings
         huge: ["clamp(48px, 6vw, 64px)", "1.25"],
