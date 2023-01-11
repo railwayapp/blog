@@ -1,14 +1,15 @@
 import { useRouter } from "next/router"
+import { CATEGORIES } from "../constants"
 import Link from "./Link"
 
 export const Categories: React.FC = () => {
   return (
     <ul className="flex flex-wrap gap-4 md:gap-8 mt-8 mb-12">
       <CategoryItem item="Everything" slug="/" className="hidden md:block" />
-      <CategoryItem item="News" slug="/news" />
-      <CategoryItem item="Guides" slug="/guide" />
-      <CategoryItem item="Company" slug="/company" />
-      <CategoryItem item="Engineering" slug="/engineering" />
+
+      {CATEGORIES.map((c) => (
+        <CategoryItem key={c} item={c} slug={`/${c.toLowerCase()}`} />
+      ))}
     </ul>
   )
 }

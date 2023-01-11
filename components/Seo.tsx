@@ -13,7 +13,7 @@ const title = "Railway Blog"
 export const url = "https://blog.railway.app"
 const description = "Blog posts from the Railway team"
 const image =
-  "https://og.railway.app/api/image?fileType=png&layoutName=docs&Page=Railway+Blog&Url=blog.railway.app&text=Railway+Documentation"
+  "https://og.railway.app/api/image?fileType=png&layoutName=docs&Page=Railway+Blog&Url=blog.railway.app"
 
 const config: DefaultSeoProps = {
   title,

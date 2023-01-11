@@ -24,11 +24,6 @@ const PostItem: React.FC<Props> = ({ post }) => {
     [post.properties.Date.date.start]
   )
 
-  // const image = useOgImage({
-  //   title: post.properties.Page.title[0].plain_text ?? "",
-  //   authorName: post.properties.Authors.people[0].name ?? "",
-  // })
-
   const author = post.properties.Authors.people[0]
   const category = post.properties.Category.select?.name
 
