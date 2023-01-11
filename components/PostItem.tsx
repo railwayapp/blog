@@ -1,15 +1,20 @@
-import React, { useMemo } from "react"
-import Image from "next/image"
 import dayjs from "dayjs"
+import React, { useMemo } from "react"
 
 import { PostProps } from "@lib/types"
 
 import Link from "@components/Link"
 import { NotionText } from "./NotionText"
-import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
   post: PostProps
+}
+
+const categoryToColor = {
+  News: "text-blue-500",
+  Guide: "text-purple-500",
+  Company: "text-green-500",
+  Engineering: "text-pink-500",
 }
 
 const PostItem: React.FC<Props> = ({ post }) => {
@@ -19,29 +24,71 @@ const PostItem: React.FC<Props> = ({ post }) => {
     [post.properties.Date.date.start]
   )
 
-  const image = useOgImage({
-    title: post.properties.Page.title[0].plain_text ?? "",
-    authorName: post.properties.Authors.people[0].name ?? "",
-  })
+  // const image = useOgImage({
+  //   title: post.properties.Page.title[0].plain_text ?? "",
+  //   authorName: post.properties.Authors.people[0].name ?? "",
+  // })
+
+  const author = post.properties.Authors.people[0]
+  const category = post.properties.Category.select?.name
 
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="flex flex-col md:flex-row md:items-center mb-16 space-y-5 md:space-y-0"
+      className="relative grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 overflow-hidden group"
     >
-      <div className="transform lg:hover:scale-105 transition-transform flex-1 border border-gray-200 rounded-lg overflow-hidden">
-        <Image src={image} width={1440} height={720} />
+      {/* <div className="transform lg:hover:scale-105 transition-transform flex-1 border border-gray-200 rounded-lg overflow-hidden">
+        <Image src={image} width={1200} height={630} />
+      </div> */}
+
+      {/* <div className="hidden sm:block w-full h-full bg-gray-100 rounded-lg" /> */}
+
+      <div className="hidden md:flex pt-10 text-sm text-gray-500 items-start">
+        {formattedDate}
       </div>
 
-      <div className="md:ml-20 flex flex-col justify-center flex-1">
-        <header className="font-bold text-4xl leading-normal">
+      {/* <p className="text-gray-400 mt-3">{formattedDate}</p> */}
+
+      <div className="md:col-span-2 py-8 flex flex-col justify-center flex-1">
+        {category != null && (
+          <p
+            className={`mb-3 font-semibold ${
+              categoryToColor[category] ?? "text-gray-500"
+            }`}
+          >
+            {category}
+          </p>
+        )}
+
+        <header className="font-bold text-2xl leading-normal">
           <NotionText text={post.properties.Page.title} />
         </header>
-        <p className="text-gray-600 mt-3 line-clamp-3 leading-8">
+
+        <p className="text-gray-800 mt-3 line-clamp-3 leading-8">
           <NotionText text={post.properties.Description.rich_text} />
         </p>
-        <p className="text-gray-400 mt-3">{formattedDate}</p>
+
+        <div className="mt-6 flex gap-8 items-center">
+          <div className="flex items-center space-x-3">
+            <img
+              src={author.avatar_url}
+              alt={`Avatar of ${author.name}`}
+              className="w-6 h-6 rounded-full overflow-hidden"
+            />
+            <span className="font-medium text-sm">{author.name}</span>
+          </div>
+
+          <div className="block md:hidden text-sm font-medium text-gray-500">
+            {formattedDate}
+          </div>
+        </div>
+
+        {/* <p className="text-gray-400 mt-3">{formattedDate}</p> */}
       </div>
+
+      {/* <div className="hidden group-hover:block">
+        <img src="/blog.svg" className="absolute top-[0px] left-[-500px]" />
+      </div> */}
     </Link>
   )
 }

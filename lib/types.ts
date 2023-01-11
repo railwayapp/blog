@@ -6,6 +6,7 @@ import {
   RichTextPropertyValue,
   TitlePropertyValue,
   URLPropertyValue,
+  SelectPropertyValue,
 } from "@notionhq/client/build/src/api-types"
 
 export interface PostItem {
@@ -16,6 +17,7 @@ export interface PostItem {
   Authors: { people: PersonUser[] }
   Image: URLPropertyValue
   Description: RichTextPropertyValue
+  Category: SelectPropertyValue
 }
 
 export interface PostProps extends Omit<Page, "properties"> {
