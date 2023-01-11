@@ -30,7 +30,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="relative flex gap-20 mb-4 px-8 md:mb-16 overflow-hidden group hover:bg-post rounded-lg"
+      className="relative flex gap-20 mb-4 sm:px-8 md:mb-16 overflow-hidden group sm:hover:bg-post rounded-lg"
     >
       <div className="hidden md:flex pt-8 text-sm text-gray-500 items-start">
         {formattedDate}
@@ -47,7 +47,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
           </p>
         )}
 
-        <header className="font-bold text-2xl leading-normal">
+        <header className="font-bold text-2xl leading-normal group-hover:opacity-60 sm:group-hover:opacity-100">
           <NotionText text={post.properties.Page.title} />
         </header>
 
