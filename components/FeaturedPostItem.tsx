@@ -2,6 +2,7 @@ import Link from "@components/Link"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
+import { Divider } from "./Divider"
 import { NotionText } from "./NotionText"
 import { PostCategory } from "./PostCategory"
 
@@ -19,33 +20,45 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className=""
+      className="group"
     >
       {featuredImage != null ? (
-        <img src={featuredImage} />
+        <div
+          className="w-full h-[240px] bg-cover bg-center bg-no-repeat rounded-xl border border-black border-opacity-10"
+          style={{
+            transition: "all 0.2s ease-in-out",
+            backgroundImage: `url(${featuredImage})`,
+          }}
+        />
       ) : (
         <div className="h-[240px] w-full bg-gray-100 rounded-xl" />
       )}
 
       <div className="mt-6">
         {category != null && <PostCategory category={category} />}
-      </div>
 
-      <header className="font-bold text-2xl my-4">
-        <NotionText text={post.properties.Page.title} />
-      </header>
+        <header className="font-bold text-2xl my-4">
+          <NotionText text={post.properties.Page.title} noLinks />
+        </header>
 
-      <p className="text-lg text-gray-800 line-clamp-2">
-        <NotionText text={post.properties.Description.rich_text} />
-      </p>
+        <p className="text-lg text-gray-800 line-clamp-2">
+          <NotionText text={post.properties.Description.rich_text} noLinks />
+        </p>
 
-      <div className="flex items-center gap-3 mt-6">
-        <img
-          src={author.avatar_url}
-          alt={`Avatar of ${author.name}`}
-          className="w-6 h-6 rounded-full overflow-hidden"
-        />
-        <span className="font-medium text-sm text-gray-500">{author.name}</span>
+        <div className="flex items-center gap-3 mt-6">
+          <img
+            src={author.avatar_url}
+            alt={`Avatar of ${author.name}`}
+            className="w-6 h-6 rounded-full overflow-hidden"
+          />
+          <span className="font-medium text-sm text-gray-500">
+            {author.name}
+          </span>
+          <Divider />
+          <span className="font-medium text-sm text-gray-500">
+            {formattedDate}
+          </span>
+        </div>
       </div>
 
       {/* <div className="hidden md:flex pt-8 text-sm text-gray-500 items-start">

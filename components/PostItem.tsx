@@ -2,17 +2,12 @@ import Link from "@components/Link"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
+import { Divider } from "./Divider"
 import { NotionText } from "./NotionText"
+import { PostCategory } from "./PostCategory"
 
 export interface Props {
   post: PostProps
-}
-
-const categoryToColor = {
-  News: "text-blue-500",
-  Guide: "text-purple-500",
-  Company: "text-green-500",
-  Engineering: "text-pink-500",
 }
 
 const PostItem: React.FC<Props> = ({ post }) => {
@@ -28,46 +23,34 @@ const PostItem: React.FC<Props> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="relative flex gap-20 mb-4 sm:px-8 md:mb-16 overflow-hidden group sm:hover:bg-post rounded-lg"
+      className="flex flex-col"
     >
-      <div className="hidden md:flex pt-8 text-sm text-gray-500 items-start">
-        {formattedDate}
-      </div>
+      {category != null && <PostCategory category={category} />}
 
-      <div className="md:col-span-2 py-8 flex flex-col justify-center flex-1">
-        {category != null && (
-          <p
-            className={`mb-3 font-bold text-sm uppercase ${
-              categoryToColor[category] ?? "text-gray-500"
-            }`}
-          >
-            {category}
-          </p>
-        )}
-
-        <header className="font-bold text-2xl leading-normal group-hover:opacity-60 sm:group-hover:opacity-100">
-          <NotionText text={post.properties.Page.title} />
+      <div className="flex-grow">
+        <header className="font-bold text-lg mt-2 mb-1">
+          <NotionText text={post.properties.Page.title} noLinks />
         </header>
 
-        <p className="text-gray-800 mt-2 line-clamp-3 leading-8 max-w-lg">
-          <NotionText text={post.properties.Description.rich_text} />
+        <p className="text-base text-gray-800 line-clamp-2">
+          <NotionText text={post.properties.Description.rich_text} noLinks />
         </p>
-
-        <div className="mt-6 flex gap-8 items-center">
-          <div className="flex items-center space-x-3">
-            <img
-              src={author.avatar_url}
-              alt={`Avatar of ${author.name}`}
-              className="w-6 h-6 rounded-full overflow-hidden"
-            />
-            <span className="font-medium text-sm">{author.name}</span>
-          </div>
-
-          <div className="block md:hidden text-sm font-medium text-gray-500">
-            {formattedDate}
-          </div>
-        </div>
       </div>
+
+      <div className="flex items-center gap-3 mt-6">
+        <img
+          src={author.avatar_url}
+          alt={`Avatar of ${author.name}`}
+          className="w-6 h-6 rounded-full overflow-hidden"
+        />
+        <span className="font-medium text-sm text-gray-500">{author.name}</span>
+        <Divider />
+        <span className="font-medium text-sm text-gray-500">
+          {formattedDate}
+        </span>
+      </div>
+
+      <hr className="border-gray-100 mt-10" />
     </Link>
   )
 }

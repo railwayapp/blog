@@ -8,6 +8,7 @@ import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
   post: PostProps
+  children?: React.ReactNode
 }
 
 export const PostPage: React.FC<Props> = ({ post, children }) => {
