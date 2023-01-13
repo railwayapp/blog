@@ -5,6 +5,7 @@ import SEO, { Props as SEOProps } from "@components/Seo"
 
 export interface Props {
   seo?: SEOProps
+  children?: React.ReactNode
 }
 
 const Page: React.FC<Props> = (props) => {

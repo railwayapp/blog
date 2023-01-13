@@ -26,7 +26,7 @@ export const PostList: React.FC<{ posts: PostProps[] }> = ({ posts }) => {
           </>
         )}
 
-        {otherPosts.length === 0 ? (
+        {/* {otherPosts.length === 0 ? (
           <div className="text-center text-gray-500">Pretty empty here</div>
         ) : (
           <div className="max-w-5xl">
@@ -36,7 +36,7 @@ export const PostList: React.FC<{ posts: PostProps[] }> = ({ posts }) => {
                 <PostItem key={p.id} post={p} />
               ))}
           </div>
-        )}
+        )} */}
       </div>
 
       {/* <img
