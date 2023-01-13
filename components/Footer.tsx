@@ -98,7 +98,10 @@ const Footer: React.FC = () => {
 
 export default Footer
 
-const FooterListLink: React.FC<{ href: string }> = ({ children, href }) => (
+const FooterListLink: React.FC<{
+  href: string
+  children?: React.ReactNode
+}> = ({ children, href }) => (
   <li>
     <Link href={href} className="hover:text-foreground">
       {children}
