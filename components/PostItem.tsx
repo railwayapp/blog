@@ -23,12 +23,12 @@ const PostItem: React.FC<Props> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="flex flex-col border-b border-gray-100"
+      className="flex flex-col border-b border-gray-100 group"
     >
       {category != null && <PostCategory category={category} />}
 
       <div className="flex-grow">
-        <header className="font-bold text-lg mt-2 mb-1">
+        <header className="font-bold text-lg mt-2 mb-1 group-hover:opacity-60">
           <NotionText text={post.properties.Page.title} noLinks />
         </header>
 

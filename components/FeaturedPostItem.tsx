@@ -1,6 +1,7 @@
 import Link from "@components/Link"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
+import Image from "next/image"
 import React, { useMemo } from "react"
 import { Divider } from "./Divider"
 import { NotionText } from "./NotionText"
@@ -23,13 +24,14 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       className="group"
     >
       {featuredImage != null ? (
-        <div
-          className="w-full h-[240px] bg-cover bg-center bg-no-repeat rounded-xl border border-black border-opacity-10"
-          style={{
-            transition: "all 0.2s ease-in-out",
-            backgroundImage: `url(${featuredImage})`,
-          }}
-        />
+        <div className="w-full h-[240px] relative border border-black border-opacity-10 rounded-xl overflow-hidden">
+          <Image
+            src={featuredImage}
+            fill
+            alt=""
+            className="transition-transform group-hover:scale-[1.05]"
+          />
+        </div>
       ) : (
         <div className="h-[240px] w-full bg-gray-100 rounded-xl" />
       )}
@@ -37,7 +39,7 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       <div className="mt-6">
         {category != null && <PostCategory category={category} />}
 
-        <header className="font-bold text-2xl my-4">
+        <header className="font-bold text-2xl my-4 group-hover:opacity-60">
           <NotionText text={post.properties.Page.title} noLinks />
         </header>
 
@@ -60,37 +62,6 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
           </span>
         </div>
       </div>
-
-      {/* <div className="hidden md:flex pt-8 text-sm text-gray-500 items-start">
-        {formattedDate}
-      </div>
-
-      <div className="md:col-span-2 py-8 flex flex-col justify-center flex-1">
-        {category != null && <PostCategory category={category} />}
-
-        <header className="font-bold text-2xl leading-normal group-hover:opacity-60 sm:group-hover:opacity-100">
-          <NotionText text={post.properties.Page.title} />
-        </header>
-
-        <p className="text-gray-800 mt-2 line-clamp-3 leading-8 max-w-lg">
-          <NotionText text={post.properties.Description.rich_text} />
-        </p>
-
-        <div className="mt-6 flex gap-8 items-center">
-          <div className="flex items-center space-x-3">
-            <img
-              src={author.avatar_url}
-              alt={`Avatar of ${author.name}`}
-              className="w-6 h-6 rounded-full overflow-hidden"
-            />
-            <span className="font-medium text-sm">{author.name}</span>
-          </div>
-
-          <div className="block md:hidden text-sm font-medium text-gray-500">
-            {formattedDate}
-          </div>
-        </div>
-      </div> */}
     </Link>
   )
 }
