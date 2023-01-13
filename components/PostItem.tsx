@@ -23,7 +23,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="flex flex-col"
+      className="flex flex-col border-b border-gray-100"
     >
       {category != null && <PostCategory category={category} />}
 
@@ -37,7 +37,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
         </p>
       </div>
 
-      <div className="flex items-center gap-3 mt-6">
+      <div className="flex items-center gap-3 mt-6 mb-10">
         <img
           src={author.avatar_url}
           alt={`Avatar of ${author.name}`}
@@ -49,8 +49,6 @@ const PostItem: React.FC<Props> = ({ post }) => {
           {formattedDate}
         </span>
       </div>
-
-      <hr className="border-gray-100 mt-10" />
     </Link>
   )
 }

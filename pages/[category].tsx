@@ -7,13 +7,13 @@ import { CATEGORIES } from "../constants"
 
 export interface Props {
   posts: PostProps[]
-  preview: boolean
+  category: string
 }
 
-const CategoryPage: NextPage<Props> = ({ posts = [] }) => {
+const CategoryPage: NextPage<Props> = ({ posts = [], category }) => {
   return (
     <Page>
-      <PostList posts={posts} />
+      <PostList posts={posts} category={category} />
     </Page>
   )
 }
@@ -25,17 +25,17 @@ export const getStaticProps: GetStaticProps = async (props) => {
     }
   }
 
-  let category = props.params?.category as string
+  const category = props.params?.category as string
 
   // Special case for "Guides"
-  category = category === "guides" ? "guide" : category
-
   const posts = (await getDatabase(process.env.POSTS_TABLE_ID)).filter(
-    (p) => p.properties.Category.select?.name?.toLowerCase() === category
+    (p) =>
+      p.properties.Category.select?.name?.toLowerCase() ===
+      (category === "guides" ? "guide" : category)
   )
 
   return {
-    props: { posts },
+    props: { posts, category },
     revalidate: 900, // 15 minutes
   }
 }

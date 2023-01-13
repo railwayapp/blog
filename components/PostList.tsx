@@ -4,7 +4,12 @@ import { Categories } from "./Categories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
 
-export const PostList: React.FC<{ posts: PostProps[] }> = ({ posts }) => {
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+export const PostList: React.FC<{ posts: PostProps[]; category?: string }> = ({
+  posts,
+  category,
+}) => {
   const featuredPosts = posts.filter((p) => p.properties.Featured.checkbox)
   const otherPosts = posts.filter((p) => !p.properties.Featured.checkbox)
 
@@ -28,9 +33,11 @@ export const PostList: React.FC<{ posts: PostProps[] }> = ({ posts }) => {
 
         {otherPosts.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 mb-24">
-            <h2 className="text-3xl font-bold mb-12">Everything</h2>
+            <h2 className="text-3xl font-bold mb-12">
+              {capitalize(category ?? "Everything")}
+            </h2>
 
-            <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+            <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(1)]:border-transparent md:[&>*:nth-last-child(2)]:border-transparent">
               {otherPosts
                 .filter((p) => p.properties.Published.checkbox)
                 .map((p) => (
@@ -41,13 +48,13 @@ export const PostList: React.FC<{ posts: PostProps[] }> = ({ posts }) => {
         )}
 
         {/* <img
-        src="/grid.svg"
-        className="absolute top-24 left-0 transform scale-x-[-1] max-w-none opacity-40 pointer-events-none"
-      />
-      <img
-        src="/grid.svg"
-        className="hidden lg:block absolute top-24 right-0 max-w-none opacity-40 pointer-events-none"
-      /> */}
+          src="/grid.svg"
+          className="absolute top-24 left-0 transform scale-x-[-1] max-w-none opacity-40 pointer-events-none"
+        />
+        <img
+          src="/grid.svg"
+          className="hidden lg:block absolute top-24 right-0 max-w-none opacity-40 pointer-events-none"
+        /> */}
       </div>
     </>
   )
