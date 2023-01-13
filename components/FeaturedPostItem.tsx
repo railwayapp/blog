@@ -1,11 +1,11 @@
 import Link from "@components/Link"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
-import Image from "next/image"
 import React, { useMemo } from "react"
 import { Divider } from "./Divider"
 import { NotionText } from "./NotionText"
 import { PostCategory } from "./PostCategory"
+import Image from "next/image"
 
 export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
   const formattedDate = useMemo(
@@ -24,16 +24,17 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       className="group"
     >
       {featuredImage != null ? (
-        <div className="w-full h-[240px] relative border border-black border-opacity-10 rounded-xl overflow-hidden">
+        <div className="w-full aspect-[2/1] relative border border-black border-opacity-10 rounded-xl overflow-hidden">
           <Image
             src={featuredImage}
             fill
+            priority
             alt=""
-            className="transition-transform group-hover:scale-[1.05]"
+            className="object-cover transition-transform group-hover:scale-[1.05]"
           />
         </div>
       ) : (
-        <div className="h-[240px] w-full bg-gray-100 rounded-xl" />
+        <div className="w-full aspect-[2/1] bg-gray-100 rounded-xl" />
       )}
 
       <div className="mt-6">
