@@ -53,7 +53,7 @@ export const PostList: React.FC<{ posts: PostProps[]; category?: string }> = ({
                 <div />
               ) : (
                 <button
-                  className="col-span-2 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
+                  className="md:col-span-2 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
                   onClick={() => setShowMore(true)}
                 >
                   Load more posts...
