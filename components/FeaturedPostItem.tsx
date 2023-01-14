@@ -24,7 +24,7 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       className="group"
     >
       {featuredImage != null ? (
-        <div className="w-full aspect-[2/1] relative border border-black border-opacity-10 rounded-xl overflow-hidden">
+        <div className="w-full aspect-[2.25/1] relative border border-black border-opacity-10 rounded-xl overflow-hidden">
           <Image
             src={featuredImage}
             fill
