@@ -16,6 +16,7 @@ export const PostList: React.FC<{ posts: PostProps[]; category?: string }> = ({
   const otherPosts = posts.filter((p) => !p.properties.Featured.checkbox)
 
   const [showMore, setShowMore] = useState(false)
+  const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH
 
   return (
     <>
@@ -49,7 +50,7 @@ export const PostList: React.FC<{ posts: PostProps[]; category?: string }> = ({
                   <PostItem key={p.id} post={p} />
                 ))}
 
-              {showMore ? (
+              {showMore || !hasMorePosts ? (
                 <div />
               ) : (
                 <button
