@@ -29,7 +29,7 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
             src={featuredImage}
             fill
             priority
-            alt=""
+            alt={post.properties.Page.title[0].plain_text}
             className="object-cover transition-transform group-hover:scale-[1.05]"
           />
         </div>
