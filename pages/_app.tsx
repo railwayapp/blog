@@ -6,6 +6,9 @@ import Head from "next/head"
 import { useMemo } from "react"
 import { transformThemeToCustomProperties } from "theme-custom-properties"
 import { colorThemes, defaultColorMode } from "../styles/theme"
+import { Inter } from "@next/font/google"
+
+const inter = Inter({ subsets: ["latin"] })
 
 const RailwayBlog = ({ Component, pageProps }: AppProps) => {
   useFathom(process.env.NEXT_PUBLIC_FATHOM_CODE ?? "", "blog.railway.app")
@@ -28,6 +31,11 @@ const RailwayBlog = ({ Component, pageProps }: AppProps) => {
     >
       <Head>
         <style>{bodyCSS}</style>
+        <style jsx global>{`
+          html {
+            font-family: ${inter.style.fontFamily};
+          }
+        `}</style>
       </Head>
 
       <Component {...pageProps} />

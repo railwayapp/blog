@@ -13,9 +13,11 @@ export interface PostItem {
   Page: TitlePropertyValue
   Slug: RichTextPropertyValue
   Published: CheckboxPropertyValue
+  Featured: CheckboxPropertyValue
   Date: DatePropertyValue
   Authors: { people: PersonUser[] }
   Image: URLPropertyValue
+  FeaturedImage: URLPropertyValue
   Description: RichTextPropertyValue
   Category: SelectPropertyValue
 }

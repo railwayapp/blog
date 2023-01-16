@@ -4,7 +4,7 @@ import Link from "./Link"
 
 export const Categories: React.FC = () => {
   return (
-    <ul className="flex flex-wrap gap-4 md:gap-8 mt-8 mb-12">
+    <ul className="flex flex-wrap gap-4 md:gap-8 my-8">
       <CategoryItem item="Everything" slug="/" className="hidden md:block" />
 
       {CATEGORIES.map((c) => (

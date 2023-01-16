@@ -32,8 +32,8 @@ const Link = ({ href, external, children, ...props }: Props) => {
   }
 
   return (
-    <NLink href={href} passHref>
-      <a {...props}>{children}</a>
+    <NLink href={href} passHref {...props}>
+      {children}
     </NLink>
   )
 }

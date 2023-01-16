@@ -3,9 +3,11 @@ import Link from "@components/Link"
 import Logo from "@components/Logo"
 import { Moon, Sun } from "react-feather"
 import { useTheme } from "next-themes"
+import { useIsMounted } from "../hooks/useIsMounted"
 
 const Nav: React.FC = () => {
   const { theme, setTheme } = useTheme()
+  const isMounted = useIsMounted()
 
   return (
     <div className="max-w-6xl px-5 md:px-8 mx-auto">
@@ -23,12 +25,14 @@ const Nav: React.FC = () => {
             Go to Homepage
           </Link>
 
-          <button
-            className="hover:text-pink-600"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          >
-            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
+          {isMounted && (
+            <button
+              className="hover:text-pink-600"
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            >
+              {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+          )}
         </div>
       </nav>
     </div>

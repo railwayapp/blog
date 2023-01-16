@@ -42,9 +42,10 @@ const RenderTextContent: React.FC<{
     />
   )
 
-export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
-  text,
-}) => {
+export const NotionText: React.FC<{
+  text: TextProps[] | null
+  noLinks?: boolean
+}> = ({ text, noLinks }) => {
   if (text == null) {
     return null
   }
@@ -68,11 +69,11 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
 
         return (
           <Fragment key={idx}>
-            {text.link != null ? (
+            {text.link != null && !noLinks ? (
               <>
                 {text.link.url.includes(TEMPLATE_PATH) ? (
                   <Link href={text.link.url} className="flex justify-center">
-                    <Image src="/button.svg" height={48} width={240} />
+                    <Image src="/button.svg" height={48} width={240} alt="" />
                   </Link>
                 ) : (
                   <Link
@@ -101,7 +102,10 @@ export const NotionText: React.FC<{ text: TextProps[] | null }> = ({
   )
 }
 
-export const NotionList: React.FC<{ type: string }> = ({ type, children }) =>
+export const NotionList: React.FC<{
+  type: string
+  children?: React.ReactNode
+}> = ({ type, children }) =>
   type === "ul" ? (
     <ul className="list-disc pl-6 mb-6">{children}</ul>
   ) : (
