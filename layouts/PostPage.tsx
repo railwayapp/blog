@@ -3,16 +3,18 @@ import Page from "@layouts/Page"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
-import { Background } from "../components/Background"
+import { BottomCTA } from "../components/BottomCTA"
+import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
   post: PostProps
+  relatedPosts: PostProps[]
   children?: React.ReactNode
 }
 
-export const PostPage: React.FC<Props> = ({ post, children }) => {
+export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
   const formattedDate = useMemo(
     () => dayjs(post.properties.Date.date.start).format("MMM D, YYYY"),
     [post.properties.Date.date.start]
@@ -24,6 +26,8 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     authorName: author?.name,
   })
 
+  const category = post.properties.Category?.select?.name
+
   return (
     <Page
       seo={{
@@ -34,7 +38,7 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
       }}
     >
       <div className="max-w-6xl px-5 md:px-8 mx-auto">
-        <article className="mt-24 mb-48">
+        <article className="mt-24 mb-12 pb-32 border-b border-gray-100">
           <div className="flex items-center text-gray-500 space-x-3">
             <div className="flex items-center space-x-3">
               <img
@@ -56,10 +60,16 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
             </h1>
           </header>
 
-          <section className="max-w-[736px] ml-auto text-base sm:text-lg leading-8">
+          <section className="max-w-[736px] ml-auto lg:mr-12 text-base sm:text-lg leading-8">
             {children}
           </section>
         </article>
+
+        {category != null && (
+          <ContinueReading category={category} posts={relatedPosts} />
+        )}
+
+        <BottomCTA />
       </div>
 
       {/* <Background /> */}

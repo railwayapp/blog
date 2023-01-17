@@ -18,6 +18,7 @@ import { NotionList } from "../../components/NotionText"
 
 export interface Props {
   page: PostProps
+  relatedPosts: PostProps[]
   blocks: Block[]
 }
 
@@ -27,7 +28,7 @@ interface ListBlock {
   items: Block[]
 }
 
-const Post: NextPage<Props> = ({ page, ...props }) => {
+const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
   const router = useRouter()
 
   // Group all list items together so we can group in a <ul />
@@ -66,7 +67,7 @@ const Post: NextPage<Props> = ({ page, ...props }) => {
   }
 
   return (
-    <PostPage post={page}>
+    <PostPage post={page} relatedPosts={relatedPosts}>
       {blocks.map((block) => {
         if ((block as ListBlock).items != null) {
           return (
@@ -126,6 +127,18 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   const post = posts.find((post) => {
     return post.properties.Slug.rich_text[0].plain_text === slug
   })
+
+  const category = post?.properties.Category?.select?.name
+  const relatedPosts = (
+    category != null
+      ? posts.filter(
+          (post) =>
+            post.properties.Slug.rich_text[0].plain_text !== slug &&
+            post.properties.Category?.select?.name === category
+        )
+      : []
+  ).slice(0, 2)
+
   if (post == null) {
     return {
       notFound: true,
@@ -134,7 +147,10 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
 
   const props = await mapDatabaseItemToPageProps(post.id)
   return {
-    props,
+    props: {
+      ...props,
+      relatedPosts,
+    },
     revalidate: 1,
   }
 }
