@@ -1,0 +1,21 @@
+<svg width="200" height="160" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 44C24 42.3431 25.3431 41 27 41H101C102.657 41 104 42.3431 104 44V54C104 55.6569 102.657 57 101 57H27C25.3431 57 24 55.6569 24 54V44Z" fill="#853BCE" fill-opacity="0.3"/>
+<path d="M101 40H27C24.7909 40 23 41.7909 23 44V54C23 56.2091 24.7909 58 27 58H101C103.209 58 105 56.2091 105 54V44C105 41.7909 103.209 40 101 40Z" stroke="#853BCE" stroke-opacity="0.65" stroke-width="2"/>
+<path opacity="0.75" d="M148 18H200V22H148V18Z" fill="#853BCE" fill-opacity="0.25"/>
+<path d="M144 3C144 1.34315 145.343 0 147 0H199C200.657 0 202 1.34315 202 3V13C202 14.6569 200.657 16 199 16H147C145.343 16 144 14.6569 144 13V3Z" fill="#853BCE" fill-opacity="0.3"/>
+<path d="M199 -1H147C144.791 -1 143 0.790861 143 3V13C143 15.2091 144.791 17 147 17H199C201.209 17 203 15.2091 203 13V3C203 0.790861 201.209 -1 199 -1Z" stroke="#853BCE" stroke-opacity="0.65" stroke-width="2"/>
+<rect x="102" y="84" width="64" height="16" rx="3" fill="#853BCE" fill-opacity="0.3"/>
+<rect x="101" y="83" width="66" height="18" rx="4" stroke="#853BCE" stroke-opacity="0.65" stroke-width="2"/>
+<rect x="54" y="126" width="64" height="16" rx="3" fill="#853BCE" fill-opacity="0.3"/>
+<rect x="53" y="125" width="66" height="18" rx="4" stroke="#853BCE" stroke-opacity="0.65" stroke-width="2"/>
+<path d="M56 29H200" stroke="#853BCE" stroke-opacity="0.3" stroke-width="2" stroke-linejoin="round" stroke-dasharray="2 6"/>
+<path d="M0 71L200 71" stroke="#853BCE" stroke-opacity="0.3" stroke-width="2" stroke-linejoin="round" stroke-dasharray="2 6"/>
+<path d="M40 113L200 113" stroke="#853BCE" stroke-opacity="0.3" stroke-width="2" stroke-linejoin="round" stroke-dasharray="2 6"/>
+<circle cx="32" cy="49" r="4" fill="#853BCE" fill-opacity="0.74"/>
+<circle cx="110" cy="92" r="4" fill="#853BCE" fill-opacity="0.74"/>
+<circle cx="62" cy="134" r="4" fill="#853BCE" fill-opacity="0.74"/>
+<circle cx="152" cy="8" r="4" fill="#853BCE" fill-opacity="0.74"/>
+<path opacity="0.75" d="M30 59V60C30 61.6569 31.3431 63 33 63H107C108.657 63 110 61.6569 110 60V50C110 48.3431 108.657 47 107 47H106V54C106 56.7614 103.761 59 101 59H30Z" fill="#853BCE" fill-opacity="0.25"/>
+<path opacity="0.75" d="M107 102V103C107 104.657 108.343 106 110 106H168C169.657 106 171 104.657 171 103V93C171 91.3431 169.657 90 168 90H167V97C167 99.7614 164.761 102 162 102H107Z" fill="#853BCE" fill-opacity="0.25"/>
+<path opacity="0.75" d="M60 144V145C60 146.657 61.3431 148 63 148H121C122.657 148 124 146.657 124 145V135C124 133.343 122.657 132 121 132H120V139C120 141.761 117.761 144 115 144H60Z" fill="#853BCE" fill-opacity="0.25"/>
+</svg>

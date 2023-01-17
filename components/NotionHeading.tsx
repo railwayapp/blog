@@ -20,7 +20,7 @@ const headingConfig: Record<HeadingTypes, HeadingConfig> = {
     as: "h1",
   },
   heading_2: {
-    classes: "text-2xl font-bold mt-16 mb-8",
+    classes: "text-h2 font-bold mt-10 mb-5",
     as: "h2",
   },
   heading_3: {

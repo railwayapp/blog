@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { Block } from "@notionhq/client/build/src/api-types"
-
+import { TwitterTweetEmbed } from "react-twitter-embed"
 import { getMediaProperties } from "@lib/notion"
-
-import { NotionText } from "@components/NotionText"
-import { NotionImage } from "@components/NotionImage"
-import { NotionHeading } from "@components/NotionHeading"
 import { Code } from "@components/Code"
+import { NotionHeading } from "@components/NotionHeading"
+import { NotionImage } from "@components/NotionImage"
+import { NotionText } from "@components/NotionText"
 
 interface Props {
   block: Block
@@ -70,9 +69,9 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     case "image": {
       const { source, caption } = getMediaProperties(value)
       return (
-        <div className="flex flex-col my-8 space-y-4">
+        <div className="flex flex-col my-8">
           <NotionImage src={source} alt={caption} blockId={block.id} />
-          {caption && <p className="text-gray-600 text-sm">{caption}</p>}
+          {caption && <p className="text-gray-600 mt-3 text-sm">{caption}</p>}
         </div>
       )
     }
@@ -100,13 +99,33 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         </div>
       )
     }
-    default: {
+    case "embed": {
+      const url = block.embed.url
+      if (!url.includes("twitter.com")) {
+        return null
+      }
+
+      // const tweetId = url.split("/").pop()
+      const regex = /status\/(\d+)/gm
+      const matches = regex.exec(url)
+      const tweetId = matches[1]
+
+      if (tweetId == null) return null
+
       return (
-        <p>
-          ❌ Unsupported block{" "}
-          {type === "unsupported" ? "unsupported by Notion API" : type})
-        </p>
+        <div className="mb-6">
+          <TwitterTweetEmbed tweetId={`${tweetId}`} />
+        </div>
       )
+    }
+    default: {
+      return null
+      // return (
+      //   <p>
+      //     ❌ Unsupported block{" "}
+      //     {type === "unsupported" ? "unsupported by Notion API" : type})
+      //   </p>
+      // )
     }
   }
 }

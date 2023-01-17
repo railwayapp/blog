@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import React, { useMemo } from "react"
 import NLink from "next/link"
 
 export interface Props {
@@ -6,6 +6,7 @@ export interface Props {
   children: React.ReactNode
   external?: boolean
   className?: string
+  style?: React.CSSProperties
 }
 
 const isExternalLink = (href: string) =>

@@ -7,6 +7,7 @@ import { BottomCTA } from "../components/BottomCTA"
 import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
+import { cn } from "../utils"
 
 export interface Props {
   post: PostProps
@@ -24,6 +25,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
   const ogImage = useOgImage({
     title: post.properties.Page.title[0].plain_text,
     authorName: author?.name,
+    image: post.properties?.Image?.url,
   })
 
   const category = post.properties.Category?.select?.name
@@ -37,8 +39,15 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
         author: author?.name,
       }}
     >
-      <div className="max-w-6xl px-5 md:px-8 mx-auto">
-        <article className="mt-24 mb-12 pb-32 border-b border-gray-100">
+      <div className="mt-10 mb-5 px-5 md:px-8 mx-auto">
+        <article
+          className={cn(
+            "max-w-6xl mx-auto mt-24 mb-12",
+            relatedPosts.length >= 2
+              ? "border-b border-gray-100 pb-32"
+              : "pb-12"
+          )}
+        >
           <div className="flex items-center text-gray-500 space-x-3">
             <div className="flex items-center space-x-3">
               <img
@@ -54,25 +63,25 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
             </time>
           </div>
 
-          <header className="mt-9 mb-12 max-w-4xl">
-            <h1 className="text-jumbo font-bold">
+          <header className="mt-5 mb-16 max-w-[736px]">
+            <h1 className="text-huge font-bold">
               <NotionText text={post.properties.Page.title} />
             </h1>
           </header>
 
-          <section className="max-w-[736px] ml-auto lg:mr-12 text-base sm:text-lg leading-8">
+          <section className="max-w-[736px] mx-auto text-base sm:text-lg leading-8">
             {children}
           </section>
         </article>
 
-        {category != null && (
-          <ContinueReading category={category} posts={relatedPosts} />
-        )}
+        <div className="max-w-6xl mx-auto">
+          {category != null && relatedPosts.length >= 2 && (
+            <ContinueReading category={category} posts={relatedPosts} />
+          )}
 
-        <BottomCTA />
+          <BottomCTA />
+        </div>
       </div>
-
-      {/* <Background /> */}
     </Page>
   )
 }

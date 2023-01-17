@@ -22,6 +22,32 @@ const customColors = {
   red: generateColorShades("red"),
 }
 
+const fontStack = [
+  "Inter",
+  "-apple-system",
+  "BlinkMacSystemFont",
+  "Segoe UI",
+  "Roboto",
+  "Oxygen-Sans",
+  "Ubuntu",
+  "Cantarell",
+  "Helvetica Neue",
+  "sans-serif",
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol",
+].join(",")
+
+const monoStack = [
+  "ui-monospace",
+  "SFMono-Regular",
+  "SF Mono",
+  "Consolas",
+  "Liberation Mono",
+  "Menlo",
+  "monospace",
+].join(",")
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -31,7 +57,8 @@ module.exports = {
   darkMode: "class", // 'media' or 'class'
   theme: {
     fontFamily: {
-      sans: `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
+      sans: fontStack,
+      mono: monoStack,
     },
     extend: {
       colors: {
