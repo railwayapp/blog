@@ -13,10 +13,11 @@ export const NotionImage: React.FC<{
       <NextImage
         src={imageSrc}
         alt={alt}
-        layout="fill"
-        objectFit="cover"
-        objectPosition="center"
-        className="nextImage mb-8 p-0 rounded overflow-hidden"
+        fill
+        // layout="fill"
+        // objectFit="cover"
+        // objectPosition="center"
+        className="nextImage p-0 rounded overflow-hidden"
         unoptimized={process.env.NODE_ENV !== "production"}
         onError={async () => {
           const res = await fetch(`/api/image?blockId=${blockId}`).then((res) =>

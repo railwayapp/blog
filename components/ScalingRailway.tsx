@@ -59,7 +59,7 @@ export const ScalingRailway: React.FC = () => {
           number="03"
           drops={"31/01"}
           colour={"#6C6CD8"}
-          image="artwork-roadmap"
+          image="artwork-canvas"
         />
       </div>
     </div>
@@ -83,10 +83,11 @@ const ScalingRailwayPostItem: React.FC<{
     <Wrapper
       {...(slug != null ? ({ href: slug } as any) : {})}
       className={cn(
-        "px-8 py-10 bg-background dark:bg-gray-50 flex flex-col rounded-xl overflow-hidden",
-        slug != null ? "hover:bg-secondaryBg" : ""
+        "px-8 py-10 bg-background dark:bg-gray-50 border border-transparent flex flex-col rounded-xl overflow-hidden shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)]",
+        slug != null
+          ? "hover:border-pink-200 hover:shadow-[0px_1px_0px_4px_rgba(179,_45,_242,_0.05)] dark:hover:shadow-none"
+          : ""
       )}
-      style={{ boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.08)" }}
     >
       <div className="flex items-start justify-between -mr-8 -mt-10">
         {drops == null ? (
@@ -109,11 +110,13 @@ const ScalingRailwayPostItem: React.FC<{
       <div
         className={cn(
           "flex flex-col justify-end flex-grow",
-          slug != null ? "opacity-100" : "opacity-60"
+          slug != null ? "opacity-100" : "opacity-30"
         )}
       >
-        <h3 className="text-2xl font-semibold mt-7 mb-2">{title}</h3>
-        <p className="text-lg text-gray-500">{desc}</p>
+        <h3 className="max-w-[220px] text-2xl font-semibold mt-7 mb-2">
+          {title}
+        </h3>
+        <p className="max-w-[240px] text-lg text-gray-500">{desc}</p>
       </div>
     </Wrapper>
   )

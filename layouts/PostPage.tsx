@@ -37,8 +37,8 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
         author: author?.name,
       }}
     >
-      <div className="max-w-6xl px-5 md:px-8 mx-auto">
-        <article className="mt-24 mb-12 pb-32 border-b border-gray-100">
+      <div className="px-5 md:px-8 mx-auto">
+        <article className="max-w-6xl mx-auto mt-24 mb-12 pb-32 border-b border-gray-100">
           <div className="flex items-center text-gray-500 space-x-3">
             <div className="flex items-center space-x-3">
               <img
@@ -54,8 +54,8 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
             </time>
           </div>
 
-          <header className="mt-9 mb-12 max-w-4xl">
-            <h1 className="text-jumbo font-bold">
+          <header className="mt-5 mb-16 max-w-[736px]">
+            <h1 className="text-huge font-bold">
               <NotionText text={post.properties.Page.title} />
             </h1>
           </header>
@@ -65,14 +65,14 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
           </section>
         </article>
 
-        {category != null && (
-          <ContinueReading category={category} posts={relatedPosts} />
-        )}
+        <div className="max-w-6xl mx-auto">
+          {category != null && (
+            <ContinueReading category={category} posts={relatedPosts} />
+          )}
 
-        <BottomCTA />
+          <BottomCTA />
+        </div>
       </div>
-
-      {/* <Background /> */}
     </Page>
   )
 }

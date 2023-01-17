@@ -31,7 +31,7 @@ export const Code: React.FC<{ children: string; language?: string }> = ({
   // Show raw code if highlighting hasn't completed yet
   if (markupToHighlight == null) {
     return (
-      <pre>
+      <pre className="mb-6">
         <code>{children}</code>
       </pre>
     )

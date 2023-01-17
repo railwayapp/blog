@@ -4,7 +4,6 @@ import { Categories } from "./Categories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
 import { ScalingRailway } from "./ScalingRailway"
-import { Blob } from "./Blob"
 
 const DEFAULT_POSTS_LENGTH = 8
 
@@ -40,7 +39,7 @@ export const PostList: React.FC<{
         {showScalingRailway && <ScalingRailway />}
 
         {featuredPosts.length > 0 && otherPosts.length > 0 && (
-          <hr className="border-gray-100" />
+          <hr className="max-w-6xl mx-auto border-gray-100" />
         )}
 
         {otherPosts.length > 0 && (
