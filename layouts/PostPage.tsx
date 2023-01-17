@@ -7,6 +7,7 @@ import { BottomCTA } from "../components/BottomCTA"
 import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
+import { cn } from "../utils"
 
 export interface Props {
   post: PostProps
@@ -37,8 +38,15 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
         author: author?.name,
       }}
     >
-      <div className="px-5 md:px-8 mx-auto">
-        <article className="max-w-6xl mx-auto mt-24 mb-12 pb-32 border-b border-gray-100">
+      <div className="mt-10 mb-5 px-5 md:px-8 mx-auto">
+        <article
+          className={cn(
+            "max-w-6xl mx-auto mt-24 mb-12",
+            relatedPosts.length >= 2
+              ? "border-b border-gray-100 pb-32"
+              : "pb-12"
+          )}
+        >
           <div className="flex items-center text-gray-500 space-x-3">
             <div className="flex items-center space-x-3">
               <img
@@ -66,7 +74,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
         </article>
 
         <div className="max-w-6xl mx-auto">
-          {category != null && (
+          {category != null && relatedPosts.length >= 2 && (
             <ContinueReading category={category} posts={relatedPosts} />
           )}
 

@@ -101,12 +101,13 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
       )
     }
     default: {
-      return (
-        <p>
-          ❌ Unsupported block{" "}
-          {type === "unsupported" ? "unsupported by Notion API" : type})
-        </p>
-      )
+      return null
+      // return (
+      //   <p>
+      //     ❌ Unsupported block{" "}
+      //     {type === "unsupported" ? "unsupported by Notion API" : type})
+      //   </p>
+      // )
     }
   }
 }
