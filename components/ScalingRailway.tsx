@@ -34,10 +34,10 @@ export const ScalingRailway: React.FC = () => {
         </Link> */}
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         <ScalingRailwayPostItem
           title="Roadmap"
-          desc="Brief description about this blog post of the series."
+          desc="Introducing the Scaling Railway series "
           number="01"
           slug={"/p/scaling-railway-roadmap"}
           colour={"#6C6CD8"}
@@ -46,7 +46,7 @@ export const ScalingRailway: React.FC = () => {
 
         <ScalingRailwayPostItem
           title="Guiding Principles"
-          desc="Brief description about this blog post of the series."
+          desc="These are the core concepts that we use to build Railway"
           number="02"
           drops={"24/01"}
           colour={"#6C6CD8"}
@@ -55,11 +55,12 @@ export const ScalingRailway: React.FC = () => {
 
         <ScalingRailwayPostItem
           title="Multi-service design with Canvas"
-          desc="Brief description about this blog post of the series."
+          desc="All of us write code so we all know what's on the table"
           number="03"
           drops={"31/01"}
           colour={"#6C6CD8"}
           image="artwork-canvas"
+          className="block md:hidden lg:block"
         />
       </div>
     </div>
@@ -74,7 +75,8 @@ const ScalingRailwayPostItem: React.FC<{
   drops?: string
   colour: string
   image: string
-}> = ({ title, desc, drops, number, slug, image, colour }) => {
+  className?: string
+}> = ({ title, desc, drops, number, slug, image, colour, className }) => {
   const Wrapper = slug ? Link : "div"
   const { theme } = useTheme()
   const isMounted = useIsMounted()
@@ -86,7 +88,8 @@ const ScalingRailwayPostItem: React.FC<{
         "px-8 py-10 bg-background dark:bg-gray-50 border border-transparent flex flex-col rounded-xl overflow-hidden shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)]",
         slug != null
           ? "hover:border-pink-200 hover:shadow-[0px_1px_0px_4px_rgba(179,_45,_242,_0.05)] dark:hover:shadow-none"
-          : ""
+          : "",
+        className
       )}
     >
       <div className="flex items-start justify-between -mr-8 -mt-10">
