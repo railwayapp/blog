@@ -85,7 +85,7 @@ const ScalingRailwayPostItem: React.FC<{
     <Wrapper
       {...(slug != null ? ({ href: slug } as any) : {})}
       className={cn(
-        "px-8 py-10 bg-background dark:bg-gray-50 border border-transparent flex flex-col rounded-xl overflow-hidden shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)]",
+        "px-8 py-10 min-h-[356px] bg-background dark:bg-gray-50 border border-transparent flex flex-col rounded-xl overflow-hidden shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)]",
         slug != null
           ? "hover:border-pink-200 hover:shadow-[0px_1px_0px_4px_rgba(179,_45,_242,_0.05)] dark:hover:shadow-none"
           : "",
