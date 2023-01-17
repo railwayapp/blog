@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { Block } from "@notionhq/client/build/src/api-types"
-
+import { TwitterTweetEmbed } from "react-twitter-embed"
 import { getMediaProperties } from "@lib/notion"
-
-import { NotionText } from "@components/NotionText"
-import { NotionImage } from "@components/NotionImage"
-import { NotionHeading } from "@components/NotionHeading"
 import { Code } from "@components/Code"
+import { NotionHeading } from "@components/NotionHeading"
+import { NotionImage } from "@components/NotionImage"
+import { NotionText } from "@components/NotionText"
 
 interface Props {
   block: Block
@@ -97,6 +96,25 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
             className="rounded-lg"
           />
           {caption && <p className="text-gray-500 text-sm">{caption}</p>}
+        </div>
+      )
+    }
+    case "embed": {
+      const url = block.embed.url
+      if (!url.includes("twitter.com")) {
+        return null
+      }
+
+      // const tweetId = url.split("/").pop()
+      const regex = /status\/(\d+)/gm
+      const matches = regex.exec(url)
+      const tweetId = matches[1]
+
+      if (tweetId == null) return null
+
+      return (
+        <div className="mb-6">
+          <TwitterTweetEmbed tweetId={`${tweetId}`} />
         </div>
       )
     }

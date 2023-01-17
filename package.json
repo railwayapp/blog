@@ -46,6 +46,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-feather": "^2.0.10",
+    "react-twitter-embed": "^4.0.4",
     "sharp": "^0.31.3",
     "shiki": "^0.12.1",
     "tailwind-merge": "^1.8.1",
