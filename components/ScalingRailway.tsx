@@ -26,12 +26,12 @@ export const ScalingRailway: React.FC = () => {
           </p>
         </div>
 
-        <Link
+        {/* <Link
           href="/scaling-railway"
           className="md:col-span-2 text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
         >
           All Scaling Railway Posts →
-        </Link>
+        </Link> */}
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
