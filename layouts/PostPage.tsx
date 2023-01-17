@@ -3,15 +3,18 @@ import Page from "@layouts/Page"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
-import { Background } from "../components/Background"
+import { BottomCTA } from "../components/BottomCTA"
+import { ContinueReading } from "../components/ContinueReading"
+import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
 
 export interface Props {
   post: PostProps
+  relatedPosts: PostProps[]
   children?: React.ReactNode
 }
 
-export const PostPage: React.FC<Props> = ({ post, children }) => {
+export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
   const formattedDate = useMemo(
     () => dayjs(post.properties.Date.date.start).format("MMM D, YYYY"),
     [post.properties.Date.date.start]
@@ -23,6 +26,8 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
     authorName: author?.name,
   })
 
+  const category = post.properties.Category?.select?.name
+
   return (
     <Page
       seo={{
@@ -32,38 +37,42 @@ export const PostPage: React.FC<Props> = ({ post, children }) => {
         author: author?.name,
       }}
     >
-      <div className="wrapper px-5 md:px-8">
-        <div className="mb-48">
-          <article>
-            <header className="mt-12 mb-12 sm:mt-24 sm:mb-16">
-              <h1 className="text-jumbo font-bold">
-                <NotionText text={post.properties.Page.title} />
-              </h1>
+      <div className="max-w-6xl px-5 md:px-8 mx-auto">
+        <article className="mt-24 mb-12 pb-32 border-b border-gray-100">
+          <div className="flex items-center text-gray-500 space-x-3">
+            <div className="flex items-center space-x-3">
+              <img
+                src={author?.avatar_url}
+                alt={`Avatar of ${author?.name}`}
+                className="w-6 h-6 rounded-full overflow-hidden"
+              />
+              <span>{author?.name}</span>
+            </div>
+            <Divider />
+            <time dateTime={post.properties.Date.date.start}>
+              {formattedDate}
+            </time>
+          </div>
 
-              <div className="flex items-center pt-8 text-gray-500 space-x-3">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={author?.avatar_url}
-                    alt={`Avatar of ${author?.name}`}
-                    className="w-6 h-6 rounded-full overflow-hidden"
-                  />
-                  <span>{author?.name}</span>
-                </div>
-                <span>{"·"}</span>
-                <time dateTime={post.properties.Date.date.start}>
-                  {formattedDate}
-                </time>
-              </div>
-            </header>
+          <header className="mt-9 mb-12 max-w-4xl">
+            <h1 className="text-jumbo font-bold">
+              <NotionText text={post.properties.Page.title} />
+            </h1>
+          </header>
 
-            <section className="post text-base sm:text-lg leading-8">
-              {children}
-            </section>
-          </article>
-        </div>
+          <section className="max-w-[736px] ml-auto lg:mr-12 text-base sm:text-lg leading-8">
+            {children}
+          </section>
+        </article>
+
+        {category != null && (
+          <ContinueReading category={category} posts={relatedPosts} />
+        )}
+
+        <BottomCTA />
       </div>
 
-      <Background />
+      {/* <Background /> */}
     </Page>
   )
 }

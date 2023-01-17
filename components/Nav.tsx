@@ -4,14 +4,24 @@ import Logo from "@components/Logo"
 import { Moon, Sun } from "react-feather"
 import { useTheme } from "next-themes"
 import { useIsMounted } from "../hooks/useIsMounted"
+import { useRouter } from "next/router"
+import { cn } from "../utils"
 
 const Nav: React.FC = () => {
   const { theme, setTheme } = useTheme()
   const isMounted = useIsMounted()
+  const { asPath } = useRouter()
+
+  const isHome = asPath === "/"
 
   return (
     <div className="max-w-6xl px-5 md:px-8 mx-auto">
-      <nav className="py-6 flex justify-between items-center">
+      <nav
+        className={cn(
+          "py-6 flex justify-between items-center border-b border-transparent",
+          isHome ? "" : "border-gray-100"
+        )}
+      >
         <Link href="/" className="flex items-center space-x-4">
           <Logo />
           <span className="text-xl font-bold">Blog</span>
