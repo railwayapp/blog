@@ -25,6 +25,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
   const ogImage = useOgImage({
     title: post.properties.Page.title[0].plain_text,
     authorName: author?.name,
+    image: post.properties?.Image?.url,
   })
 
   const category = post.properties.Category?.select?.name
