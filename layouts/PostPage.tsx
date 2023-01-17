@@ -69,7 +69,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
             </h1>
           </header>
 
-          <section className="max-w-[736px] ml-auto lg:mr-12 text-base sm:text-lg leading-8">
+          <section className="max-w-[736px] mx-auto text-base sm:text-lg leading-8">
             {children}
           </section>
         </article>
