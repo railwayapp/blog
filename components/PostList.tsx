@@ -3,15 +3,18 @@ import { PostProps } from "../lib/types"
 import { Categories } from "./Categories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
+import { ScalingRailway } from "./ScalingRailway"
+import { Blob } from "./Blob"
 
-const DEFAULT_POSTS_LENGTH = 12
+const DEFAULT_POSTS_LENGTH = 8
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
-export const PostList: React.FC<{ posts: PostProps[]; category?: string }> = ({
-  posts,
-  category,
-}) => {
+export const PostList: React.FC<{
+  posts: PostProps[]
+  category?: string
+  showScalingRailway?: boolean
+}> = ({ posts, category, showScalingRailway }) => {
   const featuredPosts = posts.filter((p) => p.properties.Featured.checkbox)
   const otherPosts = posts.filter((p) => !p.properties.Featured.checkbox)
 
@@ -20,24 +23,28 @@ export const PostList: React.FC<{ posts: PostProps[]; category?: string }> = ({
 
   return (
     <>
-      <div className="max-w-6xl px-5 md:px-8 mx-auto">
-        <Categories />
-        <hr className="border-gray-100 mb-12" />
+      <div className="px-5 md:px-8">
+        <div className="max-w-6xl mx-auto mb-24">
+          <Categories />
+          <hr className="border-gray-100 mb-12" />
 
-        {featuredPosts.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12">
-            {featuredPosts.map((p) => (
-              <FeaturedPostItem key={p.id} post={p} />
-            ))}
-          </div>
-        )}
+          {featuredPosts.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12">
+              {featuredPosts.map((p) => (
+                <FeaturedPostItem key={p.id} post={p} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {showScalingRailway && <ScalingRailway />}
 
         {featuredPosts.length > 0 && otherPosts.length > 0 && (
-          <hr className="border-gray-100 my-24" />
+          <hr className="border-gray-100" />
         )}
 
         {otherPosts.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 mb-24">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
             <h2 className="text-3xl font-bold mb-12">
               {capitalize(category ?? "Everything")}
             </h2>

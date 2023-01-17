@@ -15,10 +15,10 @@ const Nav: React.FC = () => {
   const isHome = asPath === "/"
 
   return (
-    <div className="max-w-6xl px-5 md:px-8 mx-auto">
+    <div className="px-5 md:px-8">
       <nav
         className={cn(
-          "py-6 flex justify-between items-center border-b border-transparent",
+          "max-w-6xl mx-auto py-6 flex justify-between items-center border-b border-transparent",
           isHome ? "" : "border-gray-100"
         )}
       >
