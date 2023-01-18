@@ -72,24 +72,16 @@ export const NotionText: React.FC<{
         return (
           <Fragment key={idx}>
             {text.link != null && !noLinks ? (
-              <>
-                {text.link.url.includes(TEMPLATE_PATH) ? (
-                  <Link href={text.link.url} className="flex justify-center">
-                    <Image src="/button.svg" height={48} width={240} alt="" />
-                  </Link>
-                ) : (
-                  <Link
-                    href={text.link.url}
-                    className="underline hover:text-pink-600"
-                  >
-                    <RenderTextContent
-                      isCode={code}
-                      content={text.content}
-                      className={classes}
-                    />
-                  </Link>
-                )}
-              </>
+              <Link
+                href={text.link.url}
+                className="underline hover:text-pink-600"
+              >
+                <RenderTextContent
+                  isCode={code}
+                  content={text.content}
+                  className={classes}
+                />
+              </Link>
             ) : (
               <RenderTextContent
                 isCode={code}
