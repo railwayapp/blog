@@ -48,7 +48,7 @@ export const ScalingRailway: React.FC = () => {
           title="Guiding Principles"
           desc="These are the core concepts that we use to build Railway"
           number="02"
-          drops={"24/01"}
+          drops={"01/24"}
           colour={"#6C6CD8"}
           image="artwork-principles"
         />
@@ -57,7 +57,7 @@ export const ScalingRailway: React.FC = () => {
           title="Multi-service design with Canvas"
           desc="All of us write code so we all know what's on the table"
           number="03"
-          drops={"31/01"}
+          drops={"01/31"}
           colour={"#6C6CD8"}
           image="artwork-canvas"
           className="block md:hidden lg:block"
