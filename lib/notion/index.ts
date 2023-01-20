@@ -20,13 +20,20 @@ export const getDatabase = async (databaseId: string) => {
   })
 
   const results = response.results as unknown as PostProps[]
-  return results.filter(
-    (r) =>
-      r.properties.Date.date != null &&
-      r.properties.Description.rich_text.length > 0 &&
-      r.properties.Slug.rich_text.length > 0 &&
-      r.properties.Page.title.length > 0
-  )
+  return results
+    .filter(
+      (r) =>
+        r.properties.Date.date != null &&
+        r.properties.Description.rich_text.length > 0 &&
+        r.properties.Slug.rich_text.length > 0 &&
+        r.properties.Page.title.length > 0
+    )
+    .sort((a, b) => {
+      const dateA = new Date(a.properties.Date.date.start)
+      const dateB = new Date(b.properties.Date.date.start)
+
+      return dateB.getTime() - dateA.getTime()
+    })
 }
 
 export const getPage = async (pageId: string) => {
