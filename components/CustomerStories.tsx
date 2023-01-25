@@ -1,18 +1,21 @@
 import React from "react"
 import { useIsMounted } from "../hooks/useIsMounted"
+import { Blob } from "./Blob"
 import { cn } from "../utils"
 import Link from "./Link"
 
 export const CustomerStories: React.FC = () => {
   return (
     <div
-      className={cn(
-        "relative -mx-5 md:-mx-8 px-5 md:px-8 pt-12 pb-12 bg-background"
-      )}
+      className={cn("relative -mx-5 md:-mx-8 px-5 md:px-8 pt-20 pb-24")}
+      style={{
+        background:
+          "linear-gradient(155.36deg, var(--secondaryBg) 14.3%, var(--background) 82.49%)",
+      }}
     >
-      {/* <div className="absolute top-0 pointer-events-none">
+      <div className="absolute top-0 pointer-events-none">
         <Blob />
-      </div> */}
+      </div>
 
       <header className="max-w-6xl mx-auto mb-12 flex items-center justify-between">
         <div>
