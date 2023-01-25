@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { PostProps } from "../lib/types"
 import { Categories } from "./Categories"
+import { CustomerStories } from "./CustomerStories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
 import { ScalingRailway } from "./ScalingRailway"
@@ -13,7 +14,8 @@ export const PostList: React.FC<{
   posts: PostProps[]
   category?: string
   showScalingRailway?: boolean
-}> = ({ posts, category, showScalingRailway }) => {
+  showCustomerStories?: boolean
+}> = ({ posts, category, showScalingRailway, showCustomerStories }) => {
   const featuredPosts = posts.filter((p) => p.properties.Featured.checkbox)
   const otherPosts = posts.filter((p) => !p.properties.Featured.checkbox)
 
@@ -37,6 +39,7 @@ export const PostList: React.FC<{
         </div>
 
         {showScalingRailway && <ScalingRailway />}
+        {showCustomerStories && <CustomerStories />}
 
         {featuredPosts.length > 0 && otherPosts.length > 0 && (
           <hr className="max-w-6xl mx-auto border-gray-100" />

@@ -13,7 +13,7 @@ export interface Props {
 const Home: NextPage<Props> = ({ posts = [] }) => {
   return (
     <Page>
-      <PostList posts={posts} showScalingRailway />
+      <PostList posts={posts} showScalingRailway showCustomerStories />
     </Page>
   )
 }
