@@ -28,9 +28,9 @@ const PostItem: React.FC<Props> = ({ post }) => {
       {category != null && <PostCategory category={category} />}
 
       <div className="flex-grow">
-        <header className="font-bold text-lg mt-2 mb-1 group-hover:opacity-60">
+        <h4 className="font-bold text-lg mt-2 mb-1 group-hover:opacity-60 tracking-tight">
           <NotionText text={post.properties.Page.title} noLinks />
-        </header>
+        </h4>
 
         <p className="text-base text-gray-800 line-clamp-2">
           <NotionText text={post.properties.Description.rich_text} noLinks />

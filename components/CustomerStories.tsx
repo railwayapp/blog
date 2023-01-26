@@ -112,7 +112,7 @@ const CustomerStoryPostItem: React.FC<{
 
         <h3
           className={cn(
-            "max-w-xs text-xl font-medium mt-7 mb-2",
+            "max-w-xs text-xl font-medium mt-7 mb-2 tracking-tight",
             slug == null ? "opacity-40" : ""
           )}
         >

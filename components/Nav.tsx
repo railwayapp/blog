@@ -18,7 +18,7 @@ const Nav: React.FC = () => {
     <div className="px-5 md:px-8">
       <nav
         className={cn(
-          "max-w-6xl mx-auto py-6 flex justify-between items-center border-b border-transparent",
+          "max-w-6xl mx-auto my-6 flex justify-between items-center border-b border-transparent",
           !isBlogPage ? "" : "border-gray-100"
         )}
       >
