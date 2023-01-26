@@ -50,11 +50,11 @@ export const CustomerStories: React.FC = () => {
         <CustomerStoryPostItem
           title={
             <>
-              Building a new kind of professional network. Q&A with Yogini Bende
-              from <span className="underline">Peerlist</span>
+              How <span className="underline">Peerlist</span> Built a New Kind 
+              of Professional Network with Railway
             </>
           }
-          drops={"01/26"}
+          slug={"/p/peerlist-professional-network-yogini-bende"}
           image="/customers/product-image--peerlist.png"
           avatars={[
             "/customers/peerlist-avatar.png",
