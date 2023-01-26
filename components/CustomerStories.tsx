@@ -3,6 +3,7 @@ import { useIsMounted } from "../hooks/useIsMounted"
 import { Blob } from "./Blob"
 import { cn } from "../utils"
 import Link from "./Link"
+import Image from "next/image"
 
 export const CustomerStories: React.FC = () => {
   return (
@@ -43,11 +44,8 @@ export const CustomerStories: React.FC = () => {
             </>
           }
           slug={"/p/software-for-architects-paul-ocarroll-arcol-interview"}
-          image="/illustrations/arcol.png"
-          avatars={[
-            "/illustrations/arcol-avatar.png",
-            "/illustrations/arcol-paul.png",
-          ]}
+          image="/customers/product-image--arcol.png"
+          avatars={["/customers/arcol-avatar.png", "/customers/arcol-paul.png"]}
         />
 
         <CustomerStoryPostItem
@@ -58,10 +56,10 @@ export const CustomerStories: React.FC = () => {
             </>
           }
           drops={"01/26"}
-          image="/illustrations/peerlist.png"
+          image="/customers/product-image--peerlist.png"
           avatars={[
-            "/illustrations/peerlist-avatar.png",
-            "/illustrations/peerlist-yogini.png",
+            "/customers/peerlist-avatar.png",
+            "/customers/peerlist-yogini.png",
           ]}
         />
       </div>
@@ -124,14 +122,16 @@ const CustomerStoryPostItem: React.FC<{
       </div>
 
       {isMounted && (
-        <div className="w-full h-full relative overflow-hidden">
-          <img
+        <div className="w-[250%] h-full relative -rotate-6">
+          <Image
             src={`${image}`}
-            alt=""
+            alt={`Product image for ${title}`}
             className={cn(
-              "max-w-[initial] absolute top-[-32px] opacity-90",
+              "absolute top-0 md:top-[initial] md:bottom-0 left-0",
               slug == null ? "opacity-40" : ""
             )}
+            width={1350}
+            height={840}
           />
         </div>
       )}
