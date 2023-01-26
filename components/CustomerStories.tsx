@@ -82,10 +82,8 @@ const CustomerStoryPostItem: React.FC<{
       {...(slug != null ? ({ href: slug } as any) : {})}
       className={cn(
         "min-h-[288px] bg-gray-100 dark:bg-gray-50 flex flex-col overflow-hidden rounded-tl-xl rounded-tr-[48px] rounded-br-xl rounded-bl-[32px]",
-        "grid grid-cols-3",
-        slug != null
-          ? "hover:border-pink-200 hover:shadow-[0px_1px_0px_4px_rgba(179,_45,_242,_0.05)] dark:hover:shadow-none"
-          : "",
+        "grid grid-cols-3 border border-black border-opacity-5 dark:border-white dark:border-opacity-5",
+        slug != null ? "hover:bg-gray-200 dark:hover:bg-gray-100" : "",
         className
       )}
     >
@@ -131,6 +129,9 @@ const CustomerStoryPostItem: React.FC<{
             )}
             width={1350}
             height={840}
+            style={{
+              filter: "drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.08))",
+            }}
           />
         </div>
       )}
