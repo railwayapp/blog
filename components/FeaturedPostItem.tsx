@@ -40,9 +40,9 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       <div className="mt-6">
         {category != null && <PostCategory category={category} />}
 
-        <header className="font-bold text-2xl my-4 group-hover:opacity-60">
+        <h3 className="font-bold text-2xl my-4 group-hover:opacity-60 tracking-tight">
           <NotionText text={post.properties.Page.title} noLinks />
-        </header>
+        </h3>
 
         <p className="text-lg text-gray-800 line-clamp-2">
           <NotionText text={post.properties.Description.rich_text} noLinks />

@@ -1,8 +1,7 @@
-import React, { Fragment } from "react"
 import Link from "@components/Link"
-import Image from "next/image"
+import React, { Fragment } from "react"
 
-const TEMPLATE_PATH = "https://railway.app/new/template"
+// const TEMPLATE_PATH = "https://railway.app/new/template"
 
 /**
  * This type is harcoded here as I couldn't really find anything

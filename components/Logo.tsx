@@ -3,7 +3,7 @@ const Logo = () => (
     data-v-423bf9ae=""
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 59.99945071644884 60"
-    className="logo w-10"
+    className="logo w-8"
   >
     <g
       data-v-423bf9ae=""

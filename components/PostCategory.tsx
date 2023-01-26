@@ -5,8 +5,8 @@ const categoryToStyle = {
   Guide: "text-green-500 bg-green-50",
   Company: "text-pink-500 bg-pink-50",
   Engineering: "text-pink-500 bg-pink-50",
-  "User Stories": "text-purple-500 bg-purple-50",
-  "Scaling Railway": "text-emerald-500 bg-emerald-50",
+  "User Stories": "text-pink-500 bg-pink-50",
+  "Scaling Railway": "text-green-500 bg-green-50",
 }
 
 export const PostCategory: React.FC<{

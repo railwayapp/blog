@@ -20,7 +20,9 @@ export const ScalingRailway: React.FC = () => {
 
       <header className="max-w-6xl mx-auto mb-12 flex items-center justify-between">
         <div>
-          <h1 className="text-[42px] font-bold mb-3">Scaling Railway</h1>
+          <h1 className="text-[42px] font-bold mb-3 tracking-tight">
+            Scaling Railway
+          </h1>
           <p className="text-lg text-gray-600">
             Learn how we keep the train going, on-time, and fire-free.
           </p>
