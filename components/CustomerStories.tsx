@@ -22,8 +22,7 @@ export const CustomerStories: React.FC = () => {
         <div>
           <h1 className="text-[42px] font-bold mb-3">Customer Stories</h1>
           <p className="text-lg text-gray-600">
-            Interviews with customers who are building amazing things with
-            Railway
+            Learn how we keep the train going, on-time, and fire-free.
           </p>
         </div>
 
@@ -135,28 +134,6 @@ const CustomerStoryPostItem: React.FC<{
           />
         </div>
       )}
-
-      {/* <div className="flex items-start justify-between -mr-8 -mt-10">
-        {drops != null && (
-          <p className="mt-8 px-2 py-1 text-sm font-medium text-gray-400 bg-gray-50 dark:bg-gray-100 rounded whitespace-nowrap">
-            Available on {drops}
-          </p>
-        )}
-        {isMounted && (
-          <img src={`/illustrations/${image}--${theme}.svg`} alt="" />
-        )}
-      </div> */}
-
-      {/* <div
-        className={cn(
-          "flex flex-col justify-end flex-grow",
-          slug != null ? "opacity-100" : "opacity-30"
-        )}
-      >
-        <h3 className="max-w-[220px] text-2xl font-semibold mt-7 mb-2">
-          {title}
-        </h3>
-      </div> */}
     </Wrapper>
   )
 }
