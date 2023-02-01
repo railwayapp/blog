@@ -26,7 +26,8 @@ export const getDatabase = async (databaseId: string) => {
         r.properties.Date.date != null &&
         r.properties.Description.rich_text.length > 0 &&
         r.properties.Slug.rich_text.length > 0 &&
-        r.properties.Page.title.length > 0
+        r.properties.Page.title.length > 0 &&
+        r.properties.Authors.people.length > 0
     )
     .sort((a, b) => {
       const dateA = new Date(a.properties.Date.date.start)
