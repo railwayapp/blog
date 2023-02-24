@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "next-sitemap",
     "start": "next start --port ${PORT-3000}",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
