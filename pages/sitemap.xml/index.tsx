@@ -8,12 +8,15 @@ const ROOT_URL = "https://blog.railway.app"
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const posts = await getDatabase(process.env.POSTS_TABLE_ID)
 
-  const paths = posts.map((post) => {
-    return {
-      loc: ROOT_URL + getBlogLink(post.properties.Slug.rich_text[0].plain_text),
-      lastmod: new Date().toISOString(),
-    }
-  })
+  const paths = posts
+    .filter((p) => p.properties.Published.checkbox)
+    .map((post) => {
+      return {
+        loc:
+          ROOT_URL + getBlogLink(post.properties.Slug.rich_text[0].plain_text),
+        lastmod: new Date().toISOString(),
+      }
+    })
 
   const fields = [
     {
