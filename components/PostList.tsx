@@ -53,7 +53,6 @@ export const PostList: React.FC<{
 
             <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
               {otherPosts
-                .filter((p) => p.properties.Published.checkbox)
                 .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
                 .map((p) => (
                   <PostItem key={p.id} post={p} />
