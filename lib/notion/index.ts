@@ -14,12 +14,18 @@ const notion = new Client({
  * @param databaseId ID of the collection to query
  * @returns A list of published posts from the collection
  */
-export const getDatabase = async (databaseId: string) => {
+export const getDatabase = async (
+  databaseId: string,
+  { includeUnpublished }: { includeUnpublished: boolean } = {
+    includeUnpublished: false,
+  }
+) => {
   const response = await notion.databases.query({
     database_id: databaseId,
   })
 
   const results = response.results as unknown as PostProps[]
+
   return results
     .filter(
       (r) =>
@@ -27,7 +33,8 @@ export const getDatabase = async (databaseId: string) => {
         r.properties.Description.rich_text.length > 0 &&
         r.properties.Slug.rich_text.length > 0 &&
         r.properties.Page.title.length > 0 &&
-        r.properties.Authors.people.length > 0
+        r.properties.Authors.people.length > 0 &&
+        (includeUnpublished || r.properties.Published.checkbox)
     )
     .sort((a, b) => {
       const dateA = new Date(a.properties.Date.date.start)

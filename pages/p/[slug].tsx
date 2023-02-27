@@ -99,7 +99,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }
   }
 
-  const posts = await getDatabase(process.env.POSTS_TABLE_ID)
+  const posts = await getDatabase(process.env.POSTS_TABLE_ID, {
+    includeUnpublished: true,
+  })
 
   const paths = mapDatabaseToPaths(posts)
   return {
@@ -122,7 +124,9 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     }
   }
 
-  const posts = await getDatabase(process.env.POSTS_TABLE_ID)
+  const posts = await getDatabase(process.env.POSTS_TABLE_ID, {
+    includeUnpublished: true,
+  })
   const slug = params.slug as string
   const post = posts.find((post) => {
     return post.properties.Slug.rich_text[0].plain_text === slug
