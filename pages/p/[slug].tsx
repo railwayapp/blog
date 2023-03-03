@@ -138,7 +138,8 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
       ? posts.filter(
           (post) =>
             post.properties.Slug.rich_text[0].plain_text !== slug &&
-            post.properties.Category?.select?.name === category
+            post.properties.Category?.select?.name === category &&
+            post.properties.Published?.checkbox === true
         )
       : []
   ).slice(0, 2)
