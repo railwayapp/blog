@@ -2,7 +2,10 @@ import Link from "@components/Link"
 import React, { Fragment } from "react"
 import Image from "next/image"
 
-const TEMPLATE_PATH = "https://railway.app/new/template"
+const TEMPLATE_PATHS = [
+  "https://railway.app/new/template",
+  "https://railway.app/template/",
+]
 
 /**
  * This type is harcoded here as I couldn't really find anything
@@ -73,8 +76,8 @@ export const NotionText: React.FC<{
           <Fragment key={idx}>
             {text.link != null && !noLinks ? (
               <>
-                {text.link.url.includes(TEMPLATE_PATH) &&
-                text.content === text.link.url ? (
+                {text.content === text.link.url &&
+                TEMPLATE_PATHS.some((path) => text.link.url.includes(path)) ? (
                   <Link href={text.link.url} className="flex justify-center">
                     <Image src="/button.svg" height={48} width={240} alt="" />
                   </Link>
