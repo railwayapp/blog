@@ -27,6 +27,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
     authorName: author?.name,
     image: post.properties?.Image?.url,
   })
+  const authorExists = author != null && author.name != null
 
   const category = post.properties.Category?.select?.name
 
@@ -49,15 +50,19 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
           )}
         >
           <div className="flex items-center text-gray-500 space-x-3">
-            <div className="flex items-center space-x-3">
-              <img
-                src={author?.avatar_url}
-                alt={`Avatar of ${author?.name}`}
-                className="w-6 h-6 rounded-full overflow-hidden"
-              />
-              <span>{author?.name}</span>
-            </div>
-            <Divider />
+            {authorExists && (
+              <>
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={author?.avatar_url}
+                    alt={`Avatar of ${author?.name}`}
+                    className="w-6 h-6 rounded-full overflow-hidden"
+                  />
+                  <span>{author?.name}</span>
+                </div>
+                <Divider />
+              </>
+            )}
             <time dateTime={post.properties.Date.date.start}>
               {formattedDate}
             </time>

@@ -18,6 +18,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
   )
 
   const author = post.properties.Authors.people[0]
+  const authorExists = author != null && author.name != null
   const category = post.properties.Category.select?.name
 
   return (
@@ -38,13 +39,19 @@ const PostItem: React.FC<Props> = ({ post }) => {
       </div>
 
       <div className="flex items-center gap-3 mt-6 mb-10">
-        <img
-          src={author.avatar_url}
-          alt={`Avatar of ${author.name}`}
-          className="w-6 h-6 rounded-full overflow-hidden"
-        />
-        <span className="font-medium text-sm text-gray-500">{author.name}</span>
-        <Divider />
+        {authorExists && (
+          <>
+            <img
+              src={author.avatar_url}
+              alt={`Avatar of ${author.name}`}
+              className="w-6 h-6 rounded-full overflow-hidden"
+            />
+            <span className="font-medium text-sm text-gray-500">
+              {author.name}
+            </span>
+            <Divider />
+          </>
+        )}
         <span className="font-medium text-sm text-gray-500">
           {formattedDate}
         </span>
