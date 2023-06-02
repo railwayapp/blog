@@ -68,7 +68,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
             </time>
           </div>
 
-          <header className="mt-5 mb-16 max-w-[736px]">
+          <header className="mt-5 mb-16 max-w-[800px]">
             <h1 className="text-huge font-bold">
               <NotionText text={post.properties.Page.title} />
             </h1>
