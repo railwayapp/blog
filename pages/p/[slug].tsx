@@ -1,20 +1,21 @@
-import { GetStaticPaths, GetStaticProps, NextPage } from "next"
-import { useRouter } from "next/router"
 import { Block } from "@notionhq/client/build/src/api-types"
+import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import ErrorPage from "next/error"
+import { useRouter } from "next/router"
 import { Fragment, useMemo } from "react"
 
 import { PostPage } from "@layouts/PostPage"
-import { PostProps } from "@lib/types"
 import {
   getDatabase,
+  groupListBlocks,
   mapDatabaseItemToPageProps,
   mapDatabaseToPaths,
 } from "@lib/notion"
+import { ListBlock, PostProps } from "@lib/types"
 
-import { RenderBlock } from "@components/RenderBlock"
 import { FullLoading } from "@components/Loading"
-import { NotionList } from "../../components/NotionText"
+import { RenderBlock } from "@components/RenderBlock"
+import { NotionListBlock } from "../../components/ListBlock"
 
 export interface Props {
   page: PostProps
@@ -22,41 +23,11 @@ export interface Props {
   blocks: Block[]
 }
 
-interface ListBlock {
-  id: string
-  type: string
-  items: Block[]
-}
-
 const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
   const router = useRouter()
 
   // Group all list items together so we can group in a <ul />
-  const blocks = useMemo(() => {
-    const updatedBlocks: Array<Block | ListBlock> = []
-    let currList: ListBlock | null = null
-
-    for (const b of props.blocks ?? []) {
-      if (b.type === "bulleted_list_item" || b.type === "numbered_list_item") {
-        if (currList == null)
-          currList = {
-            id: b.id,
-            type: b.type === "bulleted_list_item" ? "ul" : "ol",
-            items: [],
-          }
-        currList.items.push(b)
-      } else {
-        if (currList != null) {
-          updatedBlocks.push(currList)
-          currList = null
-        }
-
-        updatedBlocks.push(b)
-      }
-    }
-
-    return updatedBlocks
-  }, [props.blocks])
+  const blocks = useMemo(() => groupListBlocks(props.blocks), [props.blocks])
 
   if (!router.isFallback && page == null) {
     return <ErrorPage statusCode={404} />
@@ -70,15 +41,7 @@ const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
     <PostPage post={page} relatedPosts={relatedPosts}>
       {blocks.map((block) => {
         if ((block as ListBlock).items != null) {
-          return (
-            <NotionList key={block.id} type={(block as ListBlock).type}>
-              {(block as ListBlock).items.map((block) => (
-                <Fragment key={block.id}>
-                  <RenderBlock block={block} />
-                </Fragment>
-              ))}
-            </NotionList>
-          )
+          return <NotionListBlock key={block.id} block={block as ListBlock} />
         }
 
         return (

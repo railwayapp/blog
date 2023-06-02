@@ -7,6 +7,7 @@ import {
   TitlePropertyValue,
   URLPropertyValue,
   SelectPropertyValue,
+  Block,
 } from "@notionhq/client/build/src/api-types"
 
 export interface PostItem {
@@ -24,4 +25,10 @@ export interface PostItem {
 
 export interface PostProps extends Omit<Page, "properties"> {
   properties: PostItem
+}
+
+export interface ListBlock {
+  id: string
+  type: string
+  items: Block[]
 }

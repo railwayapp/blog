@@ -1,6 +1,7 @@
 import Link from "@components/Link"
 import React, { Fragment } from "react"
 import Image from "next/image"
+import { twMerge } from "tailwind-merge"
 
 const TEMPLATE_PATHS = [
   "https://railway.app/new/template",
@@ -111,9 +112,10 @@ export const NotionText: React.FC<{
 export const NotionList: React.FC<{
   type: string
   children?: React.ReactNode
-}> = ({ type, children }) =>
+  className?: string
+}> = ({ type, children, className }) =>
   type === "ul" ? (
-    <ul className="list-disc pl-6 mb-6">{children}</ul>
+    <ul className={twMerge("list-disc pl-6 mb-6", className)}>{children}</ul>
   ) : (
-    <ol className="list-decimal pl-6 mb-6">{children}</ol>
+    <ol className={twMerge("list-disc pl-6 mb-6", className)}>{children}</ol>
   )

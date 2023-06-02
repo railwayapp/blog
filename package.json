@@ -48,7 +48,7 @@
     "react-twitter-embed": "^4.0.4",
     "sharp": "^0.31.3",
     "shiki": "^0.12.1",
-    "tailwind-merge": "^1.8.1",
+    "tailwind-merge": "^1.13.0",
     "theme-custom-properties": "^1.0.0"
   },
   "devDependencies": {
