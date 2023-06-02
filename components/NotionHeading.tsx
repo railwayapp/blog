@@ -38,7 +38,14 @@ export const NotionHeading: React.FC<Props> = ({ type, text }) => {
   const config = headingConfig[type]
 
   return (
-    <Link href={`#${id}`}>
+    <Link href={`#${id}`} className="relative">
+      {/* Link to something that is slightly above the actual heading to leave some padding */}
+      <span
+        id={id}
+        aria-hidden="true"
+        className="absolute inline-block w-px top-[-2rem]"
+      />
+
       {type === "heading_1" && (
         <h1 className={config.classes}>
           <NotionText text={text} />

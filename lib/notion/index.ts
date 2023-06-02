@@ -1,9 +1,10 @@
 import {
   FileWithCaption,
   ExternalFileWithCaption,
+  Block,
 } from "@notionhq/client/build/src/api-types"
 import { Client } from "@notionhq/client"
-import { PostProps } from "@lib/types"
+import { ListBlock, PostProps } from "@lib/types"
 
 const notion = new Client({
   auth: process.env.NOTION_API_TOKEN,
@@ -124,4 +125,32 @@ export const getChangelogImageSrc = async (blockId: string) => {
   }
 
   return image.file.url
+}
+
+export const groupListBlocks = (blocks: Block[]): (Block | ListBlock)[] => {
+  const updatedBlocks: Array<Block | ListBlock> = []
+  let currList: ListBlock | null = null
+
+  for (const b of blocks ?? []) {
+    if (b.type === "bulleted_list_item" || b.type === "numbered_list_item") {
+      if (currList == null) {
+        currList = {
+          id: b.id,
+          type: b.type === "bulleted_list_item" ? "ul" : "ol",
+          items: [],
+        }
+      }
+
+      currList.items.push(b)
+    } else {
+      if (currList != null) {
+        updatedBlocks.push(currList)
+        currList = null
+      }
+
+      updatedBlocks.push(b)
+    }
+  }
+
+  return updatedBlocks
 }
