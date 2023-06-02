@@ -36,7 +36,7 @@ const RenderListItem: React.FC<{ item: Block }> = ({ item }) => {
       <RenderBlock block={item} />
 
       {subListBlock != null && (
-        <NotionListBlock block={subListBlock} className="mb-4" />
+        <NotionListBlock block={subListBlock} className="mt-4 mb-4" />
       )}
     </>
   )

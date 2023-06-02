@@ -5,6 +5,7 @@ export interface Props {
   href: string
   children: React.ReactNode
   external?: boolean
+  id?: string
   className?: string
   style?: React.CSSProperties
 }
