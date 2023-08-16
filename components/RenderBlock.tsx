@@ -85,22 +85,11 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
       return <hr />
     }
     case "video": {
-      if (value.type === "external") {
-        const extUrl = value.external.url
-        if (!extUrl || extUrl === "")
-          throw new Error(
-            `Unable to render video - missing external URL in ` +
-              `value.type=external (object: ${value})`
-          )
+      const { source, caption } = getMediaProperties(value)
 
-        // Remove this if you wanna support other video embeds
-        const youtubeId = extractYoutubeId(extUrl)
-        if (!youtubeId)
-          throw new Error(
-            `Unable to render video - unsupported external type ` +
-              `(object: ${value})`
-          )
-
+      // Handle YT embeds
+      const youtubeId = extractYoutubeId(source)
+      if (youtubeId) {
         return (
           <div className="flex flex-col my-8 space-y-2">
             <iframe
@@ -112,7 +101,6 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         )
       }
 
-      const { source, caption } = getMediaProperties(value)
       return (
         <div className="flex flex-col my-8 space-y-2">
           <video
