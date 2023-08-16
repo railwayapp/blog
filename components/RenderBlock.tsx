@@ -104,6 +104,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         return (
           <div className="flex flex-col my-8 space-y-2">
             <iframe
+              className="rounded-lg"
               src={`https://youtube.com/embed/${youtubeId}`}
               height={550}
             />
