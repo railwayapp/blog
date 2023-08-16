@@ -6,6 +6,7 @@ import { getMediaProperties } from "@lib/notion"
 import { Code } from "@components/Code"
 import { NotionHeading } from "@components/NotionHeading"
 import { NotionImage } from "@components/NotionImage"
+import { extractYoutubeId } from "utils"
 import { NotionText } from "@components/NotionText"
 
 interface Props {
@@ -84,6 +85,32 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
       return <hr />
     }
     case "video": {
+      if (value.type === "external") {
+        const extUrl = value.external.url
+        if (!extUrl || extUrl === "")
+          throw new Error(
+            `Unable to render video - missing external URL in ` +
+              `value.type=external (object: ${value})`
+          )
+
+        // Remove this if you wanna support other video embeds
+        const youtubeId = extractYoutubeId(extUrl)
+        if (!youtubeId)
+          throw new Error(
+            `Unable to render video - unsupported external type ` +
+              `(object: ${value})`
+          )
+
+        return (
+          <div className="flex flex-col my-8 space-y-2">
+            <iframe
+              src={`https://youtube.com/embed/${youtubeId}`}
+              height={550}
+            />
+          </div>
+        )
+      }
+
       const { source, caption } = getMediaProperties(value)
       return (
         <div className="flex flex-col my-8 space-y-2">
