@@ -6,6 +6,7 @@ import { getMediaProperties } from "@lib/notion"
 import { Code } from "@components/Code"
 import { NotionHeading } from "@components/NotionHeading"
 import { NotionImage } from "@components/NotionImage"
+import { extractYoutubeId } from "utils"
 import { NotionText } from "@components/NotionText"
 
 interface Props {
@@ -85,6 +86,21 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     }
     case "video": {
       const { source, caption } = getMediaProperties(value)
+
+      // Handle YT embeds
+      const youtubeId = extractYoutubeId(source)
+      if (youtubeId) {
+        return (
+          <div className="flex flex-col my-8 space-y-2">
+            <iframe
+              className="rounded-lg"
+              src={`https://youtube.com/embed/${youtubeId}`}
+              height={550}
+            />
+          </div>
+        )
+      }
+
       return (
         <div className="flex flex-col my-8 space-y-2">
           <video
