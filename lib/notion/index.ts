@@ -54,7 +54,7 @@ export const getPage = async (pageId: string) => {
 export const getBlocks = async (blockId: string) => {
   const response = await notion.blocks.children.list({
     block_id: blockId,
-    page_size: 100,
+    page_size: 150,
   })
 
   return response.results
