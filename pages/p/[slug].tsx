@@ -9,7 +9,6 @@ import {
   getDatabase,
   groupListBlocks,
   mapDatabaseItemToPageProps,
-  mapDatabaseToPaths,
 } from "@lib/notion"
 import { ListBlock, PostProps } from "@lib/types"
 
@@ -55,20 +54,8 @@ const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  if (process.env.POSTS_TABLE_ID == null) {
-    return {
-      paths: [],
-      fallback: true,
-    }
-  }
-
-  const posts = await getDatabase(process.env.POSTS_TABLE_ID, {
-    includeUnpublished: true,
-  })
-
-  const paths = mapDatabaseToPaths(posts)
   return {
-    paths,
+    paths: [],
     fallback: true,
   }
 }
