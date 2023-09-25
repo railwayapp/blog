@@ -52,12 +52,25 @@ export const getPage = async (pageId: string) => {
 }
 
 export const getBlocks = async (blockId: string) => {
+  const allResults: Block[] = []
   const response = await notion.blocks.children.list({
     block_id: blockId,
-    page_size: 150,
+    page_size: 100,
   })
 
-  return response.results
+  allResults.push(...response.results)
+
+  if (response.next_cursor != null) {
+    const nextResponse = await notion.blocks.children.list({
+      start_cursor: response.next_cursor,
+      block_id: blockId,
+      page_size: 100,
+    })
+
+    allResults.push(...nextResponse.results)
+  }
+
+  return allResults
 }
 
 export const mapDatabaseToPaths = (database: PostProps[]) => {
