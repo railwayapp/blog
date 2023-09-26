@@ -83,7 +83,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     }
     // @ts-ignore: Current client version does not support `divider` but API does
     case "divider": {
-      return <hr />
+      return <hr className="my-8" />
     }
     case "video": {
       const { source, caption } = getMediaProperties(value)
