@@ -8,6 +8,7 @@ import { NotionHeading } from "@components/NotionHeading"
 import { NotionImage } from "@components/NotionImage"
 import { extractYoutubeId } from "utils"
 import { NotionText } from "@components/NotionText"
+import { NotionVideo } from "./NotionVideo"
 
 interface Props {
   block: Block
@@ -103,14 +104,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
 
       return (
         <div className="flex flex-col my-8 space-y-2">
-          <video
-            src={source}
-            controls
-            autoPlay
-            loop
-            muted
-            className="rounded-lg"
-          />
+          <NotionVideo src={source} blockId={block.id} />
           {caption && <p className="text-gray-500 text-sm">{caption}</p>}
         </div>
       )

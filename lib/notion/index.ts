@@ -122,16 +122,13 @@ export const getBlogLink = (slug: string) => {
 }
 
 export const getChangelogImageSrc = async (blockId: string) => {
-  const supportedBlockType = "image"
   const block = await notion.blocks.retrieve({ block_id: blockId })
 
-  if (block.type !== supportedBlockType) {
-    throw new Error("Block is not an image")
+  if (block.type !== "image" && block.type !== "video") {
+    throw new Error("Block is not an image or video")
   }
 
-  const image = block[supportedBlockType] as
-    | FileWithCaption
-    | ExternalFileWithCaption
+  const image = block[block.type] as FileWithCaption | ExternalFileWithCaption
 
   if (image.type === "external") {
     return image.external.url
