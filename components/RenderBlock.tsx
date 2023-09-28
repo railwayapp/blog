@@ -37,6 +37,15 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         </p>
       )
     }
+    // @ts-ignore: Current client version does not support `quote` but API does
+    case "quote": {
+      // const { source, caption } = getMediaProperties(value)
+      return (
+        <blockquote className="flex flex-col my-8 border-l-4 pl-4 border-gray-100 text-gray-700 italic">
+          <NotionText text={value.text} />
+        </blockquote>
+      )
+    }
     case "heading_1":
     case "heading_2":
     case "heading_3": {
