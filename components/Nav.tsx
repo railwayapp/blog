@@ -1,7 +1,7 @@
 import React from "react"
 import Link from "@components/Link"
 import Logo from "@components/Logo"
-import { Moon, Sun } from "react-feather"
+import { Moon, Sun, Rss } from "react-feather"
 import { useTheme } from "next-themes"
 import { useIsMounted } from "../hooks/useIsMounted"
 import { useRouter } from "next/router"
@@ -34,6 +34,13 @@ const Nav: React.FC = () => {
           >
             Go to Homepage
           </Link>
+
+          <button
+            className="hover:text-pink-600"
+            onClick={() => window.open("https://blog.railway.app/rss.xml")}
+          >
+            <Rss size={16} />
+          </button>
 
           {isMounted && (
             <button
