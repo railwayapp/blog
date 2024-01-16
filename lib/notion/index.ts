@@ -21,13 +21,25 @@ export const getDatabase = async (
     includeUnpublished: false,
   }
 ) => {
+  const allResults: PostProps[] = []
   const response = await notion.databases.query({
     database_id: databaseId,
+    page_size: 100,
   })
 
-  const results = response.results as unknown as PostProps[]
+  allResults.push(...(response.results as unknown as PostProps[]))
 
-  return results
+  if (response.next_cursor != null) {
+    const nextResponse = await notion.databases.query({
+      database_id: databaseId,
+      start_cursor: response.next_cursor,
+      page_size: 100,
+    })
+
+    allResults.push(...(nextResponse.results as unknown as PostProps[]))
+  }
+
+  return allResults
     .filter(
       (r) =>
         r.properties.Date.date != null &&
