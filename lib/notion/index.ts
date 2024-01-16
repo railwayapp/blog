@@ -21,25 +21,21 @@ export const getDatabase = async (
     includeUnpublished: false,
   }
 ) => {
-  const allResults: PostProps[] = []
-  const response = await notion.databases.query({
-    database_id: databaseId,
-    page_size: 100,
-  })
+  let startCursor: string | undefined
+  const results: PostProps[] = []
 
-  allResults.push(...(response.results as unknown as PostProps[]))
-
-  if (response.next_cursor != null) {
-    const nextResponse = await notion.databases.query({
+  do {
+    const response = await notion.databases.query({
       database_id: databaseId,
-      start_cursor: response.next_cursor,
       page_size: 100,
+      start_cursor: startCursor,
     })
 
-    allResults.push(...(nextResponse.results as unknown as PostProps[]))
-  }
+    results.push(...(response.results as unknown as PostProps[]))
+    startCursor = response.next_cursor ?? undefined
+  } while (startCursor != null)
 
-  return allResults
+  return results
     .filter(
       (r) =>
         r.properties.Date.date != null &&
@@ -64,25 +60,21 @@ export const getPage = async (pageId: string) => {
 }
 
 export const getBlocks = async (blockId: string) => {
-  const allResults: Block[] = []
-  const response = await notion.blocks.children.list({
-    block_id: blockId,
-    page_size: 100,
-  })
+  let startCursor: string | undefined
+  const results: Block[] = []
 
-  allResults.push(...response.results)
-
-  if (response.next_cursor != null) {
-    const nextResponse = await notion.blocks.children.list({
-      start_cursor: response.next_cursor,
+  do {
+    const response = await notion.blocks.children.list({
       block_id: blockId,
       page_size: 100,
+      start_cursor: startCursor,
     })
 
-    allResults.push(...nextResponse.results)
-  }
+    results.push(...response.results)
+    startCursor = response.next_cursor ?? undefined
+  } while (startCursor != null)
 
-  return allResults
+  return results
 }
 
 export const mapDatabaseToPaths = (database: PostProps[]) => {
