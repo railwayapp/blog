@@ -137,12 +137,34 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         </div>
       )
     }
+    // @ts-ignore: Current client version does not support `column_list` but API does
+    case "column_list": {
+      return (
+        <div className="grid grid-cols-2 items-start gap-8">
+          {/* @ts-ignore: Current client version does not support `column_list` but API does */}
+          {block.column_list.children.map((block) => (
+            <RenderBlock block={block} />
+          ))}
+        </div>
+      )
+    }
+    // @ts-ignore: Current client version does not support `column_list` but API does
+    case "column": {
+      return (
+        <div className="flex flex-col space-y-4">
+          {/* @ts-ignore: Current client version does not support `column_list` but API does */}
+          {block.column.map((block) => (
+            <RenderBlock block={block} />
+          ))}
+        </div>
+      )
+    }
     default: {
       return null
       // return (
       //   <p>
       //     ❌ Unsupported block{" "}
-      //     {type === "unsupported" ? "unsupported by Notion API" : type})
+      //     {type === "unsupported" ? "unsupported by Notion API" : type}
       //   </p>
       // )
     }
