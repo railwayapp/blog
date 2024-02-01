@@ -87,28 +87,51 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
   const page = await getPage(id)
   const blocks = await getBlocks(id)
 
-  const childBlocks = await Promise.all(
-    blocks
-      .filter((block) => block.has_children)
-      .map(async (block) => {
-        return {
-          id: block.id,
-          children: await getBlocks(block.id),
-        }
-      })
-  )
+  const parsedBlocks = []
+  for (const block of blocks) {
+    // @ts-ignore: Current client version does not support `column_list` but API does
+    if (block.type === "column_list") {
+      const typedBlock = block as unknown as Block
+      const columnListChildren = await getBlocks(typedBlock.id)
+      const columnData = await Promise.all(
+        columnListChildren.map(async (c) => ({
+          ...c,
+          column: await getBlocks(c.id),
+        }))
+      )
 
-  const blocksWithChildren = blocks.map((block) => {
-    if (block.has_children && !block[block.type].children) {
-      block[block.type]["children"] = childBlocks.find(
-        (childBlock) => (childBlock.id = block.id)
-      )?.children
+      const parsedBlock = {
+        ...typedBlock,
+        [typedBlock.type]: {
+          ...typedBlock[typedBlock.type],
+          children: columnData,
+        },
+      }
+
+      parsedBlocks.push(parsedBlock)
+
+      continue
     }
 
-    return block
-  })
+    if (block.has_children && !block[block.type].children) {
+      const childBlocks = await getBlocks(block.id)
 
-  return { page, blocks: blocksWithChildren }
+      const parsedBlock = {
+        ...block,
+        [block.type]: {
+          ...block[block.type],
+          children: childBlocks,
+        },
+      }
+
+      parsedBlocks.push(parsedBlock)
+      continue
+    }
+
+    parsedBlocks.push(block)
+  }
+
+  return { page, blocks: parsedBlocks }
 }
 
 export const getMediaProperties = (
