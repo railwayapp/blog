@@ -143,7 +143,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         <div className="grid grid-cols-2 items-start gap-8">
           {/* @ts-ignore: Current client version does not support `column_list` but API does */}
           {block.column_list.children.map((block) => (
-            <RenderBlock block={block} />
+            <RenderBlock key={block.id} block={block} />
           ))}
         </div>
       )
@@ -154,7 +154,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
         <div className="flex flex-col space-y-4">
           {/* @ts-ignore: Current client version does not support `column_list` but API does */}
           {block.column.map((block) => (
-            <RenderBlock block={block} />
+            <RenderBlock key={block.id} block={block} />
           ))}
         </div>
       )

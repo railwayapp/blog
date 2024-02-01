@@ -110,7 +110,6 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
 
       parsedBlocks.push(parsedBlock)
 
-      console.dir(columnData, { depth: null })
       continue
     }
 
@@ -169,10 +168,8 @@ export const groupListBlocks = (blocks: Block[]): (Block | ListBlock)[] => {
   const updatedBlocks: Array<Block | ListBlock> = []
   let currList: ListBlock | null = null
 
-  console.dir(blocks, { depth: null })
   for (const b of blocks ?? []) {
     if (b.type === "bulleted_list_item" || b.type === "numbered_list_item") {
-      console.log("list item: ", b)
       if (currList == null) {
         currList = {
           id: b.id,
@@ -184,7 +181,6 @@ export const groupListBlocks = (blocks: Block[]): (Block | ListBlock)[] => {
       currList.items.push(b)
     } else {
       if (currList != null) {
-        console.log("list: ", currList)
         updatedBlocks.push(currList)
         currList = null
       }
