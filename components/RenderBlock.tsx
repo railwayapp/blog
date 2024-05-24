@@ -32,7 +32,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
   switch (type) {
     case "paragraph": {
       return (
-        <p className="leading-8 mb-6 text-gray-800">
+        <p className="leading-8 mb-4 text-gray-800">
           <NotionText text={value.text} />
         </p>
       )
@@ -49,7 +49,11 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     case "heading_1":
     case "heading_2":
     case "heading_3": {
-      return <NotionHeading type={type} text={value.text} />
+      return (
+        <div className="mt-12">
+          <NotionHeading type={type} text={value.text} />
+        </div>
+      )
     }
     // @ts-ignore: Current client version does not support `callout` but API does
     case "callout": {
@@ -90,7 +94,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     case "image": {
       const { source, caption } = getMediaProperties(value)
       return (
-        <div className="flex flex-col my-8">
+        <div className="flex flex-col mb-4">
           <NotionImage src={source} alt={caption} blockId={block.id} />
           {caption && <p className="text-gray-600 mt-3 text-sm">{caption}</p>}
         </div>
