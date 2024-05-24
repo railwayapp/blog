@@ -14,11 +14,6 @@ interface Props {
   block: Block
 }
 
-// TODO: IDK where notion types are when you upgrade the API
-type NotionBlock = Block & {
-  children: Block[]
-}
-
 export const RenderBlock: React.FC<Props> = ({ block }) => {
   const { type } = block
   const value = block[type]
@@ -58,7 +53,6 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
     }
     // @ts-ignore: Current client version does not support `callout` but API does
     case "callout": {
-      console.log("callout", block)
       const callout = (block as any).callout
       return (
         <div className="flex w-full p-4 my-8 rounded border border-transparent bg-blue-100">
