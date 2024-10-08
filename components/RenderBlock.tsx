@@ -32,9 +32,19 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
   switch (type) {
     case "paragraph": {
       return (
-        <p className="leading-8 mb-4 text-gray-800">
-          <NotionText text={value.text} />
-        </p>
+        <>
+          <p className="leading-8 mb-4 text-gray-800">
+            <NotionText text={value.text} />
+          </p>
+          {/* Render children recursively if present */}
+          {block.has_children && (
+            <div className="ml-4">
+              {value.children && value.children.map((child) => (
+                <RenderBlock key={child.id} block={child} />
+              ))}
+            </div>
+          )}
+        </>
       )
     }
     // @ts-ignore: Current client version does not support `quote` but API does
