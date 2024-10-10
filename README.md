@@ -2,7 +2,7 @@
 
 This repository contains the source code for the [Railway blog](https://blog.railway.app/). We use a [NextJS](https://nextjs.org/) app with [Notion](https://www.notion.so/) as our CMS.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/EVFIqE)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/EVFIqE)
 
 ## ✨ Features
 
