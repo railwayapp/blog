@@ -19,7 +19,9 @@ export const NotionListBlock: React.FC<{
 
 const RenderListItem: React.FC<{ item: Block }> = ({ item }) => {
   const children = useMemo(() => {
-    return ((item as any).bulleted_list_item?.children ?? []) as Block[]
+    return ((item as any).bulleted_list_item?.children ??
+      (item as any).numbered_list_item?.children ??
+      []) as Block[]
   }, [item])
 
   const subListBlock: ListBlock | null = useMemo(() => {
