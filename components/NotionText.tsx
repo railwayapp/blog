@@ -117,5 +117,5 @@ export const NotionList: React.FC<{
   type === "ul" ? (
     <ul className={twMerge("list-disc pl-6 mb-6", className)}>{children}</ul>
   ) : (
-    <ol className={twMerge("list-disc pl-6 mb-6", className)}>{children}</ol>
+    <ol className={twMerge("list-decimal pl-6 mb-6", className)}>{children}</ol>
   )
