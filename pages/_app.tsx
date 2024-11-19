@@ -11,7 +11,7 @@ import { Inter } from "@next/font/google"
 const inter = Inter({ subsets: ["latin"] })
 
 const RailwayBlog = ({ Component, pageProps }: AppProps) => {
-  useFathom(process.env.NEXT_PUBLIC_FATHOM_CODE ?? "", "blog.railway.app")
+  useFathom(process.env.NEXT_PUBLIC_FATHOM_CODE ?? "", "blog.railway.com")
 
   const { bodyCSS } = useMemo(
     () =>
