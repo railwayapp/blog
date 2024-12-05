@@ -20,7 +20,7 @@ export const Code: React.FC<{ children: string; language?: string }> = ({
   useAsyncEffect(async () => {
     setMarkupToHighlight(
       await getHighlighter({
-        langs: ["html", "javascript", "typescript", "shell", "rust", "go", "yaml", "ruby", "python"],
+        langs: ["html", "javascript", "typescript", "shell", "rust", "go", "yaml", "ruby", "python", "graphql"],
         theme: theme === "light" ? LIGHT_THEME : DARK_THEME,
       }).then((highlighter) =>
         highlighter.codeToHtml(children, { lang: language })
