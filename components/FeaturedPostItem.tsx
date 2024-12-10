@@ -18,6 +18,7 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
   const category = post.properties.Category.select?.name
   const featuredImage = post.properties.FeaturedImage.url
   const authorExists = author != null && author.name != null
+  const isCommunity = post.properties.Community.checkbox
 
   return (
     <Link
@@ -39,7 +40,7 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       )}
 
       <div className="mt-6">
-        {category != null && <PostCategory category={category} />}
+        {category != null && <PostCategory category={category} isCommunity={isCommunity}/>}
 
         <h3 className="font-bold text-2xl my-4 group-hover:opacity-60 tracking-tight">
           <NotionText text={post.properties.Page.title} noLinks />

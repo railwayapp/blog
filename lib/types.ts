@@ -21,6 +21,7 @@ export interface PostItem {
   FeaturedImage: URLPropertyValue
   Description: RichTextPropertyValue
   Category: SelectPropertyValue
+  Community: CheckboxPropertyValue
 }
 
 export interface PostProps extends Omit<Page, "properties"> {
