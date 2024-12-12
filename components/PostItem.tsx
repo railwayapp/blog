@@ -20,13 +20,15 @@ const PostItem: React.FC<Props> = ({ post }) => {
   const author = post.properties.Authors.people[0]
   const authorExists = author != null && author.name != null
   const category = post.properties.Category.select?.name
+  const isCommunity = post.properties.Community.checkbox
+
 
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
       className="flex flex-col border-b border-gray-100 group"
     >
-      {category != null && <PostCategory category={category} />}
+      {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
 
       <div className="flex-grow">
         <h4 className="font-bold text-lg mt-2 mb-1 group-hover:opacity-60 tracking-tight">

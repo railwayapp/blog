@@ -123,7 +123,7 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
           children: childBlocks,
         },
       }
-
+      
       parsedBlocks.push(parsedBlock)
       continue
     }
@@ -187,6 +187,10 @@ export const groupListBlocks = (blocks: Block[]): (Block | ListBlock)[] => {
 
       updatedBlocks.push(b)
     }
+  }
+
+  if (currList != null) {
+    updatedBlocks.push(currList);
   }
 
   return updatedBlocks

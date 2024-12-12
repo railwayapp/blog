@@ -17,7 +17,11 @@ export const PostList: React.FC<{
   showCustomerStories?: boolean
 }> = ({ posts, category, showScalingRailway, showCustomerStories }) => {
   const featuredPosts = posts.filter((p) => p.properties.Featured.checkbox)
-  const otherPosts = posts.filter((p) => !p.properties.Featured.checkbox)
+  
+  // filter community posts from landing page
+  const otherPosts = category == null 
+  ? posts.filter((p) => !p.properties.Featured.checkbox && !p.properties.Community.checkbox) 
+  : posts.filter((p) => !p.properties.Featured.checkbox);
 
   const [showMore, setShowMore] = useState(false)
   const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH

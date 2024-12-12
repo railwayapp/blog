@@ -45,13 +45,14 @@ const RelatedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
 
   const author = post.properties.Authors.people[0]
   const category = post.properties.Category.select?.name
+  const isCommunity = post.properties.Community.checkbox
 
   return (
     <Link
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
       className="flex flex-col bg-secondaryBg p-6 rounded-lg hover:bg-gray-100 group"
     >
-      {category != null && <PostCategory category={category} />}
+      {category != null && <PostCategory category={category} isCommunity={isCommunity}/>}
 
       <div className="flex-grow">
         <header className="font-bold text-lg mt-2 mb-1">
