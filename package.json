@@ -47,7 +47,7 @@
     "react-feather": "^2.0.10",
     "react-twitter-embed": "^4.0.4",
     "sharp": "^0.31.3",
-    "shiki": "^0.12.1",
+    "shiki": "^1.24.2",
     "tailwind-merge": "^1.13.0",
     "theme-custom-properties": "^1.0.0"
   },
