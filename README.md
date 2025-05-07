@@ -43,10 +43,10 @@ That is it, just make sure the properties on a post within Notion are not empty.
 
 This blog is heavily based on [this example](https://github.com/ijjk/notion-blog) by JJ Kasper.
 
-## How to run locally
+## 🧑‍💻 How to run locally
 
 - Make sure you have the Railway CLI installed. If not, install it and authenticate.
-- Make sure you have yarn
+- Make sure you have `yarn`
 - [Link](https://docs.railway.com/reference/cli-api#link) a Railway project with the repo (or run it locally from the Railway UI after deploying the template)
 - Run `npm install`
 - Run `railway run yarn dev`
