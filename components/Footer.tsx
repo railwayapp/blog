@@ -2,14 +2,14 @@ import Link from "@components/Link"
 import Logo from "@components/Logo"
 import React from "react"
 
-const railwayUrl = (page: string): string => `https://railway.app/${page}`
+const railwayUrl = (page: string): string => `https://railway.com/${page}`
 
 const Footer: React.FC = () => {
   return (
     <footer className="px-5 md:px-8 py-12 border-t border-gray-100">
       <div className="grid grid-cols-2 sm:grid-cols-12 gap-8 sm:gap-4 lg:gap-16 max-w-6xl mx-auto">
         <div className="hidden sm:flex col-span-3 lg:col-span-4 flex-col justify-between">
-          <Link href="https://railway.app">
+          <Link href="https://railway.com">
             <Logo />
           </Link>
 
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
             <FooterListLink href={railwayUrl("starters")}>
               Starters
             </FooterListLink>
-            <FooterListLink href={"https://feedback.railway.app"}>
+            <FooterListLink href={"https://station.railway.com/feedback"}>
               Feedback
             </FooterListLink>
             <FooterListLink href={railwayUrl("open-source-kickback")}>
@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
               Careers
             </FooterListLink>
             <FooterListLink href={"/"}>Blog</FooterListLink>
-            <FooterListLink href={"https://shop.railway.app"}>
+            <FooterListLink href={"https://shop.railway.com"}>
               Shop
             </FooterListLink>
           </ul>
@@ -69,7 +69,7 @@ const Footer: React.FC = () => {
             <FooterListLink href={"https://github.com/railwayapp"}>
               GitHub
             </FooterListLink>
-            <FooterListLink href={"mailto:contact@railway.app"}>
+            <FooterListLink href={"mailto:contact@railway.com"}>
               Email
             </FooterListLink>
           </ul>

@@ -10,10 +10,10 @@ export interface Props extends NextSeoProps {
 }
 
 const title = "Railway Blog"
-export const url = "https://blog.railway.app"
+export const url = "https://blog.railway.com"
 const description = "Blog posts from the Railway team"
 const image =
-  "https://og.railway.app/api/image?fileType=png&layoutName=docs&Page=Railway+Blog&Url=blog.railway.app"
+  "https://og.railway.com/api/image?fileType=png&layoutName=docs&Page=Railway+Blog&Url=blog.railway.com"
 
 const config: DefaultSeoProps = {
   title,

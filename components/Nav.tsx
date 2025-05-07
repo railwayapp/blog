@@ -30,14 +30,14 @@ const Nav: React.FC = () => {
         <div className="text-gray-600 flex items-center space-x-6">
           <Link
             className="text-sm hover:text-pink-600"
-            href="https://railway.app"
+            href="https://railway.com"
           >
             Go to Homepage
           </Link>
 
           <button
             className="hover:text-pink-600"
-            onClick={() => window.open("https://blog.railway.app/rss.xml")}
+            onClick={() => window.open("https://blog.railway.com/rss.xml")}
           >
             <Rss size={16} />
           </button>
