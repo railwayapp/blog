@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
             <FooterListLink href={railwayUrl("starters")}>
               Starters
             </FooterListLink>
-            <FooterListLink href={"https://feedback.railway.app"}>
+            <FooterListLink href={"https://station.railway.com/feedback"}>
               Feedback
             </FooterListLink>
             <FooterListLink href={railwayUrl("open-source-kickback")}>
