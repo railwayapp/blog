@@ -4,10 +4,10 @@ import { writeFileSync } from "fs"
 import { PostProps } from "@lib/types"
 
 export const generateRssFeed = (posts: PostProps[]) => {
-  const baseUrl = "https://blog.railway.app"
+  const baseUrl = "https://blog.railway.com"
   const author = {
     name: "Railway",
-    email: "contact@railway.app",
+    email: "contact@railway.com",
     link: "https://twitter.com/Railway",
   }
 

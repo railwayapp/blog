@@ -34,7 +34,7 @@ exports[`Home page matches snapshot 1`] = `
       </a>
       <a
         class="text-gray-500 hover:text-primary"
-        href="https://railway.app"
+        href="https://railway.com"
         rel="noreferrer noopener"
         target="_blank"
       >
@@ -69,7 +69,7 @@ exports[`Home page matches snapshot 1`] = `
   >
     <a
       class="underline"
-      href="https://railway.app"
+      href="https://railway.com"
       rel="noreferrer noopener"
       target="_blank"
     />
@@ -78,7 +78,7 @@ exports[`Home page matches snapshot 1`] = `
     >
       <a
         class="underline"
-        href="https://railway.app"
+        href="https://railway.com"
         rel="noreferrer noopener"
         target="_blank"
       />
@@ -87,7 +87,7 @@ exports[`Home page matches snapshot 1`] = `
       >
         <a
           class="underline"
-          href="https://railway.app"
+          href="https://railway.com"
           rel="noreferrer noopener"
           target="_blank"
         >
@@ -117,7 +117,7 @@ exports[`Home page matches snapshot 1`] = `
         >
           <a
             class="underline"
-            href="https://railway.app"
+            href="https://railway.com"
             rel="noreferrer noopener"
             target="_blank"
           />

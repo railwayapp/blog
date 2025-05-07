@@ -16,7 +16,7 @@ export const useOgImage = ({
 
   return (
     image ??
-    `https://og.railway.app/api/image?fileType=png&layoutName=Blog&Theme=${
+    `https://og.railway.com/api/image?fileType=png&layoutName=Blog&Theme=${
       theme === "light" ? "Light" : "Dark"
     }&Title=${encodedTitle}&Author=${encodedAuthorName}`
   )

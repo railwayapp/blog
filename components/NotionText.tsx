@@ -4,8 +4,8 @@ import Image from "next/image"
 import { twMerge } from "tailwind-merge"
 
 const TEMPLATE_PATHS = [
-  "https://railway.app/new/template",
-  "https://railway.app/template/",
+  "https://railway.com/new/template",
+  "https://railway.com/template/",
 ]
 
 /**
