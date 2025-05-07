@@ -48,5 +48,5 @@ This blog is heavily based on [this example](https://github.com/ijjk/notion-blog
 - Make sure you have the Railway CLI installed. If not, install it and authenticate.
 - Make sure you have `yarn`
 - [Link](https://docs.railway.com/reference/cli-api#link) a Railway project with the repo (or run it locally from the Railway UI after deploying the template)
-- Run `npm install`
+- Run `yarn install`
 - Run `railway run yarn dev`
