@@ -4,6 +4,8 @@ import Router from "next/router"
 
 // Key for storing session ID in localStorage
 const POSTHOG_SESSION_ID_KEY = "railway_posthog_session_id"
+const POSTHOG_DOMAIN = process.env.POSTHOG_PUBLIC_DOMAIN ?? ""
+const POSTHOG_KEY = process.env.POSTHOG_PUBLIC_KEY ?? ""
 
 /**
  * Gets or creates a session ID for PostHog tracking
@@ -78,8 +80,8 @@ const usePostHog = () => {
       typeof (posthog as any)._send_request === "function"
 
     if (!isPostHogInitialized) {
-      posthog.init("phc_jmpOAF1fCA4XG8D6zO8AuihY1JHmOkvzqtg5cZoxeJb", {
-        api_host: "https://lantern.railway.com",
+      posthog.init(POSTHOG_KEY, {
+        api_host: POSTHOG_DOMAIN,
         loaded: (posthogInstance) => {
           // After PostHog is loaded, ensure we have a session ID
           const sessionId = posthogInstance.get_session_id()
