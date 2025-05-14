@@ -80,12 +80,6 @@ const usePostHog = () => {
       typeof (posthog as any)._send_request === "function"
 
     if (!isPostHogInitialized) {
-      // Only initialize if we have a valid key
-      if (!POSTHOG_KEY) {
-        console.warn('PostHog initialization skipped: Missing POSTHOG_PUBLIC_KEY environment variable')
-        return
-      }
-
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_DOMAIN,
         loaded: (posthogInstance) => {
