@@ -4,8 +4,8 @@ import Router from "next/router"
 
 // Key for storing session ID in localStorage
 const POSTHOG_SESSION_ID_KEY = "railway_posthog_session_id"
-const POSTHOG_DOMAIN = process.env.POSTHOG_PUBLIC_DOMAIN ?? ""
-const POSTHOG_KEY = process.env.POSTHOG_PUBLIC_KEY ?? ""
+const POSTHOG_DOMAIN = process.env.NEXT_PUBLIC_POSTHOG_PUBLIC_DOMAIN ?? ""
+const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_PUBLIC_KEY ?? ""
 
 /**
  * Gets or creates a session ID for PostHog tracking
@@ -80,6 +80,12 @@ const usePostHog = () => {
       typeof (posthog as any)._send_request === "function"
 
     if (!isPostHogInitialized) {
+      // Only initialize if we have a valid key
+      if (!POSTHOG_KEY) {
+        console.warn('PostHog initialization skipped: Missing POSTHOG_PUBLIC_KEY environment variable')
+        return
+      }
+
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_DOMAIN,
         loaded: (posthogInstance) => {
