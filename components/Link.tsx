@@ -1,5 +1,6 @@
 import React, { useMemo } from "react"
 import NLink from "next/link"
+import { cn } from "utils"
 
 export interface Props {
   href: string
@@ -16,13 +17,13 @@ const isExternalLink = (href: string) =>
 const useIsExternalLink = (href: string) =>
   useMemo(() => isExternalLink(href), [href])
 
-const Link = ({ href, external, children, ...props }: Props) => {
+const Link = ({ href, external, children, className, ...props }: Props) => {
   const isExternal = (useIsExternalLink(href) || external) ?? false
 
   if (isExternal) {
     return (
       <a
-        className="underline"
+        className={cn("underline", className)}
         href={href}
         target="_blank"
         rel="noreferrer noopener"
@@ -34,7 +35,7 @@ const Link = ({ href, external, children, ...props }: Props) => {
   }
 
   return (
-    <NLink href={href} passHref {...props}>
+    <NLink href={href} passHref {...props} className={className}>
       {children}
     </NLink>
   )
