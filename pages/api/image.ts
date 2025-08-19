@@ -9,8 +9,12 @@ const handler: NextApiHandler = async (req, res) => {
     return
   }
 
-  const imageSrc = await getChangelogImageSrc(blockId)
-  res.json({ imageSrc })
+  try {
+    const imageSrc = await getChangelogImageSrc(blockId)
+    return res.json({ imageSrc })
+  } catch {
+    return res.status(500).json({ message: "Failed to fetch image" })
+  }
 }
 
 export default handler
