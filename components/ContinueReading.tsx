@@ -11,7 +11,7 @@ export const ContinueReading: React.FC<{
   posts: PostProps[]
   category: string
 }> = ({ posts, category }) => {
-  category = category === "Guide" ? "Guides" : category
+  const displayCategory = category === "Guide" ? "Guides" : category
 
   return (
     <div>
@@ -21,9 +21,9 @@ export const ContinueReading: React.FC<{
         </h3>
         <Link
           className={cn("text-pink-500", "hover:underline")}
-          href={`/${category.toLowerCase()}`}
+          href={`/${displayCategory.toLowerCase()}`}
         >
-          View All {category} →
+          View All {displayCategory} →
         </Link>
       </header>
 
