@@ -1,6 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiHandler } from "next"
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler: NextApiHandler = async (req, res) => {
+  if (req.method !== "POST") {
+    const status = 405
+    return res.status(status).json({ status, message: "Method Not Allowed" })
+  }
+
   if (req.query.secret !== process.env.CLIENT_REVALIDATION_SECRET) {
     const status = 401
     return res.status(status).json({ status, message: "Invalid token" })
