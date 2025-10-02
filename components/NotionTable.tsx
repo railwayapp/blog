@@ -27,6 +27,11 @@ const TableRow = ({ row }: { row: TableRow }) => {
   )
 }
 
+/**
+ * Barebones table component that only supports tables with:
+ * - column headers
+ * - text cells
+ */
 export const NotionTable = ({ table }: { table: Table }) => {
   const baseRows = table.children
     // @ts-ignore: Current client version does not support `table_row` but API does
