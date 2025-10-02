@@ -14,9 +14,9 @@ interface Table {
 const TableRow = ({ row }: { row: TableRow }) => {
   return (
     <tr>
-      {row.cells.map((c) => {
+      {row.cells.map((c, idx) => {
         return (
-          <td>
+          <td key={idx}>
             {c.map((c, idx) => {
               return <NotionText key={idx} text={[c]} />
             })}
@@ -43,17 +43,19 @@ export const NotionTable = ({ table }: { table: Table }) => {
   const rows = table.has_column_header ? baseRows.slice(1) : baseRows
 
   return (
-    <table className="prose">
-      {columnHeaders != null && (
-        <thead className="font-medium">
-          <TableRow row={columnHeaders} />
-        </thead>
-      )}
-      <tbody>
-        {rows.map((r) => (
-          <TableRow key={r.id} row={r} />
-        ))}
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="prose">
+        {columnHeaders != null && (
+          <thead className="font-medium">
+            <TableRow row={columnHeaders} />
+          </thead>
+        )}
+        <tbody>
+          {rows.map((r) => (
+            <TableRow key={r.id} row={r} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
