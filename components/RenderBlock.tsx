@@ -9,6 +9,7 @@ import { NotionImage } from "@components/NotionImage"
 import { extractYoutubeId } from "utils"
 import { NotionText } from "@components/NotionText"
 import { NotionVideo } from "./NotionVideo"
+import { NotionTable } from "./NotionTable"
 
 interface Props {
   block: Block
@@ -39,9 +40,10 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
           {/* Render children recursively if present */}
           {block.has_children && (
             <div className="ml-4">
-              {value.children && value.children.map((child) => (
-                <RenderBlock key={child.id} block={child} />
-              ))}
+              {value.children &&
+                value.children.map((child) => (
+                  <RenderBlock key={child.id} block={child} />
+                ))}
             </div>
           )}
         </>
@@ -182,6 +184,11 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
           ))}
         </div>
       )
+    }
+    // @ts-ignore: Current client version does not support `table` but API does
+    case "table": {
+      // @ts-ignore: Current client version does not support `table` but API does
+      return <NotionTable table={block.table} />
     }
     default: {
       return null

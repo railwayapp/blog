@@ -12,7 +12,7 @@ const TEMPLATE_PATHS = [
  * This type is harcoded here as I couldn't really find anything
  * in the Notion API that corresponds to the actual data
  */
-interface TextProps {
+export interface TextProps {
   annotations: {
     bold: boolean
     italic: boolean
