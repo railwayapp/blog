@@ -1,73 +1,11 @@
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
-import { PostProps } from "../lib/types"
+import { MinimalRelatedPost } from "../lib/types"
 import { cn } from "../utils"
 import { Divider } from "./Divider"
 import Link from "./Link"
 import { NotionText } from "./NotionText"
 import { PostCategory } from "./PostCategory"
-
-// Minimal type matching what's serialized
-interface MinimalRelatedPost {
-  id: string
-  properties: {
-    Page: { title: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Slug: { rich_text: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Description: { rich_text: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Date: { date: { start: string } }
-    Authors: { people: Array<{ name: string; avatar_url: string | null }> }
-    Category: { select: { name?: string } | null }
-    Community: { checkbox: boolean }
-  }
-}
 
 export const ContinueReading: React.FC<{
   posts: MinimalRelatedPost[]

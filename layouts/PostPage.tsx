@@ -1,6 +1,6 @@
 import { NotionText } from "@components/NotionText"
 import Page from "@layouts/Page"
-import { PostProps } from "@lib/types"
+import { PostProps, MinimalRelatedPost } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
 import { BottomCTA } from "../components/BottomCTA"
@@ -8,68 +8,6 @@ import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
 import { cn } from "../utils"
-
-// Minimal type matching what's serialized
-interface MinimalRelatedPost {
-  id: string
-  properties: {
-    Page: { title: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Slug: { rich_text: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Description: { rich_text: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Date: { date: { start: string } }
-    Authors: { people: Array<{ name: string; avatar_url: string | null }> }
-    Category: { select: { name?: string } | null }
-    Community: { checkbox: boolean }
-  }
-}
 
 export interface Props {
   post: PostProps
