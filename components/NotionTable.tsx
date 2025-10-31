@@ -37,7 +37,7 @@ export const NotionTable = ({ table }: { table: Table }) => {
 		// @ts-ignore: Current client version does not support `table_row` but API does
 		.filter((c) => c.type === "table_row")
 		// @ts-ignore: Current client version does not support `table_row` but API does
-		.map((c) => c.table_row);
+		.map((c) => ({ id: c.id, row: c.table_row }));
 
 	const columnHeaders = table.has_column_header ? baseRows[0] : null;
 	const rows = table.has_column_header ? baseRows.slice(1) : baseRows;
@@ -47,12 +47,12 @@ export const NotionTable = ({ table }: { table: Table }) => {
 			<table className="w-full min-w-full border-collapse">
 				{columnHeaders != null && (
 					<thead className="font-medium bg-gray-50 border-b border-gray-200">
-						<TableRow row={columnHeaders} />
+						<TableRow key={columnHeaders.id} row={columnHeaders.row} />
 					</thead>
 				)}
 				<tbody className="divide-y divide-gray-200">
 					{rows.map((r) => (
-						<TableRow key={r.id} row={r} />
+						<TableRow key={r.id} row={r.row} />
 					))}
 				</tbody>
 			</table>

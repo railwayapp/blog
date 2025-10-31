@@ -77,6 +77,191 @@ export const getBlocks = async (blockId: string) => {
   return results
 }
 
+/**
+ * Minimize rich text by only keeping annotations that have actual formatting
+ */
+function minimizeRichText(richText: any[]): any[] {
+  if (!richText || !Array.isArray(richText)) return richText
+  
+  return richText.map(text => {
+    const { plain_text, annotations, text: textObj, href } = text
+    
+    // Only include annotations if there's actual formatting
+    const hasFormatting = annotations && (
+      annotations.bold ||
+      annotations.italic ||
+      annotations.strikethrough ||
+      annotations.underline ||
+      annotations.code ||
+      (annotations.color && annotations.color !== 'default')
+    )
+    
+    const minimized: any = {
+      plain_text,
+      type: text.type || 'text'
+    }
+    
+    // Only include annotations if there's formatting
+    if (hasFormatting) {
+      minimized.annotations = {
+        bold: annotations.bold || false,
+        italic: annotations.italic || false,
+        strikethrough: annotations.strikethrough || false,
+        underline: annotations.underline || false,
+        code: annotations.code || false,
+        color: annotations.color || 'default'
+      }
+    }
+    
+    // Only include text object if it has content or a link
+    if (textObj) {
+      if (textObj.content || textObj.link) {
+        minimized.text = {
+          content: textObj.content || '',
+          ...(textObj.link ? { link: { url: textObj.link.url } } : {})
+        }
+      }
+    }
+    
+    // Include href if present
+    if (href) {
+      minimized.href = href
+    }
+    
+    return minimized
+  })
+}
+
+/**
+ * Minimize a block by stripping unnecessary metadata
+ */
+function minimizeBlock(block: Block | any): any {
+  const { id, type, has_children } = block
+  const blockData = block[type as keyof Block] as any
+  
+  const minimized: any = {
+    id,
+    type,
+    has_children
+  }
+  
+  // Minimize based on block type - only include what's needed for rendering
+  // Use string comparison instead of switch to handle all block types
+  const blockType = type as string
+  
+  if (blockType === 'paragraph' || blockType === 'heading_1' || blockType === 'heading_2' || blockType === 'heading_3') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'quote') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'bulleted_list_item' || blockType === 'numbered_list_item') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'callout') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      icon: blockData.icon ? {
+        emoji: blockData.icon.emoji,
+        type: blockData.icon.type
+      } : undefined,
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'image' || blockType === 'video') {
+    minimized[type] = {
+      type: blockData.type,
+      ...(blockData.type === 'external'
+        ? { external: { url: blockData.external.url } }
+        : {
+            file: {
+              url: blockData.file.url,
+              expiry_time: blockData.file.expiry_time
+            }
+          }),
+      ...(blockData.caption && blockData.caption.length > 0
+        ? { caption: minimizeRichText(blockData.caption) }
+        : {})
+    }
+  } else if (blockType === 'code') {
+    minimized[type] = {
+      text: blockData.text ? minimizeRichText(blockData.text) : [],
+      language: blockData.language || 'plain text',
+      ...(blockData.caption && blockData.caption.length > 0
+        ? { caption: minimizeRichText(blockData.caption) }
+        : {})
+    }
+  } else if (blockType === 'divider') {
+    // Divider has no content
+    minimized[type] = {}
+  } else if (blockType === 'embed') {
+    minimized[type] = {
+      url: blockData.url,
+      ...(blockData.caption && blockData.caption.length > 0
+        ? { caption: minimizeRichText(blockData.caption) }
+        : {})
+    }
+  } else if (blockType === 'table') {
+    minimized[type] = {
+      has_column_header: blockData.has_column_header || false,
+      has_row_header: blockData.has_row_header || false,
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'table_row') {
+    minimized[type] = {
+      cells: blockData.cells ? blockData.cells.map((cell: any[]) => minimizeRichText(cell)) : []
+    }
+  } else if (blockType === 'column_list') {
+    minimized[type] = {
+      children: blockData.children ? blockData.children.map((child: Block | any) => minimizeBlock(child)) : []
+    }
+  } else if (blockType === 'column') {
+    // Column blocks can have either 'children' or 'column' property
+    if (blockData.column) {
+      minimized[type] = {
+        column: blockData.column.map((child: Block | any) => minimizeBlock(child))
+      }
+    } else if (blockData.children) {
+      minimized[type] = {
+        children: blockData.children.map((child: Block | any) => minimizeBlock(child))
+      }
+    } else {
+      minimized[type] = {}
+    }
+  } else {
+    // For unknown types, try to minimize text if present
+    if (blockData && blockData.text) {
+      minimized[type] = {
+        text: minimizeRichText(blockData.text),
+        ...(blockData.children && blockData.children.length > 0
+          ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+          : {})
+      }
+    } else if (blockData) {
+      minimized[type] = blockData
+    } else {
+      minimized[type] = {}
+    }
+  }
+  
+  return minimized
+}
+
 export const mapDatabaseToPaths = (database: PostProps[]) => {
   return database.map((item) => {
     return { params: { slug: item.properties.Slug.rich_text[0].plain_text } }
@@ -89,6 +274,8 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
 
   const parsedBlocks = []
   for (const block of blocks) {
+    let parsedBlock: Block
+    
     // @ts-ignore: Current client version does not support `column_list` but API does
     if (block.type === "column_list") {
       const typedBlock = block as unknown as Block
@@ -100,35 +287,30 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
         }))
       )
 
-      const parsedBlock = {
+      parsedBlock = {
         ...typedBlock,
         [typedBlock.type]: {
           ...typedBlock[typedBlock.type],
           children: columnData,
         },
-      }
+      } as Block
 
-      parsedBlocks.push(parsedBlock)
-
-      continue
-    }
-
-    if (block.has_children && !block[block.type].children) {
+    } else if (block.has_children && !(block[block.type as keyof Block] as any)?.children) {
       const childBlocks = await getBlocks(block.id)
 
-      const parsedBlock = {
+      parsedBlock = {
         ...block,
         [block.type]: {
-          ...block[block.type],
+          ...(block[block.type as keyof Block] as any),
           children: childBlocks,
         },
-      }
-      
-      parsedBlocks.push(parsedBlock)
-      continue
+      } as Block
+    } else {
+      parsedBlock = block
     }
-
-    parsedBlocks.push(block)
+    
+    // Minimize the block before adding to reduce serialized size
+    parsedBlocks.push(minimizeBlock(parsedBlock))
   }
 
   return { page, blocks: parsedBlocks }

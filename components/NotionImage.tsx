@@ -9,7 +9,7 @@ export const NotionImage: React.FC<{
 	const [imageSrc, setImageSrc] = useState(src);
 
 	return (
-		<div className="imageContainer shadow-sm w-full">
+		<div className="imageContainer shadow-sm w-full relative">
 			<NextImage
 				src={imageSrc}
 				alt={alt}

@@ -1,6 +1,6 @@
 import { NotionText } from "@components/NotionText"
 import Page from "@layouts/Page"
-import { PostProps } from "@lib/types"
+import { PostProps, MinimalRelatedPost } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
 import { BottomCTA } from "../components/BottomCTA"
@@ -11,7 +11,7 @@ import { cn } from "../utils"
 
 export interface Props {
   post: PostProps
-  relatedPosts: PostProps[]
+  relatedPosts: MinimalRelatedPost[]
   children?: React.ReactNode
 }
 

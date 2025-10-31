@@ -13,13 +13,13 @@ const TEMPLATE_PATHS = [
  * in the Notion API that corresponds to the actual data
  */
 export interface TextProps {
-  annotations: {
-    bold: boolean
-    italic: boolean
-    strikethrough: boolean
-    underline: boolean
-    code: boolean
-    color: string
+  annotations?: {
+    bold?: boolean
+    italic?: boolean
+    strikethrough?: boolean
+    underline?: boolean
+    code?: boolean
+    color?: string
   }
   href?: string
   plain_text: string
@@ -29,7 +29,7 @@ export interface TextProps {
       url: string
     }
   }
-  type: string
+  type?: string
 }
 
 const RenderTextContent: React.FC<{
@@ -59,11 +59,14 @@ export const NotionText: React.FC<{
   return (
     <>
       {text.map((value, idx) => {
-        const {
-          annotations: { bold, code, italic, strikethrough, underline },
-          text,
-        } = value
-        if (text == null) {
+        const annotations = value.annotations || {}
+        const bold = annotations.bold || false
+        const code = annotations.code || false
+        const italic = annotations.italic || false
+        const strikethrough = annotations.strikethrough || false
+        const underline = annotations.underline || false
+        const textContent = value.text
+        if (textContent == null && !value.plain_text) {
           return null
         }
 
@@ -73,23 +76,26 @@ export const NotionText: React.FC<{
         if (strikethrough) classes += " line-through"
         if (underline) classes += " underline"
 
+        const content = textContent?.content || value.plain_text || ''
+        const linkUrl = textContent?.link?.url || value.href
+        
         return (
           <Fragment key={idx}>
-            {text.link != null && !noLinks ? (
+            {linkUrl != null && !noLinks ? (
               <>
-                {text.content === text.link.url &&
-                TEMPLATE_PATHS.some((path) => text.link.url.includes(path)) ? (
-                  <Link href={text.link.url} className="flex justify-center">
+                {content === linkUrl &&
+                TEMPLATE_PATHS.some((path) => linkUrl.includes(path)) ? (
+                  <Link href={linkUrl} className="flex justify-center">
                     <Image src="/button.svg" height={48} width={240} alt="" />
                   </Link>
                 ) : (
                   <Link
-                    href={text.link.url}
+                    href={linkUrl}
                     className="underline hover:text-pink-600"
                   >
                     <RenderTextContent
                       isCode={code}
-                      content={text.content}
+                      content={content}
                       className={classes}
                     />
                   </Link>
@@ -98,7 +104,7 @@ export const NotionText: React.FC<{
             ) : (
               <RenderTextContent
                 isCode={code}
-                content={text.content}
+                content={content}
                 className={classes}
               />
             )}
