@@ -82,7 +82,7 @@ export const RenderBlock: React.FC<Props> = ({ block }) => {
             {callout.children ? (
               <div className="flex flex-col p-4">
                 {callout.children.map((child) => (
-                  <RenderBlock block={child} />
+                  <RenderBlock key={child.id} block={child} />
                 ))}
               </div>
             ) : null}

@@ -16,9 +16,71 @@ import { FullLoading } from "@components/Loading"
 import { RenderBlock } from "@components/RenderBlock"
 import { NotionListBlock } from "../../components/ListBlock"
 
+// Minimal type for related posts - only includes what's needed for display
+export interface MinimalRelatedPost {
+  id: string
+  properties: {
+    Page: { title: Array<{ 
+      plain_text: string
+      type?: string
+      annotations?: {
+        bold?: boolean
+        italic?: boolean
+        strikethrough?: boolean
+        underline?: boolean
+        code?: boolean
+        color?: string
+      }
+      text?: {
+        content: string
+        link?: { url: string }
+      }
+      href?: string
+    }> }
+    Slug: { rich_text: Array<{ 
+      plain_text: string
+      type?: string
+      annotations?: {
+        bold?: boolean
+        italic?: boolean
+        strikethrough?: boolean
+        underline?: boolean
+        code?: boolean
+        color?: string
+      }
+      text?: {
+        content: string
+        link?: { url: string }
+      }
+      href?: string
+    }> }
+    Description: { rich_text: Array<{ 
+      plain_text: string
+      type?: string
+      annotations?: {
+        bold?: boolean
+        italic?: boolean
+        strikethrough?: boolean
+        underline?: boolean
+        code?: boolean
+        color?: string
+      }
+      text?: {
+        content: string
+        link?: { url: string }
+      }
+      href?: string
+    }> }
+    Date: { date: { start: string } }
+    Authors: { people: Array<{ name: string; avatar_url: string | null }> }
+    Category: { select: { name?: string } | null }
+    Community: { checkbox: boolean }
+  }
+}
+
 export interface Props {
   page: PostProps
-  relatedPosts: PostProps[]
+  relatedPosts: MinimalRelatedPost[]
   blocks: Block[]
 }
 
@@ -56,7 +118,7 @@ const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [],
-    fallback: true,
+    fallback: 'blocking',
   }
 }
 
@@ -83,7 +145,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   })
 
   const category = post?.properties.Category?.select?.name
-  const relatedPosts = (
+  const relatedPostsFull = (
     category != null
       ? posts.filter(
           (post) =>
@@ -93,6 +155,25 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
         )
       : []
   ).slice(0, 2)
+
+  // Minimize related posts data - only include what's needed for display
+  const relatedPosts: MinimalRelatedPost[] = relatedPostsFull.map((post) => ({
+    id: post.id,
+    properties: {
+      Page: post.properties.Page,
+      Slug: post.properties.Slug,
+      Description: post.properties.Description,
+      Date: post.properties.Date,
+      Authors: {
+        people: post.properties.Authors.people.map((person) => ({
+          name: person.name,
+          avatar_url: person.avatar_url,
+        })),
+      },
+      Category: post.properties.Category,
+      Community: post.properties.Community,
+    },
+  }))
 
   if (post == null) {
     return {

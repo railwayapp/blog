@@ -77,6 +77,216 @@ export const getBlocks = async (blockId: string) => {
   return results
 }
 
+/**
+ * Minimize rich text by only keeping annotations that have actual formatting
+ */
+function minimizeRichText(richText: any[]): any[] {
+  if (!richText || !Array.isArray(richText)) return richText
+  
+  return richText.map(text => {
+    const { plain_text, annotations, text: textObj, href } = text
+    
+    // Only include annotations if there's actual formatting
+    const hasFormatting = annotations && (
+      annotations.bold ||
+      annotations.italic ||
+      annotations.strikethrough ||
+      annotations.underline ||
+      annotations.code ||
+      (annotations.color && annotations.color !== 'default')
+    )
+    
+    const minimized: any = {
+      plain_text,
+      type: text.type || 'text'
+    }
+    
+    // Only include annotations if there's formatting
+    if (hasFormatting) {
+      minimized.annotations = {
+        bold: annotations.bold || false,
+        italic: annotations.italic || false,
+        strikethrough: annotations.strikethrough || false,
+        underline: annotations.underline || false,
+        code: annotations.code || false,
+        color: annotations.color || 'default'
+      }
+    }
+    
+    // Only include text object if it has content or a link
+    if (textObj) {
+      if (textObj.content || textObj.link) {
+        minimized.text = {
+          content: textObj.content || '',
+          ...(textObj.link ? { link: { url: textObj.link.url } } : {})
+        }
+      }
+    }
+    
+    // Include href if present
+    if (href) {
+      minimized.href = href
+    }
+    
+    return minimized
+  })
+}
+
+/**
+ * Minimize a block by stripping unnecessary metadata
+ */
+function minimizeBlock(block: Block): any {
+  const { id, type, has_children } = block
+  const blockData = block[type as keyof Block] as any
+  
+  const minimized: any = {
+    id,
+    type,
+    has_children
+  }
+  
+  // Minimize based on block type - only include what's needed for rendering
+  switch (type) {
+    case 'paragraph':
+    case 'heading_1':
+    case 'heading_2':
+    case 'heading_3':
+      minimized[type] = {
+        text: minimizeRichText(blockData.text),
+        ...(blockData.children && blockData.children.length > 0
+          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+          : {})
+      }
+      break
+      
+    case 'quote':
+      minimized[type] = {
+        text: minimizeRichText(blockData.text),
+        ...(blockData.children && blockData.children.length > 0
+          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+          : {})
+      }
+      break
+      
+    case 'bulleted_list_item':
+    case 'numbered_list_item':
+      minimized[type] = {
+        text: minimizeRichText(blockData.text),
+        ...(blockData.children && blockData.children.length > 0
+          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+          : {})
+      }
+      break
+      
+    case 'callout':
+      minimized[type] = {
+        text: minimizeRichText(blockData.text),
+        icon: blockData.icon ? {
+          emoji: blockData.icon.emoji,
+          type: blockData.icon.type
+        } : undefined,
+        ...(blockData.children && blockData.children.length > 0
+          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+          : {})
+      }
+      break
+      
+    case 'image':
+    case 'video':
+      minimized[type] = {
+        type: blockData.type,
+        ...(blockData.type === 'external'
+          ? { external: { url: blockData.external.url } }
+          : {
+              file: {
+                url: blockData.file.url,
+                expiry_time: blockData.file.expiry_time
+              }
+            }),
+        ...(blockData.caption && blockData.caption.length > 0
+          ? { caption: minimizeRichText(blockData.caption) }
+          : {})
+      }
+      break
+      
+    case 'code':
+      minimized[type] = {
+        text: blockData.text ? minimizeRichText(blockData.text) : [],
+        language: blockData.language || 'plain text',
+        ...(blockData.caption && blockData.caption.length > 0
+          ? { caption: minimizeRichText(blockData.caption) }
+          : {})
+      }
+      break
+      
+    case 'divider':
+      // Divider has no content
+      minimized[type] = {}
+      break
+      
+    case 'embed':
+      minimized[type] = {
+        url: blockData.url,
+        ...(blockData.caption && blockData.caption.length > 0
+          ? { caption: minimizeRichText(blockData.caption) }
+          : {})
+      }
+      break
+      
+    case 'table':
+      minimized[type] = {
+        has_column_header: blockData.has_column_header || false,
+        has_row_header: blockData.has_row_header || false,
+        ...(blockData.children && blockData.children.length > 0
+          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+          : {})
+      }
+      break
+      
+    case 'table_row':
+      minimized[type] = {
+        cells: blockData.cells ? blockData.cells.map((cell: any[]) => minimizeRichText(cell)) : []
+      }
+      break
+      
+    case 'column_list':
+      minimized[type] = {
+        children: blockData.children ? blockData.children.map((child: Block) => minimizeBlock(child)) : []
+      }
+      break
+      
+    case 'column':
+      // Column blocks can have either 'children' or 'column' property
+      if (blockData.column) {
+        minimized[type] = {
+          column: blockData.column.map((child: Block) => minimizeBlock(child))
+        }
+      } else if (blockData.children) {
+        minimized[type] = {
+          children: blockData.children.map((child: Block) => minimizeBlock(child))
+        }
+      } else {
+        minimized[type] = {}
+      }
+      break
+      
+    default:
+      // For unknown types, try to minimize text if present
+      if (blockData.text) {
+        minimized[type] = {
+          text: minimizeRichText(blockData.text),
+          ...(blockData.children && blockData.children.length > 0
+            ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+            : {})
+        }
+      } else {
+        minimized[type] = blockData
+      }
+  }
+  
+  return minimized
+}
+
 export const mapDatabaseToPaths = (database: PostProps[]) => {
   return database.map((item) => {
     return { params: { slug: item.properties.Slug.rich_text[0].plain_text } }
@@ -89,6 +299,8 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
 
   const parsedBlocks = []
   for (const block of blocks) {
+    let parsedBlock: Block
+    
     // @ts-ignore: Current client version does not support `column_list` but API does
     if (block.type === "column_list") {
       const typedBlock = block as unknown as Block
@@ -100,35 +312,30 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
         }))
       )
 
-      const parsedBlock = {
+      parsedBlock = {
         ...typedBlock,
         [typedBlock.type]: {
           ...typedBlock[typedBlock.type],
           children: columnData,
         },
-      }
+      } as Block
 
-      parsedBlocks.push(parsedBlock)
-
-      continue
-    }
-
-    if (block.has_children && !block[block.type].children) {
+    } else if (block.has_children && !block[block.type as keyof Block]?.children) {
       const childBlocks = await getBlocks(block.id)
 
-      const parsedBlock = {
+      parsedBlock = {
         ...block,
         [block.type]: {
-          ...block[block.type],
+          ...block[block.type as keyof Block],
           children: childBlocks,
         },
-      }
-      
-      parsedBlocks.push(parsedBlock)
-      continue
+      } as Block
+    } else {
+      parsedBlock = block
     }
-
-    parsedBlocks.push(block)
+    
+    // Minimize the block before adding to reduce serialized size
+    parsedBlocks.push(minimizeBlock(parsedBlock))
   }
 
   return { page, blocks: parsedBlocks }

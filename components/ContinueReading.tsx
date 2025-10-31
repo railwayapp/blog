@@ -7,8 +7,70 @@ import Link from "./Link"
 import { NotionText } from "./NotionText"
 import { PostCategory } from "./PostCategory"
 
+// Minimal type matching what's serialized
+interface MinimalRelatedPost {
+  id: string
+  properties: {
+    Page: { title: Array<{ 
+      plain_text: string
+      type?: string
+      annotations?: {
+        bold?: boolean
+        italic?: boolean
+        strikethrough?: boolean
+        underline?: boolean
+        code?: boolean
+        color?: string
+      }
+      text?: {
+        content: string
+        link?: { url: string }
+      }
+      href?: string
+    }> }
+    Slug: { rich_text: Array<{ 
+      plain_text: string
+      type?: string
+      annotations?: {
+        bold?: boolean
+        italic?: boolean
+        strikethrough?: boolean
+        underline?: boolean
+        code?: boolean
+        color?: string
+      }
+      text?: {
+        content: string
+        link?: { url: string }
+      }
+      href?: string
+    }> }
+    Description: { rich_text: Array<{ 
+      plain_text: string
+      type?: string
+      annotations?: {
+        bold?: boolean
+        italic?: boolean
+        strikethrough?: boolean
+        underline?: boolean
+        code?: boolean
+        color?: string
+      }
+      text?: {
+        content: string
+        link?: { url: string }
+      }
+      href?: string
+    }> }
+    Date: { date: { start: string } }
+    Authors: { people: Array<{ name: string; avatar_url: string | null }> }
+    Category: { select: { name?: string } | null }
+    Community: { checkbox: boolean }
+  }
+}
+
 export const ContinueReading: React.FC<{
-  posts: PostProps[]
+  posts: MinimalRelatedPost[]
   category: string
 }> = ({ posts, category }) => {
   const displayCategory = category === "Guide" ? "Guides" : category
@@ -36,7 +98,7 @@ export const ContinueReading: React.FC<{
   )
 }
 
-const RelatedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
+const RelatedPostItem: React.FC<{ post: MinimalRelatedPost }> = ({ post }) => {
   const formattedDate = useMemo(
     () =>
       dayjs(new Date(post.properties.Date.date.start)).format("MMM D, YYYY"),
@@ -56,11 +118,11 @@ const RelatedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
 
       <div className="flex-grow">
         <header className="font-bold text-lg mt-2 mb-1">
-          <NotionText text={post.properties.Page.title} noLinks />
+          <NotionText text={post.properties.Page.title as any} noLinks />
         </header>
 
         <p className="text-base text-gray-800 line-clamp-2">
-          <NotionText text={post.properties.Description.rich_text} noLinks />
+          <NotionText text={post.properties.Description.rich_text as any} noLinks />
         </p>
       </div>
 
