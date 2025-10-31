@@ -135,7 +135,7 @@ function minimizeRichText(richText: any[]): any[] {
 /**
  * Minimize a block by stripping unnecessary metadata
  */
-function minimizeBlock(block: Block): any {
+function minimizeBlock(block: Block | any): any {
   const { id, type, has_children } = block
   const blockData = block[type as keyof Block] as any
   
@@ -146,142 +146,117 @@ function minimizeBlock(block: Block): any {
   }
   
   // Minimize based on block type - only include what's needed for rendering
-  switch (type) {
-    case 'paragraph':
-    case 'heading_1':
-    case 'heading_2':
-    case 'heading_3':
+  // Use string comparison instead of switch to handle all block types
+  const blockType = type as string
+  
+  if (blockType === 'paragraph' || blockType === 'heading_1' || blockType === 'heading_2' || blockType === 'heading_3') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'quote') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'bulleted_list_item' || blockType === 'numbered_list_item') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'callout') {
+    minimized[type] = {
+      text: minimizeRichText(blockData.text),
+      icon: blockData.icon ? {
+        emoji: blockData.icon.emoji,
+        type: blockData.icon.type
+      } : undefined,
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'image' || blockType === 'video') {
+    minimized[type] = {
+      type: blockData.type,
+      ...(blockData.type === 'external'
+        ? { external: { url: blockData.external.url } }
+        : {
+            file: {
+              url: blockData.file.url,
+              expiry_time: blockData.file.expiry_time
+            }
+          }),
+      ...(blockData.caption && blockData.caption.length > 0
+        ? { caption: minimizeRichText(blockData.caption) }
+        : {})
+    }
+  } else if (blockType === 'code') {
+    minimized[type] = {
+      text: blockData.text ? minimizeRichText(blockData.text) : [],
+      language: blockData.language || 'plain text',
+      ...(blockData.caption && blockData.caption.length > 0
+        ? { caption: minimizeRichText(blockData.caption) }
+        : {})
+    }
+  } else if (blockType === 'divider') {
+    // Divider has no content
+    minimized[type] = {}
+  } else if (blockType === 'embed') {
+    minimized[type] = {
+      url: blockData.url,
+      ...(blockData.caption && blockData.caption.length > 0
+        ? { caption: minimizeRichText(blockData.caption) }
+        : {})
+    }
+  } else if (blockType === 'table') {
+    minimized[type] = {
+      has_column_header: blockData.has_column_header || false,
+      has_row_header: blockData.has_row_header || false,
+      ...(blockData.children && blockData.children.length > 0
+        ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
+        : {})
+    }
+  } else if (blockType === 'table_row') {
+    minimized[type] = {
+      cells: blockData.cells ? blockData.cells.map((cell: any[]) => minimizeRichText(cell)) : []
+    }
+  } else if (blockType === 'column_list') {
+    minimized[type] = {
+      children: blockData.children ? blockData.children.map((child: Block | any) => minimizeBlock(child)) : []
+    }
+  } else if (blockType === 'column') {
+    // Column blocks can have either 'children' or 'column' property
+    if (blockData.column) {
       minimized[type] = {
-        text: minimizeRichText(blockData.text),
-        ...(blockData.children && blockData.children.length > 0
-          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
-          : {})
+        column: blockData.column.map((child: Block | any) => minimizeBlock(child))
       }
-      break
-      
-    case 'quote':
+    } else if (blockData.children) {
       minimized[type] = {
-        text: minimizeRichText(blockData.text),
-        ...(blockData.children && blockData.children.length > 0
-          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
-          : {})
+        children: blockData.children.map((child: Block | any) => minimizeBlock(child))
       }
-      break
-      
-    case 'bulleted_list_item':
-    case 'numbered_list_item':
-      minimized[type] = {
-        text: minimizeRichText(blockData.text),
-        ...(blockData.children && blockData.children.length > 0
-          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
-          : {})
-      }
-      break
-      
-    case 'callout':
-      minimized[type] = {
-        text: minimizeRichText(blockData.text),
-        icon: blockData.icon ? {
-          emoji: blockData.icon.emoji,
-          type: blockData.icon.type
-        } : undefined,
-        ...(blockData.children && blockData.children.length > 0
-          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
-          : {})
-      }
-      break
-      
-    case 'image':
-    case 'video':
-      minimized[type] = {
-        type: blockData.type,
-        ...(blockData.type === 'external'
-          ? { external: { url: blockData.external.url } }
-          : {
-              file: {
-                url: blockData.file.url,
-                expiry_time: blockData.file.expiry_time
-              }
-            }),
-        ...(blockData.caption && blockData.caption.length > 0
-          ? { caption: minimizeRichText(blockData.caption) }
-          : {})
-      }
-      break
-      
-    case 'code':
-      minimized[type] = {
-        text: blockData.text ? minimizeRichText(blockData.text) : [],
-        language: blockData.language || 'plain text',
-        ...(blockData.caption && blockData.caption.length > 0
-          ? { caption: minimizeRichText(blockData.caption) }
-          : {})
-      }
-      break
-      
-    case 'divider':
-      // Divider has no content
+    } else {
       minimized[type] = {}
-      break
-      
-    case 'embed':
+    }
+  } else {
+    // For unknown types, try to minimize text if present
+    if (blockData && blockData.text) {
       minimized[type] = {
-        url: blockData.url,
-        ...(blockData.caption && blockData.caption.length > 0
-          ? { caption: minimizeRichText(blockData.caption) }
-          : {})
-      }
-      break
-      
-    case 'table':
-      minimized[type] = {
-        has_column_header: blockData.has_column_header || false,
-        has_row_header: blockData.has_row_header || false,
+        text: minimizeRichText(blockData.text),
         ...(blockData.children && blockData.children.length > 0
-          ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
+          ? { children: blockData.children.map((child: Block | any) => minimizeBlock(child)) }
           : {})
       }
-      break
-      
-    case 'table_row':
-      minimized[type] = {
-        cells: blockData.cells ? blockData.cells.map((cell: any[]) => minimizeRichText(cell)) : []
-      }
-      break
-      
-    case 'column_list':
-      minimized[type] = {
-        children: blockData.children ? blockData.children.map((child: Block) => minimizeBlock(child)) : []
-      }
-      break
-      
-    case 'column':
-      // Column blocks can have either 'children' or 'column' property
-      if (blockData.column) {
-        minimized[type] = {
-          column: blockData.column.map((child: Block) => minimizeBlock(child))
-        }
-      } else if (blockData.children) {
-        minimized[type] = {
-          children: blockData.children.map((child: Block) => minimizeBlock(child))
-        }
-      } else {
-        minimized[type] = {}
-      }
-      break
-      
-    default:
-      // For unknown types, try to minimize text if present
-      if (blockData.text) {
-        minimized[type] = {
-          text: minimizeRichText(blockData.text),
-          ...(blockData.children && blockData.children.length > 0
-            ? { children: blockData.children.map((child: Block) => minimizeBlock(child)) }
-            : {})
-        }
-      } else {
-        minimized[type] = blockData
-      }
+    } else if (blockData) {
+      minimized[type] = blockData
+    } else {
+      minimized[type] = {}
+    }
   }
   
   return minimized
@@ -320,13 +295,13 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
         },
       } as Block
 
-    } else if (block.has_children && !block[block.type as keyof Block]?.children) {
+    } else if (block.has_children && !(block[block.type as keyof Block] as any)?.children) {
       const childBlocks = await getBlocks(block.id)
 
       parsedBlock = {
         ...block,
         [block.type]: {
-          ...block[block.type as keyof Block],
+          ...(block[block.type as keyof Block] as any),
           children: childBlocks,
         },
       } as Block
