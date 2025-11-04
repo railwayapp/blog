@@ -53,19 +53,29 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
   const breadcrumbSchema = post ? generateBreadcrumbSchema(post, fullUrl) : null
   const faqSchema = blocks ? generateFAQSchema(extractFAQs(blocks)) : null
 
+  const publishedTime = post?.properties.Date.date?.start
+  const modifiedTime = post?.properties.Date.date?.start // Using same as published for now
+  const postAuthor = author || post?.properties.Authors.people[0]?.name
+  const section = post?.properties.Category?.select?.name
+  const postImage = image || post?.properties.Image?.url
+
   return (
     <>
       <DefaultSeo {...config} />
 
       <NextSeo
         {...props}
-        {...(image == null
+        canonical={fullUrl}
+        {...(postImage == null
           ? {}
           : {
               openGraph: {
-                images: [{ url: image }],
+                images: [{ url: postImage }],
                 article: {
-                  authors: [author],
+                  authors: [postAuthor],
+                  publishedTime: publishedTime,
+                  modifiedTime: modifiedTime,
+                  section: section,
                 },
               },
             })}
@@ -76,7 +86,21 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
 
         <meta name="description" content={description} />
 
-        {/* JSON-LD Schema */}
+        <link rel="canonical" href={fullUrl} />
+
+        {publishedTime && (
+          <meta property="article:published_time" content={publishedTime} />
+        )}
+        {modifiedTime && (
+          <meta property="article:modified_time" content={modifiedTime} />
+        )}
+        {postAuthor && (
+          <meta property="article:author" content={postAuthor} />
+        )}
+        {section && (
+          <meta property="article:section" content={section} />
+        )}
+
         {blogPostSchema && (
           <script
             type="application/ld+json"
@@ -84,7 +108,6 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
           />
         )}
 
-        {/* Breadcrumb Schema */}
         {breadcrumbSchema && (
           <script
             type="application/ld+json"
@@ -92,7 +115,6 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
           />
         )}
 
-        {/* FAQ Schema */}
         {faqSchema && (
           <script
             type="application/ld+json"
