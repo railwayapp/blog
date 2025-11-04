@@ -37,7 +37,7 @@ const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
   }
 
   return (
-    <PostPage post={page} relatedPosts={relatedPosts}>
+    <PostPage post={page} relatedPosts={relatedPosts} blocks={blocks}>
       {blocks.map((block) => {
         if ((block as ListBlock).items != null) {
           return <NotionListBlock key={block.id} block={block as ListBlock} />

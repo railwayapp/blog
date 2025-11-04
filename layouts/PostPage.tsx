@@ -1,6 +1,7 @@
 import { NotionText } from "@components/NotionText"
 import Page from "@layouts/Page"
-import { PostProps, MinimalRelatedPost } from "@lib/types"
+import { PostProps, MinimalRelatedPost, ListBlock } from "@lib/types"
+import { Block } from "@notionhq/client/build/src/api-types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
 import { BottomCTA } from "../components/BottomCTA"
@@ -8,14 +9,17 @@ import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
 import { cn } from "../utils"
+import { extractTableOfContents, HiddenTableOfContents } from "@lib/seo-components"
+import { url } from "@components/Seo"
 
 export interface Props {
   post: PostProps
   relatedPosts: MinimalRelatedPost[]
+  blocks?: (Block | ListBlock)[]
   children?: React.ReactNode
 }
 
-export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
+export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children }) => {
   const formattedDate = useMemo(
     () => dayjs(post.properties.Date.date.start).format("MMM D, YYYY"),
     [post.properties.Date.date.start]
@@ -30,6 +34,15 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
   const authorExists = author != null && author.name != null
 
   const category = post.properties.Category?.select?.name
+  const slug = post.properties.Slug.rich_text[0]?.plain_text || ""
+  const currentUrl = `${url}/p/${slug}`
+
+  const tableOfContents = useMemo(() => {
+    if (!blocks) return []
+    // Filter out ListBlock types and only process Block types
+    const blockOnly = blocks.filter((b): b is Block => 'type' in b && 'id' in b && 'has_children' in b)
+    return extractTableOfContents(blockOnly)
+  }, [blocks])
 
   return (
     <Page
@@ -38,6 +51,9 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
         description: post.properties.Description.rich_text[0].plain_text,
         image: ogImage,
         author: author?.name,
+        post,
+        blocks: blocks?.filter((b): b is Block => 'type' in b && 'id' in b && 'has_children' in b),
+        currentUrl,
       }}
     >
       <div className="mt-10 mb-5 px-5 md:px-8 mx-auto">
@@ -75,6 +91,8 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, children }) => {
           </header>
 
           <section className="max-w-[736px] mx-auto text-base sm:text-lg leading-8">
+            {/* Hidden table of contents for SEO */}
+            <HiddenTableOfContents items={tableOfContents} />
             {children}
           </section>
         </article>
