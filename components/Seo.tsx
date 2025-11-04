@@ -1,12 +1,23 @@
 import { DefaultSeo, NextSeo, NextSeoProps } from "next-seo"
 import Head from "next/head"
 import { DefaultSeoProps } from "next-seo"
+import {
+  generateBlogPostSchema,
+  generateBreadcrumbSchema,
+  generateFAQSchema,
+  extractFAQs,
+} from "@lib/seo-components"
+import { PostProps } from "@lib/types"
+import { Block } from "@notionhq/client/build/src/api-types"
 
 export interface Props extends NextSeoProps {
   title?: string
   description?: string
   image?: string
   author?: string
+  post?: PostProps
+  blocks?: Block[]
+  currentUrl?: string
 }
 
 const title = "Railway Blog"
@@ -33,9 +44,20 @@ const config: DefaultSeoProps = {
   },
 }
 
-const SEO: React.FC<Props> = ({ image, author, ...props }) => {
+const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...props }) => {
   const title = props.title ?? config.title
   const description = props.description || config.description
+  const fullUrl = currentUrl || url
+
+  const blogPostSchema = post ? generateBlogPostSchema(post, fullUrl) : null
+  const breadcrumbSchema = post ? generateBreadcrumbSchema(post, fullUrl) : null
+  const faqSchema = blocks ? generateFAQSchema(extractFAQs(blocks)) : null
+
+  const publishedTime = post?.properties.Date.date?.start
+  const modifiedTime = post?.properties.Date.date?.start // Using same as published for now
+  const postAuthor = author || post?.properties.Authors.people[0]?.name
+  const section = post?.properties.Category?.select?.name
+  const postImage = image || post?.properties.Image?.url
 
   return (
     <>
@@ -43,13 +65,17 @@ const SEO: React.FC<Props> = ({ image, author, ...props }) => {
 
       <NextSeo
         {...props}
-        {...(image == null
+        canonical={fullUrl}
+        {...(postImage == null
           ? {}
           : {
               openGraph: {
-                images: [{ url: image }],
+                images: [{ url: postImage }],
                 article: {
-                  authors: [author],
+                  authors: [postAuthor],
+                  publishedTime: publishedTime,
+                  modifiedTime: modifiedTime,
+                  section: section,
                 },
               },
             })}
@@ -59,6 +85,42 @@ const SEO: React.FC<Props> = ({ image, author, ...props }) => {
         <title>{title}</title>
 
         <meta name="description" content={description} />
+
+        <link rel="canonical" href={fullUrl} />
+
+        {publishedTime && (
+          <meta property="article:published_time" content={publishedTime} />
+        )}
+        {modifiedTime && (
+          <meta property="article:modified_time" content={modifiedTime} />
+        )}
+        {postAuthor && (
+          <meta property="article:author" content={postAuthor} />
+        )}
+        {section && (
+          <meta property="article:section" content={section} />
+        )}
+
+        {blogPostSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostSchema) }}
+          />
+        )}
+
+        {breadcrumbSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          />
+        )}
+
+        {faqSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          />
+        )}
       </Head>
     </>
   )
