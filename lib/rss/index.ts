@@ -22,10 +22,12 @@ export const generateRssFeed = (posts: PostProps[]) => {
       rss2: `${baseUrl}/rss.xml`,
     },
     author,
-    copyright: "Copyright © 2022 Railway Corp.",
+    copyright: "Copyright © 2025 Railway Corp.",
   })
 
-  posts.forEach((post) => {
+  const featuredPosts = posts.filter((post) => post.properties.Featured.checkbox)
+
+  featuredPosts.forEach((post) => {
     const url = baseUrl + "/p/" + post.properties.Slug.rich_text[0].plain_text
     feed.addItem({
       title: post.properties.Page.title[0].plain_text,
