@@ -27,7 +27,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const posts = await getDatabase(process.env.POSTS_TABLE_ID)
 
-  generateRssFeed(posts)
+  await generateRssFeed(posts)
 
   return {
     props: { posts },
