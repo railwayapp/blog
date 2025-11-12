@@ -127,9 +127,9 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       
       case "image": {
         const { source, caption } = getMediaProperties(value as FileWithCaption | ExternalFileWithCaption)
-        const captionHtml = caption ? `<p style="margin-top: 0.75rem; color: #4b5563; font-size: 0.875rem;">${caption}</p>` : ""
-        html += `<figure style="margin: 1rem 0;">
-          <img src="${source}" alt="${caption || ""}" style="width: 100%; height: auto; border-radius: 0.25rem;" />
+        const captionHtml = caption ? `<figcaption style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem; font-style: italic; text-align: center; line-height: 1.5;">${caption}</figcaption>` : ""
+        html += `<figure style="margin: 2rem 0;">
+          <img src="${source}" alt="${caption || ""}" style="width: 100%; height: auto; border-radius: 0.5rem; display: block;" />
           ${captionHtml}
         </figure>`
         break
@@ -144,7 +144,7 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#39;")
-        html += `<pre style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.25rem; overflow-x: auto; margin: 1rem 0;"><code>${escapedCode}</code></pre>`
+        html += `<pre style="background-color: #f3f4f6; padding: 1.25rem 1.5rem; border-radius: 0.5rem; overflow-x: auto; margin: 2rem 0; border: 1px solid #e5e7eb; line-height: 1.6; font-size: 0.875rem; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;"><code style="color: #1f2937; white-space: pre;">${escapedCode}</code></pre>`
         break
       }
       
@@ -156,18 +156,18 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       case "video": {
         const { source, caption } = getMediaProperties(value as FileWithCaption | ExternalFileWithCaption)
         const youtubeId = extractYoutubeId(source)
-        const captionHtml = caption ? `<p style="margin-top: 0.5rem; color: #6b7280; font-size: 0.875rem;">${caption}</p>` : ""
+        const captionHtml = caption ? `<figcaption style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem; font-style: italic; text-align: center; line-height: 1.5;">${caption}</figcaption>` : ""
         
         if (youtubeId) {
-          html += `<div style="margin: 2rem 0;">
-            <iframe src="https://youtube.com/embed/${youtubeId}" style="width: 100%; height: 550px; border-radius: 0.5rem;" frameborder="0" allowfullscreen></iframe>
+          html += `<figure style="margin: 2rem 0;">
+            <iframe src="https://youtube.com/embed/${youtubeId}" style="width: 100%; height: 550px; border-radius: 0.5rem; display: block;" frameborder="0" allowfullscreen></iframe>
             ${captionHtml}
-          </div>`
+          </figure>`
         } else {
-          html += `<div style="margin: 2rem 0;">
-            <video src="${source}" controls style="width: 100%; border-radius: 0.5rem;"></video>
+          html += `<figure style="margin: 2rem 0;">
+            <video src="${source}" controls style="width: 100%; border-radius: 0.5rem; display: block;"></video>
             ${captionHtml}
-          </div>`
+          </figure>`
         }
         break
       }
