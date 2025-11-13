@@ -215,12 +215,32 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
         }
         
         // Filter to only table_row blocks and extract their row data
+        // Handle both minimized and full block structures
         const tableRows = value.children
           .filter((child: any) => child.type === "table_row")
-          .map((child: any) => ({
-            id: child.id,
-            row: child.table_row || child,
-          }))
+          .map((child: any) => {
+            // After minimization, the structure is child.table_row.cells
+            // But we need to handle cases where it might be structured differently
+            let cells: any[] = []
+            
+            if (child.table_row) {
+              // Full or minimized structure with table_row property
+              cells = child.table_row.cells || []
+            } else if (child.cells) {
+              // Direct cells property (shouldn't happen but handle it)
+              cells = child.cells || []
+            }
+            
+            // Ensure cells is an array
+            if (!Array.isArray(cells)) {
+              cells = []
+            }
+            
+            return {
+              id: child.id,
+              cells: cells,
+            }
+          })
         
         if (tableRows.length === 0) {
           break
@@ -235,7 +255,7 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
             ${columnHeaders ? `
               <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                 <tr>
-                  ${(columnHeaders.row?.cells || []).map((cell: any[]) => 
+                  ${(columnHeaders.cells || []).map((cell: any[]) => 
                     `<th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; border: 1px solid #e5e7eb;">${richTextToHtml(cell)}</th>`
                   ).join("")}
                 </tr>
@@ -244,7 +264,7 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
             <tbody>
               ${dataRows.map((rowData: any) => `
                 <tr style="border-bottom: 1px solid #e5e7eb;">
-                  ${(rowData.row?.cells || []).map((cell: any[]) => 
+                  ${(rowData.cells || []).map((cell: any[]) => 
                     `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb; color: #1f2937;">${richTextToHtml(cell)}</td>`
                   ).join("")}
                 </tr>
@@ -363,7 +383,9 @@ export const generateRssFeed = async (posts: PostProps[]) => {
   const featuredPosts = posts.filter((post) => post.properties.Featured.checkbox)
 
   // Process each post to get full content
-  for (const post of featuredPosts) {
+  // TODO: Remove .slice() for production - this is for testing only
+  // for (const post of featuredPosts) {
+  for (const post of featuredPosts.slice(0, 3)) {
     const url = baseUrl + "/p/" + post.properties.Slug.rich_text[0].plain_text
     
     try {
@@ -422,17 +444,17 @@ export const generateRssFeed = async (posts: PostProps[]) => {
     } catch (error) {
       console.error(`Error processing post ${post.id}:`, error)
       // Fallback to description-only if content fetch fails
-      feed.addItem({
-        title: post.properties.Page.title[0].plain_text,
-        description: post.properties.Description.rich_text[0].plain_text,
-        id: url,
-        link: url,
-        date: new Date(post.properties.Date.date.start),
+    feed.addItem({
+      title: post.properties.Page.title[0].plain_text,
+      description: post.properties.Description.rich_text[0].plain_text,
+      id: url,
+      link: url,
+      date: new Date(post.properties.Date.date.start),
         category: [
           { name: "railway" },
           { name: "cloud" },
         ],
-      })
+    })
     }
   }
 
