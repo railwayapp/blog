@@ -336,19 +336,13 @@ export const generateRssFeed = async (posts: PostProps[]) => {
       // Get featured image if available
       const featuredImage = post.properties.FeaturedImage?.url || post.properties.Image?.url
       
-      // Build full content with image and description
+      // Build full content with image
       let fullContent = ""
       
       if (featuredImage) {
         fullContent += `<figure style="margin: 0 0 2rem 0;">
           <img src="${featuredImage}" alt="${post.properties.Page.title[0].plain_text}" style="width: 100%; height: auto; border-radius: 0.5rem;" />
         </figure>`
-      }
-      
-      // Add description as intro
-      const description = post.properties.Description.rich_text[0]?.plain_text || ""
-      if (description) {
-        fullContent += `<p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 2rem; line-height: 1.75;">${description}</p>`
       }
       
       // Add full content
@@ -362,17 +356,25 @@ export const generateRssFeed = async (posts: PostProps[]) => {
         link: url,
         date: new Date(post.properties.Date.date.start),
         image: featuredImage ? featuredImage : undefined,
+        category: [
+          { name: "railway" },
+          { name: "cloud" },
+        ],
       })
     } catch (error) {
       console.error(`Error processing post ${post.id}:`, error)
       // Fallback to description-only if content fetch fails
-    feed.addItem({
-      title: post.properties.Page.title[0].plain_text,
-      description: post.properties.Description.rich_text[0].plain_text,
-      id: url,
-      link: url,
-      date: new Date(post.properties.Date.date.start),
-    })
+      feed.addItem({
+        title: post.properties.Page.title[0].plain_text,
+        description: post.properties.Description.rich_text[0].plain_text,
+        id: url,
+        link: url,
+        date: new Date(post.properties.Date.date.start),
+        category: [
+          { name: "railway" },
+          { name: "cloud" },
+        ],
+      })
     }
   }
 
