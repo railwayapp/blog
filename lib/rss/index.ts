@@ -379,8 +379,23 @@ export const generateRssFeed = async (posts: PostProps[]) => {
       // Get featured image if available
       const featuredImage = post.properties.FeaturedImage?.url || post.properties.Image?.url
       
-      // Build full content with image
+      // Get author name
+      const author = post.properties.Authors.people[0]
+      const authorName = author?.name || ""
+      
+      // Build full content with author, image, and content
       let fullContent = ""
+      
+      // Add author line at the beginning
+      if (authorName) {
+        const escapedAuthorName = authorName
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;")
+        fullContent += `<p style="font-style: italic; margin-bottom: 1.5rem; color: #6b7280;">Author: ${escapedAuthorName}</p>`
+      }
       
       if (featuredImage) {
         fullContent += `<figure style="margin: 0 0 2rem 0;">
