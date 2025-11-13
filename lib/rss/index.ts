@@ -209,16 +209,60 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       }
       
       case "table": {
-        // Tables are complex, so we'll render a simple version
-        html += `<table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
-          ${value?.children ? value.children.map((row: any, rowIdx: number) => {
-            const isHeader = rowIdx === 0 && value?.has_column_header
-            const Tag = isHeader ? "th" : "td"
-            return `<tr>${row.cells?.map((cell: any[]) => 
-              `<${Tag} style="padding: 0.5rem; border: 1px solid #e5e7eb;">${richTextToHtml(cell)}</${Tag}>`
-            ).join("") || ""}</tr>`
-          }).join("") : ""}
-        </table>`
+        // Tables have children that are table_row blocks
+        if (!value?.children || value.children.length === 0) {
+          break
+        }
+        
+        // Filter to only table_row blocks and extract their row data
+        const tableRows = value.children
+          .filter((child: any) => child.type === "table_row")
+          .map((child: any) => ({
+            id: child.id,
+            row: child.table_row || child,
+          }))
+        
+        if (tableRows.length === 0) {
+          break
+        }
+        
+        const hasColumnHeader = value?.has_column_header || false
+        const columnHeaders = hasColumnHeader ? tableRows[0] : null
+        const dataRows = hasColumnHeader ? tableRows.slice(1) : tableRows
+        
+        html += `<div style="overflow-x: auto; margin: 2rem 0;">
+          <table style="width: 100%; min-width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb;">
+            ${columnHeaders ? `
+              <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                <tr>
+                  ${(columnHeaders.row?.cells || []).map((cell: any[]) => 
+                    `<th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; border: 1px solid #e5e7eb;">${richTextToHtml(cell)}</th>`
+                  ).join("")}
+                </tr>
+              </thead>
+            ` : ""}
+            <tbody>
+              ${dataRows.map((rowData: any) => `
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                  ${(rowData.row?.cells || []).map((cell: any[]) => 
+                    `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb; color: #1f2937;">${richTextToHtml(cell)}</td>`
+                  ).join("")}
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>`
+        break
+      }
+      
+      case "table_row": {
+        // Table rows are handled within table blocks, but handle standalone if needed
+        const cells = value?.cells || []
+        html += `<tr>
+          ${cells.map((cell: any[]) => 
+            `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">${richTextToHtml(cell)}</td>`
+          ).join("")}
+        </tr>`
         break
       }
       
