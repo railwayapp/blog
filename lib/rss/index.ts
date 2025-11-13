@@ -46,6 +46,109 @@ function richTextToHtml(text: any[]): string {
 }
 
 /**
+ * Detect and convert markdown-style table to HTML table
+ */
+function convertMarkdownTable(text: string): string | null {
+  const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0)
+  
+  // Need at least 2 lines (header + separator or header + data)
+  if (lines.length < 2) return null
+  
+  // Check if all lines start with | and contain multiple |
+  const allLinesAreTableRows = lines.every(line => 
+    line.startsWith('|') && line.endsWith('|') && (line.match(/\|/g) || []).length >= 3
+  )
+  
+  if (!allLinesAreTableRows) return null
+  
+  // Check if there's a separator line (contains --- or similar)
+  const hasSeparator = lines.some(line => 
+    line.match(/^\|[\s\-:]+\|/) || line.match(/^[\|\s\-:]+$/)
+  )
+  
+  // Parse table rows
+  const rows: string[][] = []
+  let headerRow: string[] | null = null
+  let separatorIndex = -1
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    
+    // Check if this is a separator line
+    if (line.match(/^\|[\s\-:]+\|/) || line.match(/^[\|\s\-:]+$/)) {
+      separatorIndex = i
+      continue
+    }
+    
+    // Parse row cells - split by |, trim, and filter out empty strings
+    const cells = line.split('|')
+      .map(cell => cell.trim())
+      .filter(cell => cell.length > 0)
+    
+    if (cells.length === 0) continue
+    
+    if (separatorIndex === -1 && headerRow === null) {
+      // First row is header
+      headerRow = cells
+    } else if (separatorIndex !== -1 && i > separatorIndex) {
+      // Data rows after separator
+      rows.push(cells)
+    } else if (separatorIndex === -1) {
+      // No separator, treat first as header, rest as data
+      if (headerRow === null) {
+        headerRow = cells
+      } else {
+        rows.push(cells)
+      }
+    }
+  }
+  
+  // If we have a header and at least one data row, render as table
+  if (headerRow && rows.length > 0) {
+    // Ensure all rows have the same number of columns as header
+    const numCols = headerRow.length
+    const normalizedRows = rows.map(row => {
+      // Pad or truncate to match header length
+      while (row.length < numCols) row.push('')
+      return row.slice(0, numCols)
+    })
+    
+    // Escape cell content
+    const escapeCell = (cell: string) => {
+      return cell
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+    }
+    
+    return `<div style="overflow-x: auto; margin: 2rem 0;">
+      <table style="width: 100%; min-width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb;">
+        <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+          <tr>
+            ${headerRow.map(cell => 
+              `<th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; border: 1px solid #e5e7eb;">${escapeCell(cell)}</th>`
+            ).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${normalizedRows.map(row => `
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              ${row.map(cell => 
+                `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb; color: #1f2937;">${escapeCell(cell)}</td>`
+              ).join("")}
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>`
+  }
+  
+  return null
+}
+
+/**
  * Convert Notion blocks to HTML
  */
 function blocksToHtml(blocks: Block[], baseUrl: string): string {
@@ -62,8 +165,19 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
     
     switch (type) {
       case "paragraph": {
-        const textHtml = richTextToHtml(value.text || [])
-        html += `<p style="margin-bottom: 1rem; line-height: 2;">${textHtml}</p>`
+        // Get plain text to check for markdown tables
+        const plainText = (value.text || [])
+          .map((t: any) => t.plain_text || t.text?.content || "")
+          .join("")
+        
+        // Check if this paragraph is actually a markdown table
+        const markdownTable = convertMarkdownTable(plainText)
+        if (markdownTable) {
+          html += markdownTable
+        } else {
+          const textHtml = richTextToHtml(value.text || [])
+          html += `<p style="margin-bottom: 1rem; line-height: 2;">${textHtml}</p>`
+        }
         
         // Render children recursively
         if (block.has_children && value.children) {
