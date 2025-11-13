@@ -418,9 +418,7 @@ export const generateRssFeed = async (posts: PostProps[]) => {
   const featuredPosts = posts.filter((post) => post.properties.Featured.checkbox)
 
   // Process each post to get full content
-  // TODO: Remove .slice() for production - this is for testing only
-  // for (const post of featuredPosts) {
-  for (const post of featuredPosts.slice(0, 3)) {
+  for (const post of featuredPosts) {
     const url = baseUrl + "/p/" + post.properties.Slug.rich_text[0].plain_text
     
     try {
