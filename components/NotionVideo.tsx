@@ -11,6 +11,7 @@ export const NotionVideo: React.FC<{
       src={videoSrc}
       controls
       autoPlay
+      playsInline
       loop
       muted
       className="rounded-lg"
