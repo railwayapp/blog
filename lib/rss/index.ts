@@ -393,7 +393,7 @@ function groupedBlocksToHtml(groupedBlocks: (Block | { type: string; items: Bloc
   return html
 }
 
-export const generateRssFeed = async (posts: PostProps[]) => {
+export const generateRssFeedXml = async (posts: PostProps[]): Promise<string> => {
   const baseUrl = "https://blog.railway.com"
   const author = {
     name: "Railway",
@@ -477,19 +477,24 @@ export const generateRssFeed = async (posts: PostProps[]) => {
     } catch (error) {
       console.error(`Error processing post ${post.id}:`, error)
       // Fallback to description-only if content fetch fails
-    feed.addItem({
-      title: post.properties.Page.title[0].plain_text,
-      description: post.properties.Description.rich_text[0].plain_text,
-      id: url,
-      link: url,
-      date: new Date(post.properties.Date.date.start),
+      feed.addItem({
+        title: post.properties.Page.title[0].plain_text,
+        description: post.properties.Description.rich_text[0].plain_text,
+        id: url,
+        link: url,
+        date: new Date(post.properties.Date.date.start),
         category: [
           { name: "railway" },
           { name: "cloud" },
         ],
-    })
+      })
     }
   }
 
-  writeFileSync(`public/rss.xml`, feed.rss2())
+  return feed.rss2()
+}
+
+export const generateRssFeed = async (posts: PostProps[]) => {
+  const xml = await generateRssFeedXml(posts)
+  writeFileSync(`public/rss.xml`, xml)
 }
