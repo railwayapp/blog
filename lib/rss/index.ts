@@ -415,10 +415,14 @@ export const generateRssFeedXml = async (posts: PostProps[]): Promise<string> =>
     copyright: "Copyright © 2025 Railway Corp.",
   })
 
-  const featuredPosts = posts.filter((post) => post.properties.Featured.checkbox)
+  const includedPosts = posts.filter(
+    (post) =>
+      post.properties.Featured.checkbox ||
+      post.properties.Category.select?.name?.toLowerCase() === "guide"
+  )
 
   // Process each post to get full content
-  for (const post of featuredPosts) {
+  for (const post of includedPosts) {
     const url = baseUrl + "/p/" + post.properties.Slug.rich_text[0].plain_text
     
     try {
