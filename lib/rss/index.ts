@@ -38,6 +38,35 @@ function escapeHtml(text: string): string {
 }
 
 /**
+ * Find and escape ampersands in URLs within HTML content
+ * This handles URLs in href/src attributes and plain text URLs
+ */
+function escapeAmpersandsInUrls(html: string): string {
+  if (!html) return html
+  
+  // First, fix URLs in href and src attributes
+  // Match href="..." or src="..." and escape ampersands in the URL
+  html = html.replace(/(href|src)=["']([^"']+)["']/gi, (match, attr, url) => {
+    // Escape ampersands that aren't already escaped
+    const escapedUrl = url.replace(/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;')
+    return `${attr}="${escapedUrl}"`
+  })
+  
+  // Also fix plain text URLs (http://, https://, or www.)
+  // Match URLs that appear in text content (not in tags)
+  html = html.replace(/(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi, (url) => {
+    // Only escape if it contains an unescaped ampersand
+    if (url.includes('&') && !url.includes('&amp;')) {
+      // Escape ampersands that aren't already part of an entity
+      return url.replace(/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;')
+    }
+    return url
+  })
+  
+  return html
+}
+
+/**
  * Convert rich text to HTML
  */
 function richTextToHtml(text: any[]): string {
@@ -498,14 +527,22 @@ export const generateRssFeed = async (posts: PostProps[]) => {
       // Add full content
       fullContent += contentHtml
       
+      // Escape any remaining unescaped ampersands in URLs within the content
+      fullContent = escapeAmpersandsInUrls(fullContent)
+      
+      // Escape title and description for XML
+      const escapedTitle = escapeHtml(post.properties.Page.title[0].plain_text)
+      const escapedDescription = escapeHtml(post.properties.Description.rich_text[0].plain_text)
+      const escapedImageUrl = featuredImage ? escapeUrl(featuredImage) : undefined
+      
       feed.addItem({
-        title: post.properties.Page.title[0].plain_text,
-        description: post.properties.Description.rich_text[0].plain_text,
+        title: escapedTitle,
+        description: escapedDescription,
         content: fullContent,
         id: url,
         link: url,
         date: new Date(post.properties.Date.date.start),
-        image: featuredImage ? featuredImage : undefined,
+        image: escapedImageUrl,
         category: [
           { name: "railway" },
           { name: "cloud" },
@@ -514,17 +551,20 @@ export const generateRssFeed = async (posts: PostProps[]) => {
     } catch (error) {
       console.error(`Error processing post ${post.id}:`, error)
       // Fallback to description-only if content fetch fails
-    feed.addItem({
-      title: post.properties.Page.title[0].plain_text,
-      description: post.properties.Description.rich_text[0].plain_text,
-      id: url,
-      link: url,
-      date: new Date(post.properties.Date.date.start),
+      const escapedTitle = escapeHtml(post.properties.Page.title[0].plain_text)
+      const escapedDescription = escapeHtml(post.properties.Description.rich_text[0].plain_text)
+      
+      feed.addItem({
+        title: escapedTitle,
+        description: escapedDescription,
+        id: url,
+        link: url,
+        date: new Date(post.properties.Date.date.start),
         category: [
           { name: "railway" },
           { name: "cloud" },
         ],
-    })
+      })
     }
   }
 
