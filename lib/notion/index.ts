@@ -11,6 +11,90 @@ const notion = new Client({
 })
 
 /**
+ * Retry configuration
+ */
+const MAX_RETRIES = 5
+const INITIAL_RETRY_DELAY = 1000 // 1 second
+const MAX_RETRY_DELAY = 30000 // 30 seconds
+const TIMEOUT_MS = 30000 // 30 seconds timeout
+
+/**
+ * Sleep for a given number of milliseconds
+ */
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Check if an error is retryable
+ */
+const isRetryableError = (error: any): boolean => {
+  // Retry on 502, 503, 504 (gateway/network errors) and rate limit errors
+  if (error?.code === 'notionhq_client_response_error') {
+    const status = error?.status || error?.message?.match(/status:\s*(\d+)/)?.[1]
+    return status === 502 || status === 503 || status === 504 || status === 429
+  }
+  // Retry on network errors or timeouts
+  if (error?.code === 'ECONNRESET' || error?.code === 'ETIMEDOUT' || error?.code === 'ENOTFOUND') {
+    return true
+  }
+  // Retry on timeout errors
+  if (error?.message?.includes('timeout') || error?.message?.includes('TIMEOUT')) {
+    return true
+  }
+  return false
+}
+
+/**
+ * Execute a function with timeout
+ */
+const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ])
+}
+
+/**
+ * Retry a function with exponential backoff
+ */
+const withRetry = async <T>(
+  fn: () => Promise<T>,
+  operationName: string = 'operation'
+): Promise<T> => {
+  let lastError: any
+  let delay = INITIAL_RETRY_DELAY
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await withTimeout(fn(), TIMEOUT_MS)
+    } catch (error: any) {
+      lastError = error
+
+      // Don't retry if it's not a retryable error or we've exhausted retries
+      if (!isRetryableError(error) || attempt === MAX_RETRIES) {
+        throw error
+      }
+
+      // Calculate exponential backoff with jitter
+      const jitter = Math.random() * 0.3 * delay // Add up to 30% jitter
+      const backoffDelay = Math.min(delay + jitter, MAX_RETRY_DELAY)
+
+      console.warn(
+        `Notion API ${operationName} failed (attempt ${attempt + 1}/${MAX_RETRIES + 1}):`,
+        error?.message || error,
+        `Retrying in ${Math.round(backoffDelay)}ms...`
+      )
+
+      await sleep(backoffDelay)
+      delay *= 2 // Exponential backoff
+    }
+  }
+
+  throw lastError
+}
+
+/**
  * Get Notion database
  * @param databaseId ID of the collection to query
  * @returns A list of published posts from the collection
@@ -25,11 +109,14 @@ export const getDatabase = async (
   const results: PostProps[] = []
 
   do {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      page_size: 100,
-      start_cursor: startCursor,
-    })
+    const response = await withRetry(
+      () => notion.databases.query({
+        database_id: databaseId,
+        page_size: 100,
+        start_cursor: startCursor,
+      }),
+      `database query (cursor: ${startCursor || 'initial'})`
+    )
 
     results.push(...(response.results as unknown as PostProps[]))
     startCursor = response.next_cursor ?? undefined
@@ -54,7 +141,10 @@ export const getDatabase = async (
 }
 
 export const getPage = async (pageId: string) => {
-  const response = await notion.pages.retrieve({ page_id: pageId })
+  const response = await withRetry(
+    () => notion.pages.retrieve({ page_id: pageId }),
+    `getPage(${pageId})`
+  )
 
   return response as unknown as PostProps
 }
@@ -64,11 +154,14 @@ export const getBlocks = async (blockId: string) => {
   const results: Block[] = []
 
   do {
-    const response = await notion.blocks.children.list({
-      block_id: blockId,
-      page_size: 100,
-      start_cursor: startCursor,
-    })
+    const response = await withRetry(
+      () => notion.blocks.children.list({
+        block_id: blockId,
+        page_size: 100,
+        start_cursor: startCursor,
+      }),
+      `getBlocks(${blockId}, cursor: ${startCursor || 'initial'})`
+    )
 
     results.push(...response.results)
     startCursor = response.next_cursor ?? undefined
@@ -331,7 +424,10 @@ export const getBlogLink = (slug: string) => {
 }
 
 export const getChangelogImageSrc = async (blockId: string) => {
-  const block = await notion.blocks.retrieve({ block_id: blockId })
+  const block = await withRetry(
+    () => notion.blocks.retrieve({ block_id: blockId }),
+    `getChangelogImageSrc(${blockId})`
+  )
 
   if (block.type !== "image" && block.type !== "video") {
     throw new Error("Block is not an image or video")

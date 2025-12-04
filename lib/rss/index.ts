@@ -11,6 +11,33 @@ import { getMediaProperties, mapDatabaseItemToPageProps } from "@lib/notion"
 import { extractYoutubeId } from "utils"
 
 /**
+ * Escape a URL for use in HTML/XML attributes
+ * This ensures ampersands and other special characters are properly escaped
+ */
+function escapeUrl(url: string): string {
+  if (!url) return ""
+  return url
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+}
+
+/**
+ * Escape text content for HTML/XML
+ */
+function escapeHtml(text: string): string {
+  if (!text) return ""
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+}
+
+/**
  * Convert rich text to HTML
  */
 function richTextToHtml(text: any[]): string {
@@ -38,7 +65,7 @@ function richTextToHtml(text: any[]): string {
     
     // Wrap in link if present
     if (linkUrl) {
-      html = `<a href="${linkUrl}">${html}</a>`
+      html = `<a href="${escapeUrl(linkUrl)}">${html}</a>`
     }
     
     return html
@@ -73,7 +100,7 @@ function richTextToHtmlForTableCell(text: any[]): string {
     
     // Wrap in link if present
     if (linkUrl) {
-      html = `<a href="${linkUrl}">${html}</a>`
+      html = `<a href="${escapeUrl(linkUrl)}">${html}</a>`
     }
     
     return html
@@ -162,9 +189,11 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       
       case "image": {
         const { source, caption } = getMediaProperties(value as FileWithCaption | ExternalFileWithCaption)
-        const captionHtml = caption ? `<figcaption style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem; font-style: italic; text-align: center; line-height: 1.5;">${caption}</figcaption>` : ""
+        const escapedSource = escapeUrl(source)
+        const escapedCaption = caption ? escapeHtml(caption) : ""
+        const captionHtml = caption ? `<figcaption style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem; font-style: italic; text-align: center; line-height: 1.5;">${escapedCaption}</figcaption>` : ""
         html += `<figure style="margin: 2rem 0;">
-          <img src="${source}" alt="${caption || ""}" style="width: 100%; height: auto; border-radius: 0.5rem; display: block;" />
+          <img src="${escapedSource}" alt="${escapedCaption}" style="width: 100%; height: auto; border-radius: 0.5rem; display: block;" />
           ${captionHtml}
         </figure>`
         break
@@ -191,16 +220,18 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       case "video": {
         const { source, caption } = getMediaProperties(value as FileWithCaption | ExternalFileWithCaption)
         const youtubeId = extractYoutubeId(source)
-        const captionHtml = caption ? `<figcaption style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem; font-style: italic; text-align: center; line-height: 1.5;">${caption}</figcaption>` : ""
+        const escapedCaption = caption ? escapeHtml(caption) : ""
+        const captionHtml = caption ? `<figcaption style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem; font-style: italic; text-align: center; line-height: 1.5;">${escapedCaption}</figcaption>` : ""
         
         if (youtubeId) {
           html += `<figure style="margin: 2rem 0;">
-            <iframe src="https://youtube.com/embed/${youtubeId}" style="width: 100%; height: 550px; border-radius: 0.5rem; display: block;" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://youtube.com/embed/${escapeUrl(youtubeId)}" style="width: 100%; height: 550px; border-radius: 0.5rem; display: block;" frameborder="0" allowfullscreen></iframe>
             ${captionHtml}
           </figure>`
         } else {
+          const escapedSource = escapeUrl(source)
           html += `<figure style="margin: 2rem 0;">
-            <video src="${source}" controls style="width: 100%; border-radius: 0.5rem; display: block;"></video>
+            <video src="${escapedSource}" controls style="width: 100%; border-radius: 0.5rem; display: block;"></video>
             ${captionHtml}
           </figure>`
         }
@@ -209,18 +240,19 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       
       case "embed": {
         const url = value.url || ""
+        const escapedUrl = escapeUrl(url)
         if (url.includes("twitter.com")) {
           const regex = /status\/(\d+)/gm
           const matches = regex.exec(url)
           const tweetId = matches?.[1]
           if (tweetId) {
             html += `<div style="margin: 1.5rem 0;">
-              <blockquote class="twitter-tweet"><a href="${url}"></a></blockquote>
+              <blockquote class="twitter-tweet"><a href="${escapedUrl}"></a></blockquote>
             </div>`
           }
         } else {
           html += `<div style="margin: 1.5rem 0;">
-            <iframe src="${url}" style="width: 100%; min-height: 400px; border: none;"></iframe>
+            <iframe src="${escapedUrl}" style="width: 100%; min-height: 400px; border: none;"></iframe>
           </div>`
         }
         break
@@ -456,8 +488,10 @@ export const generateRssFeed = async (posts: PostProps[]) => {
       }
       
       if (featuredImage) {
+        const escapedImageUrl = escapeUrl(featuredImage)
+        const escapedTitle = escapeHtml(post.properties.Page.title[0].plain_text)
         fullContent += `<figure style="margin: 0 0 2rem 0;">
-          <img src="${featuredImage}" alt="${post.properties.Page.title[0].plain_text}" style="width: 100%; height: auto; border-radius: 0.5rem;" />
+          <img src="${escapedImageUrl}" alt="${escapedTitle}" style="width: 100%; height: auto; border-radius: 0.5rem;" />
         </figure>`
       }
       
