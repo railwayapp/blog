@@ -110,9 +110,18 @@ export const extractFAQs = (blocks: Block[]): FAQItem[] => {
 export const generateBlogPostSchema = (post: PostProps, url: string): object => {
   const title = extractPlainText(post.properties.Page.title)
   const description = extractPlainText(post.properties.Description.rich_text)
-  const author = post.properties.Authors.people[0]
+  const authors = post.properties.Authors.people.filter(
+    (author) => author != null && author.name != null
+  )
   const datePublished = post.properties.Date.date?.start
   const image = post.properties.Image?.url
+
+  const authorSchema =
+    authors.length === 1
+      ? { "@type": "Person", name: authors[0].name }
+      : authors.length > 1
+        ? authors.map((author) => ({ "@type": "Person", name: author.name }))
+        : undefined
 
   return {
     "@context": "https://schema.org",
@@ -122,12 +131,7 @@ export const generateBlogPostSchema = (post: PostProps, url: string): object => 
     image: image ? [image] : undefined,
     datePublished: datePublished,
     dateModified: datePublished,
-    author: author
-      ? {
-          "@type": "Person",
-          name: author.name,
-        }
-      : undefined,
+    author: authorSchema,
     publisher: {
       "@type": "Organization",
       name: "Railway",

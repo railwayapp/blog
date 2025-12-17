@@ -25,13 +25,14 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
     [post.properties.Date.date.start]
   )
 
-  const author = post.properties.Authors.people[0]
+  const authors = post.properties.Authors.people.filter(
+    (author) => author != null && author.name != null
+  )
   const ogImage = useOgImage({
     title: post.properties.Page.title[0].plain_text,
-    authorName: author?.name,
+    authorName: authors.map((a) => a.name).join(" & "),
     image: post.properties?.Image?.url,
   })
-  const authorExists = author != null && author.name != null
 
   const category = post.properties.Category?.select?.name
   const slug = post.properties.Slug.rich_text[0]?.plain_text || ""
@@ -50,7 +51,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
         title: post.properties.Page.title[0].plain_text,
         description: post.properties.Description.rich_text[0].plain_text,
         image: ogImage,
-        author: author?.name,
+        author: authors.map((a) => a.name).join(" & "),
         post,
         blocks: blocks?.filter((b): b is Block => 'type' in b && 'id' in b && 'has_children' in b),
         currentUrl,
@@ -66,15 +67,21 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
           )}
         >
           <div className="flex items-center text-gray-500 space-x-3">
-            {authorExists && (
+            {authors.length > 0 && (
               <>
                 <div className="flex items-center space-x-3">
-                  <img
-                    src={author?.avatar_url}
-                    alt={`Avatar of ${author?.name}`}
-                    className="w-6 h-6 rounded-full overflow-hidden"
-                  />
-                  <span>{author?.name}</span>
+                  <div className="flex items-center">
+                    {authors.map((author, index) => (
+                      <img
+                        key={author.name}
+                        src={author.avatar_url}
+                        alt={`Avatar of ${author.name}`}
+                        className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                        style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                      />
+                    ))}
+                  </div>
+                  <span>{authors.map((a) => a.name).join(" & ")}</span>
                 </div>
                 <Divider />
               </>

@@ -55,7 +55,11 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
 
   const publishedTime = post?.properties.Date.date?.start
   const modifiedTime = post?.properties.Date.date?.start // Using same as published for now
-  const postAuthor = author || post?.properties.Authors.people[0]?.name
+  const postAuthors = author
+    ? [author]
+    : post?.properties.Authors.people
+      .filter((a) => a != null && a.name != null)
+      .map((a) => a.name) || []
   const section = post?.properties.Category?.select?.name
   const postImage = image || post?.properties.Image?.url
 
@@ -69,16 +73,16 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
         {...(postImage == null
           ? {}
           : {
-              openGraph: {
-                images: [{ url: postImage }],
-                article: {
-                  authors: [postAuthor],
-                  publishedTime: publishedTime,
-                  modifiedTime: modifiedTime,
-                  section: section,
-                },
+            openGraph: {
+              images: [{ url: postImage }],
+              article: {
+                authors: postAuthors,
+                publishedTime: publishedTime,
+                modifiedTime: modifiedTime,
+                section: section,
               },
-            })}
+            },
+          })}
       />
 
       <Head>
@@ -94,9 +98,9 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
         {modifiedTime && (
           <meta property="article:modified_time" content={modifiedTime} />
         )}
-        {postAuthor && (
-          <meta property="article:author" content={postAuthor} />
-        )}
+        {postAuthors.map((postAuthor) => (
+          <meta key={postAuthor} property="article:author" content={postAuthor} />
+        ))}
         {section && (
           <meta property="article:section" content={section} />
         )}

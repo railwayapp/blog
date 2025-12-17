@@ -14,10 +14,11 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
     [post.properties.Date.date.start]
   )
 
-  const author = post.properties.Authors.people[0]
+  const authors = post.properties.Authors.people.filter(
+    (author) => author != null && author.name != null
+  )
   const category = post.properties.Category.select?.name
   const featuredImage = post.properties.FeaturedImage.url
-  const authorExists = author != null && author.name != null
   const isCommunity = post.properties.Community.checkbox
 
   return (
@@ -40,7 +41,7 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
       )}
 
       <div className="mt-6">
-        {category != null && <PostCategory category={category} isCommunity={isCommunity}/>}
+        {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
 
         <h3 className="font-bold text-2xl my-4 group-hover:opacity-60 tracking-tight">
           <NotionText text={post.properties.Page.title} noLinks />
@@ -51,15 +52,21 @@ export const FeaturedPostItem: React.FC<{ post: PostProps }> = ({ post }) => {
         </p>
 
         <div className="flex items-center gap-3 mt-6">
-          {authorExists && (
+          {authors.length > 0 && (
             <>
-              <img
-                src={author.avatar_url}
-                alt={`Avatar of ${author.name}`}
-                className="w-6 h-6 rounded-full overflow-hidden"
-              />
+              <div className="flex items-center">
+                {authors.map((author, index) => (
+                  <img
+                    key={author.name}
+                    src={author.avatar_url}
+                    alt={`Avatar of ${author.name}`}
+                    className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                    style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                  />
+                ))}
+              </div>
               <span className="font-medium text-sm text-gray-500">
-                {author.name}
+                {authors.map((a) => a.name).join(" & ")}
               </span>
               <Divider />
             </>
