@@ -290,8 +290,8 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
       case "column_list": {
         html += `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; align-items: start; margin: 1rem 0;">
           ${value?.children ? value.children.map((col: any) => 
-            `<div style="display: flex; flex-direction: column; gap: 1rem;">${blocksToHtml(col.column || [], baseUrl)}</div>`
-          ).join("") : ""}
+          `<div style="display: flex; flex-direction: column; gap: 1rem;">${blocksToHtml(col.column || [], baseUrl)}</div>`
+        ).join("") : ""}
         </div>`
         break
       }
@@ -352,8 +352,8 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
               <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                 <tr>
                   ${(columnHeaders.cells || []).map((cell: any[]) => 
-                    `<th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; border: 1px solid #e5e7eb;">${richTextToHtmlForTableCell(cell)}</th>`
-                  ).join("")}
+          `<th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; border: 1px solid #e5e7eb;">${richTextToHtmlForTableCell(cell)}</th>`
+        ).join("")}
                 </tr>
               </thead>
             ` : ""}
@@ -361,8 +361,8 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
               ${dataRows.map((rowData: any) => `
                 <tr style="border-bottom: 1px solid #e5e7eb;">
                   ${(rowData.cells || []).map((cell: any[]) => 
-                    `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb; color: #1f2937;">${richTextToHtmlForTableCell(cell)}</td>`
-                  ).join("")}
+          `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb; color: #1f2937;">${richTextToHtmlForTableCell(cell)}</td>`
+        ).join("")}
                 </tr>
               `).join("")}
             </tbody>
@@ -376,8 +376,8 @@ function blocksToHtml(blocks: Block[], baseUrl: string): string {
         const cells = value?.cells || []
         html += `<tr>
           ${cells.map((cell: any[]) => 
-            `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">${richTextToHtmlForTableCell(cell)}</td>`
-          ).join("")}
+          `<td style="padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">${richTextToHtmlForTableCell(cell)}</td>`
+        ).join("")}
         </tr>`
         break
       }
@@ -498,22 +498,25 @@ export const generateRssFeed = async (posts: PostProps[]) => {
       // Get featured image if available
       const featuredImage = post.properties.FeaturedImage?.url || post.properties.Image?.url
       
-      // Get author name
-      const author = post.properties.Authors.people[0]
-      const authorName = author?.name || ""
+      // Get author names
+      const authors = post.properties.Authors.people.filter(
+        (author) => author != null && author.name != null
+      )
+      const authorNames = authors.map((a) => a.name).join(" & ")
       
       // Build full content with author, image, and content
       let fullContent = ""
       
       // Add author line at the beginning
-      if (authorName) {
-        const escapedAuthorName = authorName
+      if (authorNames) {
+        const escapedAuthorNames = authorNames
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#39;")
-        fullContent += `<p style="font-style: italic; margin-bottom: 1.5rem; color: #6b7280;">Author: ${escapedAuthorName}</p>`
+        const authorLabel = authors.length > 1 ? "Authors" : "Author"
+        fullContent += `<p style="font-style: italic; margin-bottom: 1.5rem; color: #6b7280;">${authorLabel}: ${escapedAuthorNames}</p>`
       }
       
       if (featuredImage) {

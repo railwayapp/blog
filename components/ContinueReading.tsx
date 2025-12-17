@@ -43,7 +43,9 @@ const RelatedPostItem: React.FC<{ post: MinimalRelatedPost }> = ({ post }) => {
     [post.properties.Date.date.start]
   )
 
-  const author = post.properties.Authors.people[0]
+  const authors = post.properties.Authors.people.filter(
+    (author) => author != null && author.name != null
+  )
   const category = post.properties.Category.select?.name
   const isCommunity = post.properties.Community.checkbox
 
@@ -52,7 +54,7 @@ const RelatedPostItem: React.FC<{ post: MinimalRelatedPost }> = ({ post }) => {
       href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
       className="flex flex-col bg-secondaryBg p-6 rounded-lg hover:bg-gray-100 group"
     >
-      {category != null && <PostCategory category={category} isCommunity={isCommunity}/>}
+      {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
 
       <div className="flex-grow">
         <header className="font-bold text-lg mt-2 mb-1">
@@ -65,13 +67,25 @@ const RelatedPostItem: React.FC<{ post: MinimalRelatedPost }> = ({ post }) => {
       </div>
 
       <div className="flex items-center gap-3 mt-6">
-        <img
-          src={author.avatar_url}
-          alt={`Avatar of ${author.name}`}
-          className="w-6 h-6 rounded-full overflow-hidden"
-        />
-        <span className="font-medium text-sm text-gray-500">{author.name}</span>
-        <Divider />
+        {authors.length > 0 && (
+          <>
+            <div className="flex items-center">
+              {authors.map((author, index) => (
+                <img
+                  key={author.name}
+                  src={author.avatar_url}
+                  alt={`Avatar of ${author.name}`}
+                  className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                  style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                />
+              ))}
+            </div>
+            <span className="font-medium text-sm text-gray-500">
+              {authors.map((a) => a.name).join(" & ")}
+            </span>
+            <Divider />
+          </>
+        )}
         <span className="font-medium text-sm text-gray-500">
           {formattedDate}
         </span>

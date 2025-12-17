@@ -17,11 +17,11 @@ const PostItem: React.FC<Props> = ({ post }) => {
     [post.properties.Date.date.start]
   )
 
-  const author = post.properties.Authors.people[0]
-  const authorExists = author != null && author.name != null
+  const authors = post.properties.Authors.people.filter(
+    (author) => author != null && author.name != null
+  )
   const category = post.properties.Category.select?.name
   const isCommunity = post.properties.Community.checkbox
-
 
   return (
     <Link
@@ -41,15 +41,21 @@ const PostItem: React.FC<Props> = ({ post }) => {
       </div>
 
       <div className="flex items-center gap-3 mt-6 mb-10">
-        {authorExists && (
+        {authors.length > 0 && (
           <>
-            <img
-              src={author.avatar_url}
-              alt={`Avatar of ${author.name}`}
-              className="w-6 h-6 rounded-full overflow-hidden"
-            />
+            <div className="flex items-center">
+              {authors.map((author, index) => (
+                <img
+                  key={author.name}
+                  src={author.avatar_url}
+                  alt={`Avatar of ${author.name}`}
+                  className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                  style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                />
+              ))}
+            </div>
             <span className="font-medium text-sm text-gray-500">
-              {author.name}
+              {authors.map((a) => a.name).join(" & ")}
             </span>
             <Divider />
           </>
