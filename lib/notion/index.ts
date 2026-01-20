@@ -437,14 +437,15 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
   const childrenMap = new Map<string, Block[] | { columns: Block[], columnChildren: Map<string, Block[]> }>()
 
   await Promise.all(blocksNeedingChildren.map(async (block) => {
-    // @ts-ignore: Current client version does not support `column_list` but API does
-    if (block.type === "column_list") {
-      const columnListChildren = await getBlocks(block.id)
+    // Cast to any to handle column_list which isn't in the Block type but is supported by the API
+    const b = block as any
+    if (b.type === "column_list") {
+      const columnListChildren = await getBlocks(b.id)
       // Fetch all column contents in parallel
       const columnChildrenEntries = await Promise.all(
         columnListChildren.map(async (c) => [c.id, await getBlocks(c.id)] as const)
       )
-      childrenMap.set(block.id, {
+      childrenMap.set(b.id, {
         columns: columnListChildren,
         columnChildren: new Map(columnChildrenEntries)
       })
