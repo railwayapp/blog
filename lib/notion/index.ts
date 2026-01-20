@@ -459,19 +459,19 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
   const parsedBlocks = blocks.map(block => {
     let parsedBlock: Block
 
-    // @ts-ignore: Current client version does not support `column_list` but API does
-    if (block.type === "column_list") {
-      const typedBlock = block as unknown as Block
-      const childData = childrenMap.get(block.id) as { columns: Block[], columnChildren: Map<string, Block[]> }
+    // Cast to any to handle column_list which isn't in the Block type but is supported by the API
+    const b = block as any
+    if (b.type === "column_list") {
+      const childData = childrenMap.get(b.id) as { columns: Block[], columnChildren: Map<string, Block[]> }
       const columnData = childData.columns.map(c => ({
         ...c,
         column: childData.columnChildren.get(c.id) || [],
       }))
 
       parsedBlock = {
-        ...typedBlock,
-        [typedBlock.type]: {
-          ...typedBlock[typedBlock.type],
+        ...b,
+        [b.type]: {
+          ...b[b.type],
           children: columnData,
         },
       } as Block
