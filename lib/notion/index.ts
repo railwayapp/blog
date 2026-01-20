@@ -427,6 +427,7 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
 
   // Identify blocks that need children fetched
   const blocksNeedingChildren = blocks.filter(block => {
+    // @ts-ignore: Current client version does not support `column_list` but API does
     if (block.type === "column_list") return true
     if (block.has_children && !(block[block.type as keyof Block] as any)?.children) return true
     return false
