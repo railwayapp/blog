@@ -39,7 +39,7 @@ const invertTheme = <T>(theme: T): T => {
 
 const lightTheme = {
   foreground: "hsl(250, 24%, 9%)",
-  background: "hsl(0, 0%, 100%)",
+  background: "#F1F0EF",
   secondaryBg: "hsl(0, 0%, 98%)",
 
   blue: {
@@ -131,7 +131,7 @@ const darkTheme = {
   ...invertTheme(lightTheme),
 
   foreground: "hsl(0, 0%, 100%)",
-  background: "hsl(250, 24%, 9%)",
+  background: "#181622",
   secondaryBg: "hsl(250, 21%, 11%)",
 }
 

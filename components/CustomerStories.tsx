@@ -20,9 +20,11 @@ export const CustomerStories: React.FC = () => {
 
       <header className="max-w-6xl mx-auto mb-12 flex items-center justify-between">
         <div>
-          <h1 className="text-[42px] font-bold mb-3">Customer Stories</h1>
+          <h1 className="text-[42px] font-serif font-semibold mb-3 tracking-tight">
+            Customer Stories
+          </h1>
           <p className="text-lg text-gray-600">
-            Learn how we keep the train going, on-time, and fire-free.
+            Learn how our customers take most advantage of our platform.
           </p>
         </div>
 
@@ -38,28 +40,25 @@ export const CustomerStories: React.FC = () => {
         <CustomerStoryPostItem
           title={
             <>
-              Building a new cloud-based collaborative CAD tool. Q&A with Paul
-              O&apos;Carroll from <span className="underline">Arcol</span>
+              How <span className="underline">Bilt&apos;s</span> Marketing
+              Engineering Team Delivers at Scale with Railway
             </>
           }
-          slug={"/p/software-for-architects-paul-ocarroll-arcol-interview"}
-          image="/customers/product-image--arcol.png"
-          avatars={["/customers/arcol-avatar.png", "/customers/arcol-paul.png"]}
+          slug={"/p/bilt-deliver-scale"}
+          image="/customers/product-image--bilt.webp"
+          avatars={["/customers/bilt-avatar.webp"]}
         />
 
         <CustomerStoryPostItem
           title={
             <>
-              How <span className="underline">Peerlist</span> Built a New Kind 
-              of Professional Network with Railway
+              <span className="underline">MindFort</span> Runs 100+ AI Pen
+              Testing Agents Without Their Previous $10k AWS Bill
             </>
           }
-          slug={"/p/peerlist-professional-network-yogini-bende"}
-          image="/customers/product-image--peerlist.png"
-          avatars={[
-            "/customers/peerlist-avatar.png",
-            "/customers/peerlist-yogini.png",
-          ]}
+          slug={"/p/mindfort-railway"}
+          image="/customers/product-image--mindfort.webp"
+          avatars={["/customers/mindfort-avatar.webp"]}
         />
       </div>
     </div>

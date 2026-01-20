@@ -455,6 +455,12 @@ function groupedBlocksToHtml(groupedBlocks: (Block | { type: string; items: Bloc
 }
 
 export const generateRssFeed = async (posts: PostProps[]) => {
+  // Skip RSS generation in development to speed up page compilation
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[RSS] Skipping RSS generation in development mode')
+    return
+  }
+
   const baseUrl = "https://blog.railway.com"
   const author = {
     name: "Railway",
@@ -476,18 +482,42 @@ export const generateRssFeed = async (posts: PostProps[]) => {
     copyright: "Copyright © 2025 Railway Corp.",
   })
 
-  const includedPosts = posts.filter((post) => 
-    post.properties.Featured.checkbox || 
+  const includedPosts = posts.filter((post) =>
+    post.properties.Featured.checkbox ||
     post.properties.Category.select?.name?.toLowerCase() === "guide"
   )
 
-  // Process each post to get full content
+  // Fetch all post content in parallel (with concurrency limit to avoid rate limits)
+  const CONCURRENCY_LIMIT = 5
+  const postContents = new Map<string, Block[]>()
+
+  for (let i = 0; i < includedPosts.length; i += CONCURRENCY_LIMIT) {
+    const batch = includedPosts.slice(i, i + CONCURRENCY_LIMIT)
+    const results = await Promise.all(
+      batch.map(async (post) => {
+        try {
+          const { blocks } = await mapDatabaseItemToPageProps(post.id)
+          return { postId: post.id, blocks }
+        } catch (error) {
+          console.error(`Error fetching content for post ${post.id}:`, error)
+          return { postId: post.id, blocks: null }
+        }
+      })
+    )
+    results.forEach(({ postId, blocks }) => {
+      if (blocks) postContents.set(postId, blocks as Block[])
+    })
+  }
+
+  // Process each post with pre-fetched content
   for (const post of includedPosts) {
     const url = baseUrl + "/p/" + post.properties.Slug.rich_text[0].plain_text
-    
+    const blocks = postContents.get(post.id)
+
     try {
-      // Fetch full post content with blocks
-      const { blocks } = await mapDatabaseItemToPageProps(post.id)
+      if (!blocks) {
+        throw new Error('Content not fetched')
+      }
       
       // Group list blocks for proper rendering
       const groupedBlocks = groupListBlocks(blocks as Block[])

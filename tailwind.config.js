@@ -48,6 +48,16 @@ const monoStack = [
   "monospace",
 ].join(",")
 
+const serifStack = [
+  "var(--font-serif)",
+  "IBM Plex Serif",
+  "Georgia",
+  "Cambria",
+  "Times New Roman",
+  "Times",
+  "serif",
+].join(",")
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -59,6 +69,7 @@ module.exports = {
     fontFamily: {
       sans: fontStack,
       mono: monoStack,
+      serif: serifStack,
     },
     extend: {
       colors: {

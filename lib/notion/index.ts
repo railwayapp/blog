@@ -19,6 +19,36 @@ const MAX_RETRY_DELAY = 30000 // 30 seconds
 const TIMEOUT_MS = 30000 // 30 seconds timeout
 
 /**
+ * In-memory cache for development mode
+ * Caches API responses to avoid repeated calls during hot reloads
+ */
+const isDev = process.env.NODE_ENV === 'development'
+const CACHE_TTL_MS = 60 * 1000 // 1 minute cache in dev
+
+interface CacheEntry<T> {
+  data: T
+  timestamp: number
+}
+
+const cache = new Map<string, CacheEntry<any>>()
+
+function getCached<T>(key: string): T | null {
+  if (!isDev) return null
+  const entry = cache.get(key)
+  if (!entry) return null
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    cache.delete(key)
+    return null
+  }
+  return entry.data as T
+}
+
+function setCache<T>(key: string, data: T): void {
+  if (!isDev) return
+  cache.set(key, { data, timestamp: Date.now() })
+}
+
+/**
  * Sleep for a given number of milliseconds
  */
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -105,6 +135,13 @@ export const getDatabase = async (
     includeUnpublished: false,
   }
 ) => {
+  const cacheKey = `database:${databaseId}:${includeUnpublished}`
+  const cached = getCached<PostProps[]>(cacheKey)
+  if (cached) {
+    console.log(`[Cache HIT] getDatabase(${databaseId})`)
+    return cached
+  }
+
   let startCursor: string | undefined
   const results: PostProps[] = []
 
@@ -122,7 +159,7 @@ export const getDatabase = async (
     startCursor = response.next_cursor ?? undefined
   } while (startCursor != null)
 
-  return results
+  const filtered = results
     .filter(
       (r) =>
         r.properties.Date.date != null &&
@@ -138,18 +175,37 @@ export const getDatabase = async (
 
       return dateB.getTime() - dateA.getTime()
     })
+
+  setCache(cacheKey, filtered)
+  return filtered
 }
 
 export const getPage = async (pageId: string) => {
+  const cacheKey = `page:${pageId}`
+  const cached = getCached<PostProps>(cacheKey)
+  if (cached) {
+    console.log(`[Cache HIT] getPage(${pageId})`)
+    return cached
+  }
+
   const response = await withRetry(
     () => notion.pages.retrieve({ page_id: pageId }),
     `getPage(${pageId})`
   )
 
-  return response as unknown as PostProps
+  const result = response as unknown as PostProps
+  setCache(cacheKey, result)
+  return result
 }
 
 export const getBlocks = async (blockId: string) => {
+  const cacheKey = `blocks:${blockId}`
+  const cached = getCached<Block[]>(cacheKey)
+  if (cached) {
+    console.log(`[Cache HIT] getBlocks(${blockId})`)
+    return cached
+  }
+
   let startCursor: string | undefined
   const results: Block[] = []
 
@@ -167,6 +223,7 @@ export const getBlocks = async (blockId: string) => {
     startCursor = response.next_cursor ?? undefined
   } while (startCursor != null)
 
+  setCache(cacheKey, results)
   return results
 }
 
@@ -362,23 +419,52 @@ export const mapDatabaseToPaths = (database: PostProps[]) => {
 }
 
 export const mapDatabaseItemToPageProps = async (id: string) => {
-  const page = await getPage(id)
-  const blocks = await getBlocks(id)
+  // Fetch page and blocks in parallel
+  const [page, blocks] = await Promise.all([
+    getPage(id),
+    getBlocks(id)
+  ])
 
-  const parsedBlocks = []
-  for (const block of blocks) {
+  // Identify blocks that need children fetched
+  const blocksNeedingChildren = blocks.filter(block => {
+    if (block.type === "column_list") return true
+    if (block.has_children && !(block[block.type as keyof Block] as any)?.children) return true
+    return false
+  })
+
+  // Fetch all children in parallel
+  const childrenMap = new Map<string, Block[] | { columns: Block[], columnChildren: Map<string, Block[]> }>()
+
+  await Promise.all(blocksNeedingChildren.map(async (block) => {
+    // @ts-ignore: Current client version does not support `column_list` but API does
+    if (block.type === "column_list") {
+      const columnListChildren = await getBlocks(block.id)
+      // Fetch all column contents in parallel
+      const columnChildrenEntries = await Promise.all(
+        columnListChildren.map(async (c) => [c.id, await getBlocks(c.id)] as const)
+      )
+      childrenMap.set(block.id, {
+        columns: columnListChildren,
+        columnChildren: new Map(columnChildrenEntries)
+      })
+    } else {
+      const children = await getBlocks(block.id)
+      childrenMap.set(block.id, children)
+    }
+  }))
+
+  // Build parsed blocks using prefetched children
+  const parsedBlocks = blocks.map(block => {
     let parsedBlock: Block
-    
+
     // @ts-ignore: Current client version does not support `column_list` but API does
     if (block.type === "column_list") {
       const typedBlock = block as unknown as Block
-      const columnListChildren = await getBlocks(typedBlock.id)
-      const columnData = await Promise.all(
-        columnListChildren.map(async (c) => ({
-          ...c,
-          column: await getBlocks(c.id),
-        }))
-      )
+      const childData = childrenMap.get(block.id) as { columns: Block[], columnChildren: Map<string, Block[]> }
+      const columnData = childData.columns.map(c => ({
+        ...c,
+        column: childData.columnChildren.get(c.id) || [],
+      }))
 
       parsedBlock = {
         ...typedBlock,
@@ -389,7 +475,7 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
       } as Block
 
     } else if (block.has_children && !(block[block.type as keyof Block] as any)?.children) {
-      const childBlocks = await getBlocks(block.id)
+      const childBlocks = childrenMap.get(block.id) as Block[]
 
       parsedBlock = {
         ...block,
@@ -401,10 +487,10 @@ export const mapDatabaseItemToPageProps = async (id: string) => {
     } else {
       parsedBlock = block
     }
-    
+
     // Minimize the block before adding to reduce serialized size
-    parsedBlocks.push(minimizeBlock(parsedBlock))
-  }
+    return minimizeBlock(parsedBlock)
+  })
 
   return { page, blocks: parsedBlocks }
 }

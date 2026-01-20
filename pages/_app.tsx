@@ -4,9 +4,14 @@ import "@styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import type { AppProps } from "next/app"
 import Head from "next/head"
-import { Inter } from "next/font/google"
+import { Inter, IBM_Plex_Serif } from "next/font/google"
 
 const inter = Inter({ subsets: ["latin"] })
+const ibmPlexSerif = IBM_Plex_Serif({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-serif",
+})
 
 const RailwayBlog = ({ Component, pageProps }: AppProps) => {
   useFathom(process.env.NEXT_PUBLIC_FATHOM_CODE ?? "", "blog.railway.com")
@@ -15,7 +20,7 @@ const RailwayBlog = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="light"
+      defaultTheme="system"
       disableTransitionOnChange={true}
       enableSystem
     >
@@ -27,7 +32,9 @@ const RailwayBlog = ({ Component, pageProps }: AppProps) => {
         `}</style>
       </Head>
 
-      <Component {...pageProps} />
+      <div className={ibmPlexSerif.variable}>
+        <Component {...pageProps} />
+      </div>
     </ThemeProvider>
   )
 }
