@@ -13,8 +13,8 @@ export const BottomCTA: React.FC = () => {
         Your train has arrived!
       </h3>
       <p className={cn("text-xl text-center max-w-xl text-opacity-90")}>
-        Join thousands of developers deploying hundreds of thousands of
-        applications effortlessly on Railway.
+        Join millions of developers deploying millions of applications
+        effortlessly on Railway.
       </p>
       <Link
         href="https://dev.new"
