@@ -180,6 +180,57 @@ export const getDatabase = async (
   return filtered
 }
 
+/**
+ * Get a single post by slug using a filtered Notion database query.
+ * Much faster than getDatabase() since it only fetches the matching post
+ * instead of paginating through the entire database.
+ */
+export const getPostBySlug = async (
+  databaseId: string,
+  slug: string
+): Promise<PostProps | null> => {
+  const cacheKey = `post-by-slug:${databaseId}:${slug}`
+  const cached = getCached<PostProps | null>(cacheKey)
+  if (cached !== null) {
+    console.log(`[Cache HIT] getPostBySlug(${slug})`)
+    return cached
+  }
+
+  const response = await withRetry(
+    () => notion.databases.query({
+      database_id: databaseId,
+      page_size: 1,
+      filter: {
+        property: 'Slug',
+        text: {
+          equals: slug,
+        },
+      },
+    }),
+    `database query by slug (${slug})`
+  )
+
+  const post = (response.results[0] as unknown as PostProps) ?? null
+
+  if (post != null) {
+    // Validate the post has required fields
+    const isValid =
+      post.properties.Date?.date != null &&
+      post.properties.Description?.rich_text?.length > 0 &&
+      post.properties.Slug?.rich_text?.length > 0 &&
+      post.properties.Page?.title?.length > 0 &&
+      post.properties.Authors?.people?.length > 0
+
+    if (!isValid) {
+      setCache(cacheKey, null)
+      return null
+    }
+  }
+
+  setCache(cacheKey, post)
+  return post
+}
+
 export const getPage = async (pageId: string) => {
   const cacheKey = `page:${pageId}`
   const cached = getCached<PostProps>(cacheKey)

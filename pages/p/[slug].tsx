@@ -7,6 +7,7 @@ import { Fragment, useMemo } from "react"
 import { PostPage } from "@layouts/PostPage"
 import {
   getDatabase,
+  getPostBySlug,
   groupListBlocks,
   mapDatabaseItemToPageProps,
 } from "@lib/notion"
@@ -74,48 +75,55 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     }
   }
 
-  const posts = await getDatabase(process.env.POSTS_TABLE_ID, {
-    includeUnpublished: true,
-  })
   const slug = params.slug as string
-  const post = posts.find((post) => {
-    return post.properties.Slug.rich_text[0].plain_text === slug
-  })
 
-  const category = post?.properties.Category?.select?.name
-  const relatedPostsFull = (
-    category != null
-      ? posts.filter(
-          (post) =>
-            post.properties.Slug.rich_text[0].plain_text !== slug &&
-            post.properties.Category?.select?.name === category &&
-            post.properties.Published?.checkbox === true
-        )
-      : []
-  ).slice(0, 2)
-
-  // Minimize related posts data - only include what's needed for display
-  const relatedPosts: MinimalRelatedPost[] = relatedPostsFull.map((post) => ({
-    id: post.id,
-    properties: {
-      Page: post.properties.Page,
-      Slug: post.properties.Slug,
-      Description: post.properties.Description,
-      Date: post.properties.Date,
-      Authors: {
-        people: post.properties.Authors.people.map((person) => ({
-          name: person.name,
-          avatar_url: person.avatar_url,
-        })),
-      },
-      Category: post.properties.Category,
-      Community: post.properties.Community,
-    },
-  }))
+  // Use targeted slug query instead of fetching entire database.
+  // This is a single Notion API call vs 3+ paginated calls for 200+ posts,
+  // which avoids timeouts that cause spurious 404s.
+  const post = await getPostBySlug(process.env.POSTS_TABLE_ID, slug)
 
   if (post == null) {
     return {
       notFound: true,
+    }
+  }
+
+  // Only fetch full database for related posts (same category, published)
+  const category = post.properties.Category?.select?.name
+  let relatedPosts: MinimalRelatedPost[] = []
+
+  if (category != null) {
+    try {
+      const posts = await getDatabase(process.env.POSTS_TABLE_ID)
+      const relatedPostsFull = posts
+        .filter(
+          (p) =>
+            p.properties.Slug.rich_text[0].plain_text !== slug &&
+            p.properties.Category?.select?.name === category &&
+            p.properties.Published?.checkbox === true
+        )
+        .slice(0, 2)
+
+      relatedPosts = relatedPostsFull.map((post) => ({
+        id: post.id,
+        properties: {
+          Page: post.properties.Page,
+          Slug: post.properties.Slug,
+          Description: post.properties.Description,
+          Date: post.properties.Date,
+          Authors: {
+            people: post.properties.Authors.people.map((person) => ({
+              name: person.name,
+              avatar_url: person.avatar_url,
+            })),
+          },
+          Category: post.properties.Category,
+          Community: post.properties.Community,
+        },
+      }))
+    } catch (error) {
+      // If fetching related posts fails, still render the page without them
+      console.warn('Failed to fetch related posts:', error)
     }
   }
 
