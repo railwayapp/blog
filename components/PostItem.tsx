@@ -1,4 +1,5 @@
 import Link from "@components/Link"
+import { getAuthorAvatarUrl } from "@lib/authorAvatars"
 import { PostProps } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
@@ -47,7 +48,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
               {authors.map((author, index) => (
                 <img
                   key={author.name}
-                  src={author.avatar_url}
+                  src={getAuthorAvatarUrl(author)}
                   alt={`Avatar of ${author.name}`}
                   className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
                   style={{ marginLeft: index > 0 ? "-8px" : 0 }}

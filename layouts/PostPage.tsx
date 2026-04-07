@@ -1,5 +1,6 @@
 import { NotionText } from "@components/NotionText"
 import Page from "@layouts/Page"
+import { getAuthorAvatarUrl } from "@lib/authorAvatars"
 import { PostProps, MinimalRelatedPost, ListBlock } from "@lib/types"
 import { Block } from "@notionhq/client/build/src/api-types"
 import dayjs from "dayjs"
@@ -74,7 +75,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
                     {authors.map((author, index) => (
                       <img
                         key={author.name}
-                        src={author.avatar_url}
+                        src={getAuthorAvatarUrl(author)}
                         alt={`Avatar of ${author.name}`}
                         className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
                         style={{ marginLeft: index > 0 ? "-8px" : 0 }}
