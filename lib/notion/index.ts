@@ -18,12 +18,7 @@ const INITIAL_RETRY_DELAY = 1000 // 1 second
 const MAX_RETRY_DELAY = 30000 // 30 seconds
 const TIMEOUT_MS = 30000 // 30 seconds timeout
 
-/**
- * In-memory cache for development mode
- * Caches API responses to avoid repeated calls during hot reloads
- */
-const isDev = process.env.NODE_ENV === 'development'
-const CACHE_TTL_MS = 60 * 1000 // 1 minute cache in dev
+const CACHE_TTL_MS = 60 * 1000 // 1 minute
 
 interface CacheEntry<T> {
   data: T
@@ -33,7 +28,6 @@ interface CacheEntry<T> {
 const cache = new Map<string, CacheEntry<any>>()
 
 function getCached<T>(key: string): T | null {
-  if (!isDev) return null
   const entry = cache.get(key)
   if (!entry) return null
   if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
@@ -44,7 +38,6 @@ function getCached<T>(key: string): T | null {
 }
 
 function setCache<T>(key: string, data: T): void {
-  if (!isDev) return
   cache.set(key, { data, timestamp: Date.now() })
 }
 

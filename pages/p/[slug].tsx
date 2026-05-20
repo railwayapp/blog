@@ -133,7 +133,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
       ...props,
       relatedPosts,
     },
-    revalidate: 1,
+    revalidate: 60,
   }
 }
 
