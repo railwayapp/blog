@@ -103,6 +103,10 @@ const CustomerStoryPostItem: React.FC<{
               src={a}
               alt=""
               style={{ zIndex: 10 - i }}
+              loading="lazy"
+              decoding="async"
+              width={40}
+              height={40}
             />
           ))}
         </div>

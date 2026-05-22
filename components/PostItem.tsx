@@ -51,6 +51,10 @@ const PostItem: React.FC<Props> = ({ post }) => {
                   alt={`Avatar of ${author.name}`}
                   className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
                   style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                  loading="lazy"
+                  decoding="async"
+                  width={24}
+                  height={24}
                 />
               ))}
             </div>

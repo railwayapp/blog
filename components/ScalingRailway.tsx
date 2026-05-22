@@ -108,7 +108,7 @@ const ScalingRailwayPostItem: React.FC<{
           </p>
         )}
         {isMounted && (
-          <img src={`/illustrations/${image}--${theme}.svg`} alt="" />
+          <img src={`/illustrations/${image}--${theme}.svg`} alt="" loading="lazy" decoding="async" />
         )}
       </div>
 
