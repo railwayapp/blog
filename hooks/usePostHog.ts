@@ -10,13 +10,13 @@ const usePostHog = () => {
   const posthogRef = useRef<PostHog | null>(null)
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") return
+    // if (process.env.NODE_ENV === "development") return
     if (typeof window === "undefined") return
 
     let cancelled = false
     let handleRouteChange: (() => void) | null = null
 
-    import("posthog-js").then(({ default: posthog }) => {
+    const load = () => import("posthog-js").then(({ default: posthog }) => {
       if (cancelled) return
       posthogRef.current = posthog
 
@@ -27,6 +27,7 @@ const usePostHog = () => {
       if (!isInitialized) {
         posthog.init(POSTHOG_KEY, {
           api_host: POSTHOG_DOMAIN,
+          advanced_disable_decide: true,
           loaded: (ph) => {
             const sessionId = ph.get_session_id()
             if (sessionId) {
@@ -48,6 +49,12 @@ const usePostHog = () => {
       handleRouteChange = () => posthog.capture("$pageview")
       Router.events.on("routeChangeComplete", handleRouteChange)
     })
+
+    if (typeof requestIdleCallback === "function") {
+      requestIdleCallback(load)
+    } else {
+      setTimeout(load, 0)
+    }
 
     return () => {
       cancelled = true
