@@ -111,14 +111,14 @@ const CustomerStoryPostItem: React.FC<{
           ))}
         </div>
 
-        <h3
+        <h2
           className={cn(
             "max-w-xs text-xl font-medium mt-7 mb-2 tracking-tight",
             slug == null ? "opacity-40" : ""
           )}
         >
           {title}
-        </h3>
+        </h2>
       </div>
 
       {isMounted && (
