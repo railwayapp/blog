@@ -35,12 +35,13 @@ const Nav: React.FC = () => {
             Go to Homepage
           </Link>
 
-          <button
-            className="hover:text-pink-600"
-            onClick={() => window.open("https://blog.railway.com/rss.xml")}
+          <a
+            href="https://blog.railway.com/rss.xml" 
+            className="outline-offset-4"
           >
             <Rss size={16} />
-          </button>
+            <span className="sr-only">RSS feed</span>
+          </a>
 
           {isMounted && (
             <button
