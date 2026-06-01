@@ -73,7 +73,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
               : "pb-12"
           )}
         >
-          <div className="flex items-center text-gray-500 space-x-3">
+          <div className="flex items-center text-gray-500 space-x-3 max-w-[736px] mx-auto">
             {authors.length > 0 && (
               <>
                 <div className="flex items-center space-x-3">
@@ -102,7 +102,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
             </time>
           </div>
 
-          <header className="mt-5 mb-16 max-w-[800px]">
+          <header className="mt-5 mb-16 max-w-[736px] mx-auto">
             <h1 className="text-huge font-bold">
               <NotionText text={post.properties.Page.title} />
             </h1>
