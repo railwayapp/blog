@@ -7,6 +7,7 @@ import { Fragment, useMemo } from "react"
 import { PostPage } from "@layouts/PostPage"
 import {
   getDatabase,
+  getPeopleRoster,
   getPostBySlug,
   groupListBlocks,
   mapDatabaseItemToPageProps,
@@ -21,9 +22,11 @@ export interface Props {
   page: PostProps
   relatedPosts: MinimalRelatedPost[]
   blocks: Block[]
+  ogRole: string
+  ogAvatar: string
 }
 
-const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
+const Post: NextPage<Props> = ({ page, relatedPosts, ogRole, ogAvatar, ...props }) => {
   const router = useRouter()
 
   // Group all list items together so we can group in a <ul />
@@ -38,7 +41,7 @@ const Post: NextPage<Props> = ({ page, relatedPosts, ...props }) => {
   }
 
   return (
-    <PostPage post={page} relatedPosts={relatedPosts} blocks={blocks}>
+    <PostPage post={page} relatedPosts={relatedPosts} blocks={blocks} ogRole={ogRole} ogAvatar={ogAvatar}>
       {blocks.map((block) => {
         if ((block as ListBlock).items != null) {
           return <NotionListBlock key={block.id} block={block as ListBlock} />
@@ -127,11 +130,30 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     }
   }
 
+  // Resolve the author's role from the People DB for the OG card.
+  // Single-author posts show the role; co-authored posts omit it (the card has
+  // room for one role line, and attributing one role to several names is wrong).
+  let ogRole = ""
+  let ogAvatar = ""
+  try {
+    const people = post.properties.Authors?.people ?? []
+    if (people.length === 1) {
+      const roster = await getPeopleRoster()
+      const entry = roster.get(people[0].id)
+      ogRole = entry?.role ?? ""
+      ogAvatar = entry?.image ?? ""
+    }
+  } catch (error) {
+    console.warn("Failed to resolve author info for OG card:", error)
+  }
+
   const props = await mapDatabaseItemToPageProps(post.id)
   return {
     props: {
       ...props,
       relatedPosts,
+      ogRole,
+      ogAvatar,
     },
     revalidate: 60,
   }

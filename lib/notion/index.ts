@@ -462,6 +462,100 @@ export const mapDatabaseToPaths = (database: PostProps[]) => {
   })
 }
 
+export interface RosterEntry {
+  name: string
+  role: string | null
+  image: string | null
+}
+
+/**
+ * In-memory roster cache that also works in production (unlike getCached, which
+ * is dev-only). The People table changes rarely, and getStaticProps runs on
+ * every ISR revalidation, so we memoize for 15 minutes to avoid hammering the
+ * Notion API on each request.
+ */
+let rosterMemo: { data: Map<string, RosterEntry>; expiresAt: number } | null = null
+const ROSTER_TTL_MS = 15 * 60 * 1000
+
+/**
+ * Build a map of Notion user id -> { name, role, image } from the People
+ * database. Authors on a post are a Notion People property, and each People-DB
+ * row links back to that same Notion user via its "Notion Person" property, so
+ * we join by user id rather than by matching name strings.
+ *
+ * Fails soft: if PEOPLE_TABLE_ID is unset or the query fails (e.g. the database
+ * isn't shared with this integration), returns an empty map so OG cards simply
+ * omit the role instead of breaking the build.
+ */
+export const getPeopleRoster = async (): Promise<Map<string, RosterEntry>> => {
+  if (rosterMemo != null && rosterMemo.expiresAt > Date.now()) {
+    return rosterMemo.data
+  }
+
+  const databaseId = process.env.PEOPLE_TABLE_ID
+  const roster = new Map<string, RosterEntry>()
+
+  if (databaseId == null) {
+    console.warn(
+      "[roster] PEOPLE_TABLE_ID is not set; blog OG cards will omit author roles"
+    )
+    return roster
+  }
+
+  try {
+    let startCursor: string | undefined
+
+    do {
+      const response = await withRetry(
+        () =>
+          notion.databases.query({
+            database_id: databaseId,
+            page_size: 100,
+            start_cursor: startCursor,
+          }),
+        `people roster query (cursor: ${startCursor || "initial"})`
+      )
+
+      for (const row of response.results as any[]) {
+        const props = row.properties ?? {}
+        const name: string =
+          props.Name?.title?.map((t: any) => t.plain_text).join("") ?? ""
+        const role: string | null =
+          props.Role?.rich_text?.map((t: any) => t.plain_text).join("") || null
+        // Prefer a stable GitHub avatar (github.com/<handle>.png never expires).
+        // Notion file URLs are signed and expire (~1h), which would bake a blank
+        // avatar into the year-cached OG image.
+        const githubUrl: string = props.Github?.url ?? ""
+        const handle = githubUrl.match(/github\.com\/([^/?#]+)/i)?.[1]
+        const file = props.Image?.files?.[0]
+        const notionImage: string | null =
+          file?.file?.url ?? file?.external?.url ?? null
+        const image: string | null = handle
+          ? `https://github.com/${handle}.png`
+          : notionImage
+
+        // "Notion Person" is the People property linking the row to a workspace user.
+        const linkedUsers: any[] = props["Notion Person"]?.people ?? []
+        for (const user of linkedUsers) {
+          if (user?.id != null) {
+            roster.set(user.id, { name, role, image })
+          }
+        }
+      }
+
+      startCursor = response.next_cursor ?? undefined
+    } while (startCursor != null)
+  } catch (error) {
+    console.warn(
+      `[roster] failed to load People DB; OG cards will omit roles: ${(error as Error).message}`
+    )
+    return new Map()
+  }
+
+  rosterMemo = { data: roster, expiresAt: Date.now() + ROSTER_TTL_MS }
+  return roster
+}
+
 export const mapDatabaseItemToPageProps = async (id: string) => {
   // Fetch page and blocks in parallel
   const [page, blocks] = await Promise.all([

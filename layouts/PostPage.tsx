@@ -17,9 +17,13 @@ export interface Props {
   relatedPosts: MinimalRelatedPost[]
   blocks?: (Block | ListBlock)[]
   children?: React.ReactNode
+  /** Author role for the OG card, resolved from the People DB (single-author posts only). */
+  ogRole?: string
+  /** Author avatar URL for the OG card, resolved from the People DB (single-author posts only). */
+  ogAvatar?: string
 }
 
-export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children }) => {
+export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children, ogRole, ogAvatar }) => {
   const formattedDate = useMemo(
     () => dayjs(post.properties.Date.date.start).format("MMM D, YYYY"),
     [post.properties.Date.date.start]
@@ -31,6 +35,9 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
   const ogImage = useOgImage({
     title: post.properties.Page.title[0].plain_text,
     authorName: authors.map((a) => a.name).join(" & "),
+    role: ogRole,
+    avatarUrl: ogAvatar,
+    eyebrow: post.properties.Category?.select?.name ?? undefined,
     image: post.properties?.Image?.url,
   })
 
