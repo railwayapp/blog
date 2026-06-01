@@ -50,10 +50,11 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
  * Check if an error is retryable
  */
 const isRetryableError = (error: any): boolean => {
-  // Retry on 502, 503, 504 (gateway/network errors) and rate limit errors
-  if (error?.code === 'notionhq_client_response_error') {
-    const status = error?.status || error?.message?.match(/status:\s*(\d+)/)?.[1]
-    return status === 502 || status === 503 || status === 504 || status === 429
+  // Retry on Notion API errors: the SDK sets `status` directly on APIResponseError.
+  // Check status (number) for 429, 502, 503, 504 — these are all transient.
+  const status = error?.status
+  if (typeof status === 'number') {
+    return status === 429 || status === 502 || status === 503 || status === 504
   }
   // Retry on network errors or timeouts
   if (error?.code === 'ECONNRESET' || error?.code === 'ETIMEDOUT' || error?.code === 'ENOTFOUND') {
