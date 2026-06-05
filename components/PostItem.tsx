@@ -31,7 +31,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
       {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
 
       <div className="flex-grow">
-        <h4 className="font-bold text-lg mt-2 mb-1 group-hover:opacity-60 tracking-tight">
+        <h4 className="font-medium font-serif text-lg mt-2 mb-1 group-hover:opacity-60 tracking-tight">
           <NotionText text={post.properties.Page.title} noLinks />
         </h4>
 

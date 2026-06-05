@@ -57,7 +57,7 @@ const RelatedPostItem: React.FC<{ post: MinimalRelatedPost }> = ({ post }) => {
       {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
 
       <div className="flex-grow">
-        <header className="font-bold text-lg mt-2 mb-1">
+        <header className="font-medium font-serif text-lg mt-2 mb-1">
           <NotionText text={post.properties.Page.title as any} noLinks />
         </header>
 
