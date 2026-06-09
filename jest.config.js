@@ -1,11 +1,15 @@
-module.exports = {
+const nextJest = require("next/jest")
+
+const createJestConfig = nextJest({
+  dir: "./",
+})
+
+const customJestConfig = {
   roots: ["<rootDir>"],
+  testEnvironment: "jsdom",
   moduleFileExtensions: ["ts", "tsx", "js", "json", "jsx"],
   testPathIgnorePatterns: ["<rootDir>[/\\\\](node_modules|.next)[/\\\\]"],
-  transformIgnorePatterns: ["[/\\\\]node_modules[/\\\\].+\\.(ts|tsx)$"],
-  transform: {
-    "^.+\\.(ts|tsx)$": "babel-jest",
-  },
+  transformIgnorePatterns: ["[/\\\\]node_modules[/\\\\]"],
   watchPlugins: [
     "jest-watch-typeahead/filename",
     "jest-watch-typeahead/testname",
@@ -20,3 +24,5 @@ module.exports = {
     "@styles/(.*)": "<rootDir>/styles/$1",
   },
 }
+
+module.exports = createJestConfig(customJestConfig)

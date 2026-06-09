@@ -1,65 +1,62 @@
 import Link from "@components/Link"
-import { PostProps } from "@lib/types"
+import { BlogPost } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
 import { Divider } from "./Divider"
-import { NotionText } from "./NotionText"
 import { PostCategory } from "./PostCategory"
 
 export interface Props {
-  post: PostProps
+  post: BlogPost
 }
 
 const PostItem: React.FC<Props> = ({ post }) => {
   const formattedDate = useMemo(
-    () =>
-      dayjs(new Date(post.properties.Date.date.start)).format("MMM D, YYYY"),
-    [post.properties.Date.date.start]
+    () => dayjs(post.publishedAt).format("MMM D, YYYY"),
+    [post.publishedAt]
   )
-
-  const authors = post.properties.Authors.people.filter(
-    (author) => author != null && author.name != null
-  )
-  const category = post.properties.Category.select?.name
-  const isCommunity = post.properties.Community.checkbox
+  const authorsWithAvatars = post.authors.filter((author) => author.avatarUrl)
 
   return (
-    <Link
-      href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
-      className="flex flex-col border-b border-gray-100 group"
-    >
-      {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
+    <Link href={`/p/${post.slug}`} className="flex flex-col border-b border-gray-100 group">
+      {post.category != null && (
+        <PostCategory
+          category={post.category.title}
+          isCommunity={post.externalAuthor}
+        />
+      )}
 
       <div className="flex-grow">
         <h4 className="font-medium font-serif text-lg mt-2 mb-1 group-hover:opacity-60 tracking-tight">
-          <NotionText text={post.properties.Page.title} noLinks />
+          {post.title}
         </h4>
 
         <p className="text-base text-gray-800 line-clamp-2">
-          <NotionText text={post.properties.Description.rich_text} noLinks />
+          {post.description}
         </p>
       </div>
 
       <div className="flex items-center gap-3 mt-6 mb-10">
-        {authors.length > 0 && (
+        {post.authors.length > 0 && (
           <>
-            <div className="flex items-center">
-              {authors.map((author, index) => (
-                <img
-                  key={author.name}
-                  src={author.avatar_url}
-                  alt={`Avatar of ${author.name}`}
-                  className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
-                  style={{ marginLeft: index > 0 ? "-8px" : 0 }}
-                  loading="lazy"
-                  decoding="async"
-                  width={24}
-                  height={24}
-                />
-              ))}
-            </div>
+            {authorsWithAvatars.length > 0 && (
+              <div className="flex items-center">
+                {authorsWithAvatars.map((author, index) => (
+                  <img
+                    key={author.id}
+                    src={author.avatarUrl}
+                    alt={`Avatar of ${author.name}`}
+                    className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                    style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                    loading="lazy"
+                    decoding="async"
+                    width={24}
+                    height={24}
+                  />
+                ))}
+              </div>
+            )}
             <span className="font-medium text-sm text-gray-500">
-              {authors.map((a) => a.name).join(" & ")}
+              {post.authors.map((author) => author.name).join(" & ")}
             </span>
             <Divider />
           </>

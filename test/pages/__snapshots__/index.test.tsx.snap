@@ -3,16 +3,17 @@
 exports[`Home page matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="max-w-4xl mx-auto"
+    class="px-5 md:px-8"
   >
     <nav
-      class="py-4 px-4 flex justify-between items-center"
+      class="max-w-6xl mx-auto py-6 flex justify-between items-center border-b border-transparent"
     >
       <a
+        class="flex items-center space-x-4"
         href="/"
       >
         <svg
-          class="logo w-10"
+          class="logo w-8"
           data-v-423bf9ae=""
           viewBox="0 0 59.99945071644884 60"
           xmlns="http://www.w3.org/2000/svg"
@@ -31,59 +32,349 @@ exports[`Home page matches snapshot 1`] = `
             />
           </g>
         </svg>
+        <span
+          class="text-xl font-bold"
+        >
+          Blog
+        </span>
       </a>
-      <a
-        class="text-gray-500 hover:text-primary"
-        href="https://railway.com"
-        rel="noreferrer noopener"
-        target="_blank"
+      <div
+        class="text-gray-600 flex items-center space-x-6"
       >
-        Go to Railway
-      </a>
+        <a
+          class="text-sm hover:text-pink-600"
+          href="https://railway.com"
+          rel="noreferrer noopener"
+          target="_blank"
+        >
+          Go to Homepage
+        </a>
+        <button
+          class="hover:text-pink-600"
+        >
+          <svg
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 11a9 9 0 0 1 9 9"
+            />
+            <path
+              d="M4 4a16 16 0 0 1 16 16"
+            />
+            <circle
+              cx="5"
+              cy="19"
+              r="1"
+            />
+          </svg>
+        </button>
+        <button
+          class="hover:text-pink-600"
+        >
+          <svg
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="5"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="1"
+              y2="3"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="21"
+              y2="23"
+            />
+            <line
+              x1="4.22"
+              x2="5.64"
+              y1="4.22"
+              y2="5.64"
+            />
+            <line
+              x1="18.36"
+              x2="19.78"
+              y1="18.36"
+              y2="19.78"
+            />
+            <line
+              x1="1"
+              x2="3"
+              y1="12"
+              y2="12"
+            />
+            <line
+              x1="21"
+              x2="23"
+              y1="12"
+              y2="12"
+            />
+            <line
+              x1="4.22"
+              x2="5.64"
+              y1="19.78"
+              y2="18.36"
+            />
+            <line
+              x1="18.36"
+              x2="19.78"
+              y1="5.64"
+              y2="4.22"
+            />
+          </svg>
+        </button>
+      </div>
     </nav>
   </div>
   <div
-    class="min-h-screen"
+    class="min-h-screen overflow-x-hidden relative"
   >
     <div
-      class="max-w-4xl px-4 mx-auto"
+      class="px-5 md:px-8"
     >
-      <header
-        class="py-16"
-      >
-        <h1
-          class="text-6xl font-bold text-center leading-10"
-        >
-          Railway Blog
-        </h1>
-      </header>
       <div
-        class="text-center text-gray-500"
+        class="max-w-6xl mx-auto mb-24"
       >
-        Pretty empty here
+        <ul
+          class="flex flex-wrap gap-4 md:gap-8 mt-4 mb-8"
+        >
+          <li
+            class="hidden md:block"
+          >
+            <a
+              class="text-base font-medium text-foreground hover:text-foreground"
+              href="/"
+            >
+              Everything
+            </a>
+          </li>
+        </ul>
+        <hr
+          class="border-gray-100 mb-12"
+        />
+      </div>
+      <div
+        class="relative -mx-5 md:-mx-8 px-5 md:px-8 pt-20 pb-24"
+      >
+        <div
+          class="absolute top-0 pointer-events-none"
+        >
+          <svg
+            fill="none"
+            height="481"
+            viewBox="0 0 1440 481"
+            width="1440"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g
+              filter="url(#filter0_f_216_3207)"
+            >
+              <path
+                d="M1298.55 -243.014C1245.26 -347.168 959.891 -155.928 581.668 -397.462C276.911 -592.08 10.7479 18.5935 183.697 110.791C356.647 202.988 950.399 437.001 1131.69 318.915C1323.06 194.267 1323.68 -193.911 1298.55 -243.014Z"
+                fill="url(#paint0_linear_216_3207)"
+                fill-opacity="0.1"
+              />
+            </g>
+            <defs>
+              <filter
+                filterUnits="userSpaceOnUse"
+                height="1045"
+                id="filter0_f_216_3207"
+                width="1438.99"
+                x="0.043457"
+                y="-564.512"
+              >
+                <feflood
+                  flood-opacity="0"
+                  result="BackgroundImageFix"
+                />
+                <feblend
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  mode="normal"
+                  result="shape"
+                />
+                <fegaussianblur
+                  result="effect1_foregroundBlur_216_3207"
+                  stdDeviation="64.5"
+                />
+              </filter>
+              <lineargradient
+                gradientUnits="userSpaceOnUse"
+                id="paint0_linear_216_3207"
+                x1="635.575"
+                x2="898.952"
+                y1="-311.477"
+                y2="277.196"
+              >
+                <stop
+                  stop-color="#FF3194"
+                />
+                <stop
+                  offset="0.432437"
+                  stop-color="#5024CC"
+                />
+                <stop
+                  offset="0.913257"
+                  stop-color="#31FFF3"
+                  stop-opacity="0"
+                />
+              </lineargradient>
+            </defs>
+          </svg>
+        </div>
+        <header
+          class="max-w-6xl mx-auto mb-12 flex items-center justify-between"
+        >
+          <div>
+            <h1
+              class="text-[42px] font-serif font-semibold mb-3 tracking-tight"
+            >
+              Customer Stories
+            </h1>
+            <p
+              class="text-lg text-gray-600"
+            >
+              Learn how our customers take most advantage of our platform.
+            </p>
+          </div>
+        </header>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto"
+        >
+          <a
+            class="min-h-[288px] bg-gray-100 dark:bg-gray-50 flex-col overflow-hidden rounded-tl-xl rounded-tr-[48px] rounded-br-xl rounded-bl-[32px] grid grid-cols-3 border border-black border-opacity-5 dark:border-white dark:border-opacity-5 hover:bg-gray-200 dark:hover:bg-gray-100"
+            href="/p/bilt-deliver-scale"
+          >
+            <div
+              class="col-span-2 flex flex-col justify-end my-8 ml-8"
+            >
+              <div
+                class="flex -space-x-2"
+              >
+                <img
+                  alt=""
+                  class="w-10 h-10 rounded-full"
+                  decoding="async"
+                  height="40"
+                  loading="lazy"
+                  src="/customers/bilt-avatar.webp"
+                  style="z-index: 10;"
+                  width="40"
+                />
+              </div>
+              <h3
+                class="max-w-xs text-xl font-medium mt-7 mb-2 tracking-tight"
+              >
+                How 
+                <span
+                  class="underline"
+                >
+                  Bilt's
+                </span>
+                 Marketing Engineering Team Delivers at Scale with Railway
+              </h3>
+            </div>
+            <div
+              class="w-[250%] h-full relative -rotate-6"
+            >
+              <img
+                alt="Product image for [object Object]"
+                class="absolute top-0 md:top-[initial] md:bottom-0 left-0"
+                data-nimg="1"
+                decoding="async"
+                height="840"
+                loading="lazy"
+                src="/_next/image?url=%2Fcustomers%2Fproduct-image--bilt.webp&w=3840&q=75"
+                srcset="/_next/image?url=%2Fcustomers%2Fproduct-image--bilt.webp&w=1920&q=75 1x, /_next/image?url=%2Fcustomers%2Fproduct-image--bilt.webp&w=3840&q=75 2x"
+                style="color: transparent; filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.08));"
+                width="1350"
+              />
+            </div>
+          </a>
+          <a
+            class="min-h-[288px] bg-gray-100 dark:bg-gray-50 flex-col overflow-hidden rounded-tl-xl rounded-tr-[48px] rounded-br-xl rounded-bl-[32px] grid grid-cols-3 border border-black border-opacity-5 dark:border-white dark:border-opacity-5 hover:bg-gray-200 dark:hover:bg-gray-100"
+            href="/p/mindfort-railway"
+          >
+            <div
+              class="col-span-2 flex flex-col justify-end my-8 ml-8"
+            >
+              <div
+                class="flex -space-x-2"
+              >
+                <img
+                  alt=""
+                  class="w-10 h-10 rounded-full"
+                  decoding="async"
+                  height="40"
+                  loading="lazy"
+                  src="/customers/mindfort-avatar.webp"
+                  style="z-index: 10;"
+                  width="40"
+                />
+              </div>
+              <h3
+                class="max-w-xs text-xl font-medium mt-7 mb-2 tracking-tight"
+              >
+                <span
+                  class="underline"
+                >
+                  MindFort
+                </span>
+                 Runs 100+ AI Pen Testing Agents Without Their Previous $10k AWS Bill
+              </h3>
+            </div>
+            <div
+              class="w-[250%] h-full relative -rotate-6"
+            >
+              <img
+                alt="Product image for [object Object]"
+                class="absolute top-0 md:top-[initial] md:bottom-0 left-0"
+                data-nimg="1"
+                decoding="async"
+                height="840"
+                loading="lazy"
+                src="/_next/image?url=%2Fcustomers%2Fproduct-image--mindfort.webp&w=3840&q=75"
+                srcset="/_next/image?url=%2Fcustomers%2Fproduct-image--mindfort.webp&w=1920&q=75 1x, /_next/image?url=%2Fcustomers%2Fproduct-image--mindfort.webp&w=3840&q=75 2x"
+                style="color: transparent; filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.08));"
+                width="1350"
+              />
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
   <footer
-    class="py-4 bg-gray-900"
+    class="px-5 md:px-8 py-12 border-t border-gray-100"
   >
-    <a
-      class="underline"
-      href="https://railway.com"
-      rel="noreferrer noopener"
-      target="_blank"
-    />
     <div
-      class="max-w-4xl px-4 mx-auto"
+      class="grid grid-cols-2 sm:grid-cols-12 gap-8 sm:gap-4 lg:gap-16 max-w-6xl mx-auto"
     >
-      <a
-        class="underline"
-        href="https://railway.com"
-        rel="noreferrer noopener"
-        target="_blank"
-      />
       <div
-        class="flex items-center justify-between"
+        class="hidden sm:flex col-span-3 lg:col-span-4 flex-col justify-between"
       >
         <a
           class="underline"
@@ -92,7 +383,7 @@ exports[`Home page matches snapshot 1`] = `
           target="_blank"
         >
           <svg
-            class="logo w-10"
+            class="logo w-8"
             data-v-423bf9ae=""
             viewBox="0 0 59.99945071644884 60"
             xmlns="http://www.w3.org/2000/svg"
@@ -113,59 +404,220 @@ exports[`Home page matches snapshot 1`] = `
           </svg>
         </a>
         <div
-          class="pl-4 flex items-center text-sm text-gray-500 font-medium"
+          class="text-xs text-gray-500 w-full"
         >
-          <a
-            class="underline"
-            href="https://railway.com"
-            rel="noreferrer noopener"
-            target="_blank"
-          />
-          <a
-            class="pr-4"
-            href="https://twitter.com/Railway_App"
-            rel="noreferrer noopener"
-            target="_blank"
-          >
-            <svg
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"
-              />
-            </svg>
-          </a>
-          <a
-            class="underline"
-            href="https://github.com/railwayapp"
-            rel="noreferrer noopener"
-            target="_blank"
-          >
-            <svg
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-              />
-            </svg>
-          </a>
+          Copyright © 2026 Railway Corp. 
+          <br />
+          All rights reserved.
         </div>
+      </div>
+      <div
+        class="col-span-1 sm:col-span-2"
+      >
+        <p
+          class="text-xs font-bold uppercase text-gray-500 mb-4"
+        >
+          Product
+        </p>
+        <ul
+          class="text-gray-500 space-y-4"
+        >
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/changelog"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Changelog
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/pricing"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Pricing
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/starters"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Starters
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://station.railway.com/feedback"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Feedback
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/open-source-kickback"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              OSS Kickback
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="col-span-1 sm:col-span-2"
+      >
+        <p
+          class="text-xs font-bold uppercase text-gray-500 mb-4"
+        >
+          Company
+        </p>
+        <ul
+          class="text-gray-500 space-y-4"
+        >
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/about"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              About
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/careers"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Careers
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="/"
+            >
+              Blog
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://shop.railway.com"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Shop
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="col-span-1 sm:col-span-2"
+      >
+        <p
+          class="text-xs font-bold uppercase text-gray-500 mb-4"
+        >
+          Contact
+        </p>
+        <ul
+          class="text-gray-500 space-y-4"
+        >
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://discord.gg/railway"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Discord
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://twitter.com/railway"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Twitter
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://github.com/railwayapp"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="mailto:contact@railway.com"
+            >
+              Email
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="col-span-1 sm:col-span-2"
+      >
+        <p
+          class="text-xs font-bold uppercase text-gray-500 mb-4"
+        >
+          Legal
+        </p>
+        <ul
+          class="text-gray-500 space-y-4"
+        >
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/legal/fair-use"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Fair Use
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/legal/privacy"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Privacy Policy
+            </a>
+          </li>
+          <li>
+            <a
+              class="hover:text-foreground"
+              href="https://railway.com/legal/terms"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              Terms of Service
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </footer>

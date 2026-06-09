@@ -30,6 +30,7 @@
     "@typescript-eslint/indent": 0,
     "@typescript-eslint/member-delimiter-style": 0,
     "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/triple-slash-reference": 0,
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/no-unused-vars": [
@@ -42,6 +43,12 @@
       2,
       {
         "allow": ["warn", "error"]
+      }
+    ],
+    "react/no-unknown-property": [
+      2,
+      {
+        "ignore": ["jsx", "global"]
       }
     ]
   }

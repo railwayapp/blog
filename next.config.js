@@ -3,17 +3,16 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: [
-      "user-images.githubusercontent.com",
-      "og.railway.app",
-      "res.cloudinary.com",
-
-      // Images from Notion
-      "s3.us-west-2.amazonaws.com",
-      "prod-files-secure.s3.us-west-2.amazonaws.com",
+    remotePatterns: [
+      { protocol: "https", hostname: "user-images.githubusercontent.com" },
+      { protocol: "https", hostname: "og.railway.app" },
+      { protocol: "https", hostname: "og.railway.com" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "cms.railway.com" },
     ],
   },
   compress: true,
+  outputFileTracingRoot: __dirname,
   poweredByHeader: false,
   reactStrictMode: true,
   staticPageGenerationTimeout: 300

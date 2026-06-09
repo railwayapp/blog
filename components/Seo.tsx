@@ -7,16 +7,15 @@ import {
   generateFAQSchema,
   extractFAQs,
 } from "@lib/seo-components"
-import { PostProps } from "@lib/types"
-import { Block } from "@notionhq/client/build/src/api-types"
+import { BlogPost } from "@lib/types"
 
 export interface Props extends NextSeoProps {
   title?: string
   description?: string
   image?: string
   author?: string
-  post?: PostProps
-  blocks?: Block[]
+  post?: BlogPost
+  content?: string | null
   currentUrl?: string
 }
 
@@ -44,24 +43,22 @@ const config: DefaultSeoProps = {
   },
 }
 
-const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...props }) => {
+const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...props }) => {
   const title = props.title ?? config.title
   const description = props.description || config.description
   const fullUrl = currentUrl || url
 
   const blogPostSchema = post ? generateBlogPostSchema(post, fullUrl) : null
   const breadcrumbSchema = post ? generateBreadcrumbSchema(post, fullUrl) : null
-  const faqSchema = blocks ? generateFAQSchema(extractFAQs(blocks)) : null
+  const faqSchema = content ? generateFAQSchema(extractFAQs(content)) : null
 
-  const publishedTime = post?.properties.Date.date?.start
-  const modifiedTime = post?.properties.Date.date?.start // Using same as published for now
+  const publishedTime = post?.publishedAt
+  const modifiedTime = post?.updatedAt
   const postAuthors = author
     ? [author]
-    : post?.properties.Authors.people
-      .filter((a) => a != null && a.name != null)
-      .map((a) => a.name) || []
-  const section = post?.properties.Category?.select?.name
-  const postImage = image || post?.properties.Image?.url
+    : post?.authors.map((a) => a.name) || []
+  const section = post?.category?.title
+  const postImage = image || post?.socialImage?.url || post?.featuredImage?.url
 
   return (
     <>

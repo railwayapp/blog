@@ -1,7 +1,8 @@
-import { NotionText } from "@components/NotionText"
+import { MarkdownContent } from "@components/MarkdownContent"
+import { url } from "@components/Seo"
+import { HiddenTableOfContents, extractTableOfContents } from "@lib/seo-components"
 import Page from "@layouts/Page"
-import { PostProps, MinimalRelatedPost, ListBlock } from "@lib/types"
-import { Block } from "@notionhq/client/build/src/api-types"
+import { BlogPost } from "@lib/types"
 import dayjs from "dayjs"
 import React, { useMemo } from "react"
 import { BottomCTA } from "../components/BottomCTA"
@@ -9,58 +10,44 @@ import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
 import { cn } from "../utils"
-import { extractTableOfContents, HiddenTableOfContents } from "@lib/seo-components"
-import { url } from "@components/Seo"
 
 export interface Props {
-  post: PostProps
-  relatedPosts: MinimalRelatedPost[]
-  blocks?: (Block | ListBlock)[]
-  children?: React.ReactNode
-  /** Author role for the OG card, resolved from the People DB (single-author posts only). */
-  ogRole?: string
-  /** Author avatar URL for the OG card, resolved from the People DB (single-author posts only). */
-  ogAvatar?: string
+  post: BlogPost
+  relatedPosts: BlogPost[]
 }
 
-export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children, ogRole, ogAvatar }) => {
+export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
   const formattedDate = useMemo(
-    () => dayjs(post.properties.Date.date.start).format("MMM D, YYYY"),
-    [post.properties.Date.date.start]
+    () => dayjs(post.publishedAt).format("MMM D, YYYY"),
+    [post.publishedAt]
   )
 
-  const authors = post.properties.Authors.people.filter(
-    (author) => author != null && author.name != null
-  )
+  const authorName = post.authors.map((author) => author.name).join(" & ")
+  const singleAuthor = post.authors.length === 1 ? post.authors[0] : null
   const ogImage = useOgImage({
-    title: post.properties.Page.title[0].plain_text,
-    authorName: authors.map((a) => a.name).join(" & "),
-    role: ogRole,
-    avatarUrl: ogAvatar,
-    eyebrow: post.properties.Category?.select?.name ?? undefined,
-    image: post.properties?.Image?.url,
+    title: post.title,
+    authorName,
+    role: singleAuthor?.title ?? undefined,
+    avatarUrl: singleAuthor?.avatarUrl ?? undefined,
+    eyebrow: post.category?.title,
+    image: post.socialImage?.url ?? undefined,
   })
 
-  const category = post.properties.Category?.select?.name
-  const slug = post.properties.Slug.rich_text[0]?.plain_text || ""
-  const currentUrl = `${url}/p/${slug}`
-
-  const tableOfContents = useMemo(() => {
-    if (!blocks) return []
-    // Filter out ListBlock types and only process Block types
-    const blockOnly = blocks.filter((b): b is Block => 'type' in b && 'id' in b && 'has_children' in b)
-    return extractTableOfContents(blockOnly)
-  }, [blocks])
+  const currentUrl = `${url}/p/${post.slug}`
+  const tableOfContents = useMemo(
+    () => extractTableOfContents(post.content ?? ""),
+    [post.content]
+  )
 
   return (
     <Page
       seo={{
-        title: post.properties.Page.title[0].plain_text,
-        description: post.properties.Description.rich_text[0].plain_text,
+        title: post.seoTitle ?? post.title,
+        description: post.seoDescription ?? post.description,
         image: ogImage,
-        author: authors.map((a) => a.name).join(" & "),
+        author: authorName,
         post,
-        blocks: blocks?.filter((b): b is Block => 'type' in b && 'id' in b && 'has_children' in b),
+        content: post.content,
         currentUrl,
       }}
     >
@@ -74,50 +61,47 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts, blocks, children
           )}
         >
           <div className="max-w-[736px] mx-auto flex items-center text-gray-500 space-x-3">
-            {authors.length > 0 && (
+            {post.authors.length > 0 && (
               <>
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center">
-                    {authors.map((author, index) => (
-                      <img
-                        key={author.name}
-                        src={author.avatar_url}
-                        alt={`Avatar of ${author.name}`}
-                        className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
-                        style={{ marginLeft: index > 0 ? "-8px" : 0 }}
-                        loading="lazy"
-                        decoding="async"
-                        width={24}
-                        height={24}
-                      />
-                    ))}
+                    {post.authors
+                      .filter((author) => author.avatarUrl)
+                      .map((author, index) => (
+                        <img
+                          key={author.id}
+                          src={author.avatarUrl}
+                          alt={`Avatar of ${author.name}`}
+                          className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                          style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                          loading="lazy"
+                          decoding="async"
+                          width={24}
+                          height={24}
+                        />
+                      ))}
                   </div>
-                  <span>{authors.map((a) => a.name).join(" & ")}</span>
+                  <span>{authorName}</span>
                 </div>
                 <Divider />
               </>
             )}
-            <time dateTime={post.properties.Date.date.start}>
-              {formattedDate}
-            </time>
+            <time dateTime={post.publishedAt}>{formattedDate}</time>
           </div>
 
           <header className="mt-5 mb-16 max-w-[736px] mx-auto">
-            <h1 className="text-6xl font-medium font-serif">
-              <NotionText text={post.properties.Page.title} />
-            </h1>
+            <h1 className="text-6xl font-medium font-serif">{post.title}</h1>
           </header>
 
           <section className="max-w-[736px] mx-auto text-base sm:text-lg leading-8">
-            {/* Hidden table of contents for SEO */}
             <HiddenTableOfContents items={tableOfContents} />
-            {children}
+            <MarkdownContent content={post.content ?? ""} />
           </section>
         </article>
 
         <div className="max-w-6xl mx-auto">
-          {category != null && relatedPosts.length >= 2 && (
-            <ContinueReading category={category} posts={relatedPosts} />
+          {post.category != null && relatedPosts.length >= 2 && (
+            <ContinueReading category={post.category} posts={relatedPosts} />
           )}
 
           <BottomCTA />

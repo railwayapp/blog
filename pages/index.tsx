@@ -1,37 +1,36 @@
+import { PostList } from "@components/PostList"
 import Page from "@layouts/Page"
-import { getDatabase } from "@lib/notion"
+import { getCategories, getPosts } from "@lib/cms"
 import { generateRssFeed } from "@lib/rss"
-import { PostProps } from "@lib/types"
+import { BlogCategory, BlogPost } from "@lib/types"
 import { GetStaticProps, NextPage } from "next"
-import { PostList } from "../components/PostList"
 
 export interface Props {
-  posts: PostProps[]
+  categories: BlogCategory[]
+  posts: BlogPost[]
   preview: boolean
 }
 
-const Home: NextPage<Props> = ({ posts = [] }) => {
+const Home: NextPage<Props> = ({ categories = [], posts = [] }) => {
   return (
     <Page>
-      <PostList posts={posts} showCustomerStories />
+      <PostList
+        posts={posts}
+        categories={categories}
+        showCustomerStories
+      />
     </Page>
   )
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  if (process.env.POSTS_TABLE_ID == null) {
-    return {
-      notFound: true,
-    }
-  }
-
-  const posts = await getDatabase(process.env.POSTS_TABLE_ID)
+  const [posts, categories] = await Promise.all([getPosts(), getCategories()])
 
   await generateRssFeed(posts)
 
   return {
-    props: { posts },
-    revalidate: 900, // 15 minutes
+    props: { posts, categories },
+    revalidate: 900,
   }
 }
 
