@@ -67,19 +67,22 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
       <NextSeo
         {...props}
         canonical={fullUrl}
-        {...(postImage == null
-          ? {}
-          : {
-            openGraph: {
-              images: [{ url: postImage }],
-              article: {
-                authors: postAuthors,
-                publishedTime: publishedTime,
-                modifiedTime: modifiedTime,
-                section: section,
-              },
-            },
-          })}
+        // next-seo only emits og:url when an openGraph config is present, so
+        // always pass one to keep og:url aligned with the canonical.
+        openGraph={
+          postImage == null
+            ? { url: fullUrl }
+            : {
+                url: fullUrl,
+                images: [{ url: postImage }],
+                article: {
+                  authors: postAuthors,
+                  publishedTime: publishedTime,
+                  modifiedTime: modifiedTime,
+                  section: section,
+                },
+              }
+        }
       />
 
       <Head>

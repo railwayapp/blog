@@ -1,7 +1,9 @@
 import { PostList } from "@components/PostList"
+import { url } from "@components/Seo"
 import Page from "@layouts/Page"
 import {
   getCategories,
+  getCategoryLabel,
   getCategoryPath,
   getCategoryRouteSlug,
   getPostsByCategorySlug,
@@ -23,8 +25,13 @@ const CategoryPage: NextPage<Props> = ({
   return (
     <Page
       seo={{
-        title: category?.seoTitle ?? `${category?.title ?? "Blog"} - Railway Blog`,
+        title:
+          category?.seoTitle ??
+          `${category ? getCategoryLabel(category) : "Blog"} - Railway Blog`,
         description: category?.seoDescription ?? category?.description ?? undefined,
+        // The canonical is derived from the category, so the legacy /guide
+        // alias canonicalizes to /guides instead of duplicating it.
+        currentUrl: category ? `${url}${getCategoryPath(category)}` : undefined,
       }}
     >
       {category && (
