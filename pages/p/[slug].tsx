@@ -38,14 +38,19 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   if (typeof slug !== "string") {
     return {
       notFound: true,
+      revalidate: 60,
     }
   }
 
   const post = await getPostBySlug(slug)
 
   if (post == null) {
+    // Without a lease the 404 is cached until the next deploy, and content
+    // now ships without deploys: one hit on a not-yet-published slug would
+    // otherwise pin the URL at 404 after the post goes live.
     return {
       notFound: true,
+      revalidate: 60,
     }
   }
 

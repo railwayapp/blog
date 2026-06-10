@@ -51,6 +51,7 @@ export const getStaticProps: GetStaticProps = async (props) => {
   if (typeof categorySlug !== "string") {
     return {
       notFound: true,
+      revalidate: 900,
     }
   }
 
@@ -59,8 +60,11 @@ export const getStaticProps: GetStaticProps = async (props) => {
   const category = categories.find((item) => item.slug === cmsSlug)
 
   if (!category) {
+    // Same lease as the success path: a category created in the CMS would
+    // otherwise stay a cached 404 until the next deploy.
     return {
       notFound: true,
+      revalidate: 900,
     }
   }
 
