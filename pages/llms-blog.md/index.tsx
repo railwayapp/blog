@@ -1,86 +1,83 @@
+import { getBlogLink, getPosts } from "@lib/cms"
+import { extractTableOfContents } from "@lib/markdown"
+import { BlogPost } from "@lib/types"
 import { GetServerSideProps } from "next"
-import { getDatabase, getBlogLink, getBlocks } from "@lib/notion"
 
 const ROOT_URL = "https://blog.railway.com"
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const posts = await getDatabase(process.env.POSTS_TABLE_ID)
-  
-  // Group posts by category
-  const postsByCategory = posts.reduce((acc, post) => {
-    const category = post.properties.Category.select?.name || 'Uncategorized'
-    if (!acc[category]) {
-      acc[category] = []
-    }
-    acc[category].push(post)
-    return acc
-  }, {} as Record<string, typeof posts>)
+const groupPostsByCategory = (posts: BlogPost[]) =>
+  posts.reduce(
+    (acc, post) => {
+      const category = post.category?.title || "Uncategorized"
+      if (!acc[category]) {
+        acc[category] = []
+      }
+      acc[category].push(post)
+      return acc
+    },
+    {} as Record<string, BlogPost[]>
+  )
 
-  // Create header section
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  const posts = await getPosts({ includeContent: true })
+  const postsByCategory = groupPostsByCategory(posts)
+
   const header = `# Railway Blog Content
 
 This document contains all blog posts from the Railway blog, organized by category.
 Each post includes its metadata, description, and key points from the content.
 
-Last updated: ${new Date().toISOString().split('T')[0]}
+Last updated: ${new Date().toISOString().split("T")[0]}
 
 ---
 
 `
 
-  // Create content string with all blog posts
-  const categoryContents = await Promise.all(
-    Object.entries(postsByCategory).map(async ([category, categoryPosts]) => {
-      const postsContent = await Promise.all(categoryPosts.map(async post => {
-        const title = post.properties.Page.title[0]?.plain_text || 'Untitled'
-        const slug = post.properties.Slug.rich_text[0]?.plain_text || ''
-        const date = post.properties.Date.date?.start || ''
-        const description = post.properties.Description.rich_text[0]?.plain_text || ''
-        const link = ROOT_URL + getBlogLink(slug)
-        
-        // Get the content blocks
-        const blocks = await getBlocks(post.id)
-        const headers = blocks
-          .filter(block => block.type === 'heading_1' || block.type === 'heading_2')
-          .map(block => {
-            const text = block[block.type].text[0]?.plain_text || ''
-            return `- ${text}`
-          })
-          .join('\n')
+  const categoryContents = Object.entries(postsByCategory).map(
+    ([category, categoryPosts]) => {
+      const postsContent = categoryPosts.map((post) => {
+        const link = ROOT_URL + getBlogLink(post.slug)
+        const headers = extractTableOfContents(post.content ?? "")
+          .filter((item) => item.level <= 2)
+          .map((item) => `- ${item.text}`)
+          .join("\n")
 
-        return `## Blog: ${title}
+        return `## Blog: ${post.title}
 
-- **Date:** ${date}
-- **Slug:** ${slug}
+- **Date:** ${post.publishedAt}
+- **Slug:** ${post.slug}
 - **Link:** ${link}
 
-${description}
+${post.description}
 
-${headers ? `\n### Key points:\n${headers}\n` : ''}
+${headers ? `\n### Key points:\n${headers}\n` : ""}
 
 ---
 `
-      }))
+      })
 
       return `# ${category}
 
-${postsContent.join('\n')}
+${postsContent.join("\n")}
 `
-    })
+    }
   )
 
-  // Set headers and return content
-  res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
-  res.setHeader('Content-Encoding', 'utf-8')
-  res.write(header + categoryContents.join('\n'))
+  res.setHeader("Content-Type", "text/markdown; charset=utf-8")
+  // Every render pulls all posts with content from the CMS; let shared
+  // caches absorb repeat crawler traffic.
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=3600, stale-while-revalidate=86400"
+  )
+  res.write(header + categoryContents.join("\n"))
   res.end()
 
   return {
-    props: {}
+    props: {},
   }
 }
 
-// @ts-ignore: Default export to prevent next.js errors
 const GenerateTextFile = () => {
   return null
 }

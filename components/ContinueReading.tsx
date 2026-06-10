@@ -1,17 +1,16 @@
-import dayjs from "dayjs"
+import { getCategoryLabel, getCategoryPath } from "@lib/cms"
+import { BlogCategory, BlogPost } from "@lib/types"
 import React, { useMemo } from "react"
-import { MinimalRelatedPost } from "../lib/types"
-import { cn } from "../utils"
+import { cn, formatPostDate } from "../utils"
 import { Divider } from "./Divider"
 import Link from "./Link"
-import { NotionText } from "./NotionText"
 import { PostCategory } from "./PostCategory"
 
 export const ContinueReading: React.FC<{
-  posts: MinimalRelatedPost[]
-  category: string
+  posts: BlogPost[]
+  category: BlogCategory
 }> = ({ posts, category }) => {
-  const displayCategory = category === "Guide" ? "Guides" : category
+  const displayCategory = getCategoryLabel(category)
 
   return (
     <div>
@@ -21,9 +20,9 @@ export const ContinueReading: React.FC<{
         </h3>
         <Link
           className={cn("text-pink-500", "hover:underline")}
-          href={`/${displayCategory.toLowerCase()}`}
+          href={getCategoryPath(category)}
         >
-          View All {displayCategory} →
+          View All {displayCategory} -&gt;
         </Link>
       </header>
 
@@ -36,56 +35,57 @@ export const ContinueReading: React.FC<{
   )
 }
 
-const RelatedPostItem: React.FC<{ post: MinimalRelatedPost }> = ({ post }) => {
+const RelatedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
   const formattedDate = useMemo(
-    () =>
-      dayjs(new Date(post.properties.Date.date.start)).format("MMM D, YYYY"),
-    [post.properties.Date.date.start]
+    () => formatPostDate(post.publishedAt),
+    [post.publishedAt]
   )
-
-  const authors = post.properties.Authors.people.filter(
-    (author) => author != null && author.name != null
-  )
-  const category = post.properties.Category.select?.name
-  const isCommunity = post.properties.Community.checkbox
+  const authorsWithAvatars = post.authors.filter((author) => author.avatarUrl)
 
   return (
     <Link
-      href={`/p/${post.properties.Slug.rich_text[0].plain_text}`}
+      href={`/p/${post.slug}`}
       className="flex flex-col bg-secondaryBg p-6 rounded-lg hover:bg-gray-100 group"
     >
-      {category != null && <PostCategory category={category} isCommunity={isCommunity} />}
+      {post.category != null && (
+        <PostCategory
+          category={post.category.title}
+          isCommunity={post.externalAuthor}
+        />
+      )}
 
       <div className="flex-grow">
         <header className="font-medium font-serif text-lg mt-2 mb-1">
-          <NotionText text={post.properties.Page.title as any} noLinks />
+          {post.title}
         </header>
 
         <p className="text-base text-gray-800 line-clamp-2">
-          <NotionText text={post.properties.Description.rich_text as any} noLinks />
+          {post.description}
         </p>
       </div>
 
       <div className="flex items-center gap-3 mt-6">
-        {authors.length > 0 && (
+        {post.authors.length > 0 && (
           <>
-            <div className="flex items-center">
-              {authors.map((author, index) => (
-                <img
-                  key={author.name}
-                  src={author.avatar_url}
-                  alt={`Avatar of ${author.name}`}
-                  className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
-                  style={{ marginLeft: index > 0 ? "-8px" : 0 }}
-                  loading="lazy"
-                  decoding="async"
-                  width={24}
-                  height={24}
-                />
-              ))}
-            </div>
+            {authorsWithAvatars.length > 0 && (
+              <div className="flex items-center">
+                {authorsWithAvatars.map((author, index) => (
+                  <img
+                    key={author.id}
+                    src={author.avatarUrl}
+                    alt={`Avatar of ${author.name}`}
+                    className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                    style={{ marginLeft: index > 0 ? "-8px" : 0 }}
+                    loading="lazy"
+                    decoding="async"
+                    width={24}
+                    height={24}
+                  />
+                ))}
+              </div>
+            )}
             <span className="font-medium text-sm text-gray-500">
-              {authors.map((a) => a.name).join(" & ")}
+              {post.authors.map((author) => author.name).join(" & ")}
             </span>
             <Divider />
           </>

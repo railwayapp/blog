@@ -5,7 +5,7 @@ const OG_BASE_URL = "https://og.railway.com/api/image"
  *
  * By default the card is generated dynamically by the Graphics Studio `blog`
  * layout (served at og.railway.com) from fields the post already has in
- * Notion — no per-post image setup required. A manually set Notion `Image`
+ * the CMS, so no per-post image setup is required. A manually set social image
  * URL still wins as an escape hatch.
  *
  * OG images are scraped server-side, so the theme is fixed to the brand `plum`
@@ -28,7 +28,7 @@ export const useOgImage = ({
   subtitle?: string
   image?: string
 }): string => {
-  // Manual escape hatch: a Notion "Image" URL always wins.
+  // Manual escape hatch: a CMS social image URL always wins.
   if (image) return image
 
   const params = new URLSearchParams({

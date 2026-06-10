@@ -1,5 +1,6 @@
+import { getCategoryLabel } from "@lib/cms"
 import React, { useState } from "react"
-import { PostProps } from "../lib/types"
+import { BlogCategory, BlogPost } from "../lib/types"
 import { Categories } from "./Categories"
 import { CustomerStories } from "./CustomerStories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
@@ -8,20 +9,25 @@ import { ScalingRailway } from "./ScalingRailway"
 
 const DEFAULT_POSTS_LENGTH = 8
 
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-
 export const PostList: React.FC<{
-  posts: PostProps[]
-  category?: string
+  posts: BlogPost[]
+  categories: BlogCategory[]
+  category?: BlogCategory | string
   showScalingRailway?: boolean
   showCustomerStories?: boolean
-}> = ({ posts, category, showScalingRailway, showCustomerStories }) => {
-  const featuredPosts = posts.filter((p) => p.properties.Featured.checkbox)
-  
-  // filter community posts from landing page
-  const otherPosts = category == null 
-  ? posts.filter((p) => !p.properties.Featured.checkbox && !p.properties.Community.checkbox) 
-  : posts.filter((p) => !p.properties.Featured.checkbox);
+}> = ({
+  posts,
+  categories,
+  category,
+  showScalingRailway,
+  showCustomerStories,
+}) => {
+  const featuredPosts = posts.filter((post) => post.featured)
+
+  const otherPosts =
+    category == null
+      ? posts.filter((post) => !post.featured && !post.externalAuthor)
+      : posts.filter((post) => !post.featured)
 
   const [showMore, setShowMore] = useState(false)
   const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH
@@ -30,13 +36,13 @@ export const PostList: React.FC<{
     <>
       <div className="px-5 md:px-8">
         <div className="max-w-6xl mx-auto mb-24">
-          <Categories />
+          <Categories categories={categories} />
           <hr className="border-gray-100 mb-12" />
 
           {featuredPosts.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12">
-              {featuredPosts.map((p) => (
-                <FeaturedPostItem key={p.id} post={p} />
+              {featuredPosts.map((post) => (
+                <FeaturedPostItem key={post.id} post={post} />
               ))}
             </div>
           )}
@@ -52,14 +58,14 @@ export const PostList: React.FC<{
         {otherPosts.length > 0 && (
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
             <h2 className="text-3xl font-bold mb-12">
-              {capitalize(category ?? "Everything")}
+              {category == null ? "Everything" : getCategoryLabel(category)}
             </h2>
 
             <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
               {otherPosts
                 .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
-                .map((p) => (
-                  <PostItem key={p.id} post={p} />
+                .map((post) => (
+                  <PostItem key={post.id} post={post} />
                 ))}
 
               {showMore || !hasMorePosts ? (

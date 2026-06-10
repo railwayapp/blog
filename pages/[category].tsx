@@ -1,49 +1,87 @@
+import { PostList } from "@components/PostList"
+import { url } from "@components/Seo"
 import Page from "@layouts/Page"
-import { getDatabase } from "@lib/notion"
-import { PostProps } from "@lib/types"
+import {
+  getCategories,
+  getCategoryLabel,
+  getCategoryPath,
+  getCategoryRouteSlug,
+  getPostsByCategorySlug,
+} from "@lib/cms"
+import { BlogCategory, BlogPost } from "@lib/types"
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
-import { PostList } from "../components/PostList"
-import { CATEGORIES } from "../constants"
 
 export interface Props {
-  posts: PostProps[]
-  category: string
+  categories: BlogCategory[]
+  category: BlogCategory
+  posts: BlogPost[]
 }
 
-const CategoryPage: NextPage<Props> = ({ posts = [], category }) => {
+const CategoryPage: NextPage<Props> = ({
+  categories = [],
+  category,
+  posts = [],
+}) => {
   return (
-    <Page>
-      <PostList posts={posts} category={category} />
+    <Page
+      seo={{
+        title:
+          category?.seoTitle ??
+          `${category ? getCategoryLabel(category) : "Blog"} - Railway Blog`,
+        description: category?.seoDescription ?? category?.description ?? undefined,
+        // The canonical is derived from the category, so the legacy /guide
+        // alias canonicalizes to /guides instead of duplicating it.
+        currentUrl: category ? `${url}${getCategoryPath(category)}` : undefined,
+      }}
+    >
+      {category && (
+        <PostList
+          posts={posts}
+          categories={categories}
+          category={category}
+        />
+      )}
     </Page>
   )
 }
 
 export const getStaticProps: GetStaticProps = async (props) => {
-  if (process.env.POSTS_TABLE_ID == null) {
+  const categorySlug = props.params?.category
+
+  if (typeof categorySlug !== "string") {
     return {
       notFound: true,
+      revalidate: 900,
     }
   }
 
-  const category = props.params?.category as string
+  const cmsSlug = getCategoryRouteSlug(categorySlug)
+  const categories = await getCategories()
+  const category = categories.find((item) => item.slug === cmsSlug)
 
-  // Special case for "Guides"
-  const posts = (await getDatabase(process.env.POSTS_TABLE_ID)).filter(
-    (p) =>
-      p.properties.Category.select?.name?.toLowerCase() ===
-      (category === "guides" ? "guide" : category)
-  )
+  if (!category) {
+    // Same lease as the success path: a category created in the CMS would
+    // otherwise stay a cached 404 until the next deploy.
+    return {
+      notFound: true,
+      revalidate: 900,
+    }
+  }
+
+  const posts = await getPostsByCategorySlug(category.slug)
 
   return {
-    props: { posts, category },
-    revalidate: 900, // 15 minutes
+    props: { posts, categories, category },
+    revalidate: 900,
   }
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const categories = await getCategories()
+
   return {
-    paths: CATEGORIES.map((c) => `/${c}`),
-    fallback: true,
+    paths: categories.map((category) => getCategoryPath(category)),
+    fallback: "blocking",
   }
 }
 

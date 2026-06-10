@@ -1,97 +1,62 @@
-import {
-  CheckboxPropertyValue,
-  DatePropertyValue,
-  Page,
-  PersonUser,
-  RichTextPropertyValue,
-  TitlePropertyValue,
-  URLPropertyValue,
-  SelectPropertyValue,
-  Block,
-} from "@notionhq/client/build/src/api-types"
-
-export interface PostItem {
-  Page: TitlePropertyValue
-  Slug: RichTextPropertyValue
-  Published: CheckboxPropertyValue
-  Featured: CheckboxPropertyValue
-  Date: DatePropertyValue
-  Authors: { people: PersonUser[] }
-  Image: URLPropertyValue
-  FeaturedImage: URLPropertyValue
-  Description: RichTextPropertyValue
-  Category: SelectPropertyValue
-  Community: CheckboxPropertyValue
-}
-
-export interface PostProps extends Omit<Page, "properties"> {
-  properties: PostItem
-}
-
-export interface ListBlock {
+export interface BlogMedia {
+  alt: string
+  height?: number | null
   id: string
-  type: string
-  items: Block[]
+  mimeType?: string | null
+  url: string
+  width?: number | null
 }
 
-// Minimal type for related posts - only includes what's needed for display
-export interface MinimalRelatedPost {
+export interface BlogAuthor {
+  avatar: BlogMedia | null
+  avatarUrl: string | null
+  githubUrl?: string | null
   id: string
-  properties: {
-    Page: { title: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Slug: { rich_text: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Description: { rich_text: Array<{ 
-      plain_text: string
-      type?: string
-      annotations?: {
-        bold?: boolean
-        italic?: boolean
-        strikethrough?: boolean
-        underline?: boolean
-        code?: boolean
-        color?: string
-      }
-      text?: {
-        content: string
-        link?: { url: string }
-      }
-      href?: string
-    }> }
-    Date: { date: { start: string } }
-    Authors: { people: Array<{ name: string; avatar_url: string | null }> }
-    Category: { select: { name?: string } | null }
-    Community: { checkbox: boolean }
-  }
+  name: string
+  slug?: string | null
+  title?: string | null
+}
+
+export interface BlogCategory {
+  description?: string | null
+  id: string
+  order?: number | null
+  seoDescription?: string | null
+  seoTitle?: string | null
+  showInNavigation?: boolean | null
+  slug: string
+  title: string
+  visible?: boolean | null
+}
+
+export interface BlogPost {
+  authors: BlogAuthor[]
+  category: BlogCategory | null
+  content: string | null
+  createdAt: string
+  description: string
+  externalAuthor: boolean
+  featured: boolean
+  featuredImage: BlogMedia | null
+  id: string
+  publishedAt: string
+  seoDescription?: string | null
+  seoTitle?: string | null
+  slug: string
+  socialImage: BlogMedia | null
+  title: string
+  updatedAt: string
+}
+
+export interface PaginatedCMSResponse<T> {
+  docs: T[]
+  hasNextPage?: boolean
+  hasPrevPage?: boolean
+  limit?: number
+  nextPage?: number | null
+  page?: number
+  pagingCounter?: number
+  prevPage?: number | null
+  totalDocs?: number
+  totalPages?: number
 }

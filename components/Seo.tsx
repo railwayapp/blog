@@ -7,18 +7,24 @@ import {
   generateFAQSchema,
   extractFAQs,
 } from "@lib/seo-components"
-import { PostProps } from "@lib/types"
-import { Block } from "@notionhq/client/build/src/api-types"
+import { BlogPost } from "@lib/types"
 
 export interface Props extends NextSeoProps {
   title?: string
   description?: string
   image?: string
   author?: string
-  post?: PostProps
-  blocks?: Block[]
+  post?: BlogPost
+  content?: string | null
   currentUrl?: string
 }
+
+// Raw JSON.stringify output is unsafe inside a <script>: a CMS-authored
+// string containing "</script>" would close the tag and execute whatever
+// follows. Escaping "<" to its unicode form parses back to the same string,
+// so crawlers see identical JSON-LD.
+export const serializeSchema = (schema: object) =>
+  JSON.stringify(schema).replace(/</g, "\\u003c")
 
 const title = "Railway Blog"
 export const url = "https://blog.railway.com"
@@ -44,24 +50,22 @@ const config: DefaultSeoProps = {
   },
 }
 
-const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...props }) => {
+const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...props }) => {
   const title = props.title ?? config.title
   const description = props.description || config.description
   const fullUrl = currentUrl || url
 
   const blogPostSchema = post ? generateBlogPostSchema(post, fullUrl) : null
   const breadcrumbSchema = post ? generateBreadcrumbSchema(post, fullUrl) : null
-  const faqSchema = blocks ? generateFAQSchema(extractFAQs(blocks)) : null
+  const faqSchema = content ? generateFAQSchema(extractFAQs(content)) : null
 
-  const publishedTime = post?.properties.Date.date?.start
-  const modifiedTime = post?.properties.Date.date?.start // Using same as published for now
+  const publishedTime = post?.publishedAt
+  const modifiedTime = post?.updatedAt
   const postAuthors = author
     ? [author]
-    : post?.properties.Authors.people
-      .filter((a) => a != null && a.name != null)
-      .map((a) => a.name) || []
-  const section = post?.properties.Category?.select?.name
-  const postImage = image || post?.properties.Image?.url
+    : post?.authors.map((a) => a.name) || []
+  const section = post?.category?.title
+  const postImage = image || post?.socialImage?.url || post?.featuredImage?.url
 
   return (
     <>
@@ -70,19 +74,22 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
       <NextSeo
         {...props}
         canonical={fullUrl}
-        {...(postImage == null
-          ? {}
-          : {
-            openGraph: {
-              images: [{ url: postImage }],
-              article: {
-                authors: postAuthors,
-                publishedTime: publishedTime,
-                modifiedTime: modifiedTime,
-                section: section,
-              },
-            },
-          })}
+        // next-seo only emits og:url when an openGraph config is present, so
+        // always pass one to keep og:url aligned with the canonical.
+        openGraph={
+          postImage == null
+            ? { url: fullUrl }
+            : {
+                url: fullUrl,
+                images: [{ url: postImage }],
+                article: {
+                  authors: postAuthors,
+                  publishedTime: publishedTime,
+                  modifiedTime: modifiedTime,
+                  section: section,
+                },
+              }
+        }
       />
 
       <Head>
@@ -108,21 +115,21 @@ const SEO: React.FC<Props> = ({ image, author, post, blocks, currentUrl, ...prop
         {blogPostSchema && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostSchema) }}
+            dangerouslySetInnerHTML={{ __html: serializeSchema(blogPostSchema) }}
           />
         )}
 
         {breadcrumbSchema && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema) }}
           />
         )}
 
         {faqSchema && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            dangerouslySetInnerHTML={{ __html: serializeSchema(faqSchema) }}
           />
         )}
       </Head>

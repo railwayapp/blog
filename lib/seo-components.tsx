@@ -1,136 +1,36 @@
+import { getCategoryPath } from "@lib/cms"
+import {
+  extractFAQs,
+  extractTableOfContents,
+  FAQItem,
+  TableOfContentsItem,
+} from "@lib/markdown"
+import { BlogPost } from "@lib/types"
 import React from "react"
-import { Block } from "@notionhq/client/build/src/api-types"
-import { PostProps } from "@lib/types"
 
-export interface TableOfContentsItem {
-  id: string
-  text: string
-  level: number
-}
+export { extractFAQs, extractTableOfContents }
+export type { FAQItem, TableOfContentsItem }
 
-export interface FAQItem {
-  question: string
-  answer: string
-}
-
-const extractPlainText = (richText: any[]): string => {
-  if (!richText || !Array.isArray(richText)) return ""
-  return richText.map((t) => t.plain_text || "").join("")
-}
-
-const convertHeadingToId = (heading: any[]): string => {
-  if (!heading || heading.length === 0) return ""
-  return heading[0].plain_text
-    .toLowerCase()
-    .replace(/\s/g, "-")
-    .replace(/[?!:]/g, "")
-}
-
-export const extractTableOfContents = (blocks: Block[]): TableOfContentsItem[] => {
-  const toc: TableOfContentsItem[] = []
-
-  const processBlock = (block: Block | any) => {
-    const blockType = block.type
-    const blockData = block[blockType]
-
-    if (blockType === "heading_1" || blockType === "heading_2" || blockType === "heading_3") {
-      const text = extractPlainText(blockData?.text || [])
-      if (text) {
-        const id = convertHeadingToId(blockData?.text || [])
-        const level = blockType === "heading_1" ? 1 : blockType === "heading_2" ? 2 : 3
-        toc.push({ id, text, level })
-      }
-    }
-
-    if (blockData?.children) {
-      blockData.children.forEach((child: Block | any) => processBlock(child))
-    }
-    if (block.column_list?.children) {
-      block.column_list.children.forEach((child: Block | any) => processBlock(child))
-    }
-    if (block.column?.column) {
-      block.column.column.forEach((child: Block | any) => processBlock(child))
-    }
-  }
-
-  blocks.forEach(processBlock)
-  return toc
-}
-
-export const extractFAQs = (blocks: Block[]): FAQItem[] => {
-  const faqs: FAQItem[] = []
-  let currentQuestion: string | null = null
-
-  const processBlock = (block: Block | any) => {
-    const blockType = block.type
-    const blockData = block[blockType]
-
-    if (blockType === "callout") {
-      const text = extractPlainText(blockData?.text || [])
-      if (text) {
-        if (text.trim().endsWith("?")) {
-          currentQuestion = text.trim()
-        } else if (currentQuestion) {
-          faqs.push({ question: currentQuestion, answer: text.trim() })
-          currentQuestion = null
-        }
-      }
-    }
-
-    if (blockType === "heading_2" || blockType === "heading_3") {
-      const text = extractPlainText(blockData?.text || [])
-      if (text && text.trim().endsWith("?")) {
-        currentQuestion = text.trim()
-      }
-    }
-
-    if (blockType === "paragraph" && currentQuestion) {
-      const text = extractPlainText(blockData?.text || [])
-      if (text.trim()) {
-        faqs.push({ question: currentQuestion, answer: text.trim() })
-        currentQuestion = null
-      }
-    }
-
-    if (blockData?.children) {
-      blockData.children.forEach((child: Block | any) => processBlock(child))
-    }
-    if (block.column_list?.children) {
-      block.column_list.children.forEach((child: Block | any) => processBlock(child))
-    }
-    if (block.column?.column) {
-      block.column.column.forEach((child: Block | any) => processBlock(child))
-    }
-  }
-
-  blocks.forEach(processBlock)
-  return faqs
-}
-
-export const generateBlogPostSchema = (post: PostProps, url: string): object => {
-  const title = extractPlainText(post.properties.Page.title)
-  const description = extractPlainText(post.properties.Description.rich_text)
-  const authors = post.properties.Authors.people.filter(
-    (author) => author != null && author.name != null
-  )
-  const datePublished = post.properties.Date.date?.start
-  const image = post.properties.Image?.url
-
+export const generateBlogPostSchema = (post: BlogPost, url: string): object => {
+  const image = post.socialImage?.url ?? post.featuredImage?.url
   const authorSchema =
-    authors.length === 1
-      ? { "@type": "Person", name: authors[0].name }
-      : authors.length > 1
-        ? authors.map((author) => ({ "@type": "Person", name: author.name }))
+    post.authors.length === 1
+      ? { "@type": "Person", name: post.authors[0].name }
+      : post.authors.length > 1
+        ? post.authors.map((author) => ({
+            "@type": "Person",
+            name: author.name,
+          }))
         : undefined
 
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: title,
-    description: description,
+    headline: post.title,
+    description: post.seoDescription ?? post.description,
     image: image ? [image] : undefined,
-    datePublished: datePublished,
-    dateModified: datePublished,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
     author: authorSchema,
     publisher: {
       "@type": "Organization",
@@ -148,13 +48,10 @@ export const generateBlogPostSchema = (post: PostProps, url: string): object => 
 }
 
 export const generateBreadcrumbSchema = (
-  post: PostProps,
+  post: BlogPost,
   url: string,
-  baseUrl: string = "https://blog.railway.com"
+  baseUrl = "https://blog.railway.com"
 ): object => {
-  const title = extractPlainText(post.properties.Page.title)
-  const category = post.properties.Category?.select?.name
-
   const items = [
     {
       "@type": "ListItem",
@@ -164,19 +61,19 @@ export const generateBreadcrumbSchema = (
     },
   ]
 
-  if (category) {
+  if (post.category) {
     items.push({
       "@type": "ListItem",
       position: 2,
-      name: category,
-      item: `${baseUrl}/${category.toLowerCase()}`,
+      name: post.category.title,
+      item: `${baseUrl}${getCategoryPath(post.category)}`,
     })
   }
 
   items.push({
     "@type": "ListItem",
     position: items.length + 1,
-    name: title,
+    name: post.title,
     item: url,
   })
 
@@ -204,7 +101,9 @@ export const generateFAQSchema = (faqs: FAQItem[]): object | null => {
   }
 }
 
-export const HiddenTableOfContents: React.FC<{ items: TableOfContentsItem[] }> = ({ items }) => {
+export const HiddenTableOfContents: React.FC<{
+  items: TableOfContentsItem[]
+}> = ({ items }) => {
   if (items.length === 0) return null
 
   return (
@@ -225,7 +124,10 @@ export const HiddenTableOfContents: React.FC<{ items: TableOfContentsItem[] }> =
       <h2>Table of Contents</h2>
       <ol>
         {items.map((item) => (
-          <li key={item.id} style={{ marginLeft: `${(item.level - 1) * 1.5}rem` }}>
+          <li
+            key={item.id}
+            style={{ marginLeft: `${(item.level - 1) * 1.5}rem` }}
+          >
             <a href={`#${item.id}`}>{item.text}</a>
           </li>
         ))}
@@ -233,4 +135,3 @@ export const HiddenTableOfContents: React.FC<{ items: TableOfContentsItem[] }> =
     </nav>
   )
 }
-
