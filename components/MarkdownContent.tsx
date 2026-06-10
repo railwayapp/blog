@@ -243,7 +243,11 @@ const MarkdownSegmentRenderer: React.FC<{
       </blockquote>
     ),
     ul: ({ children }) => <ul className="list-disc pl-6 mb-4">{children}</ul>,
-    ol: ({ children }) => <ol className="list-decimal pl-6 mb-4">{children}</ol>,
+    ol: ({ children, start }) => (
+      <ol start={start} className="list-decimal pl-6 mb-4">
+        {children}
+      </ol>
+    ),
     li: ({ children }) => <li className="mb-2 leading-8">{children}</li>,
     table: ({ children }) => (
       <div className="my-8 overflow-x-auto">

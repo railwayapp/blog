@@ -147,3 +147,26 @@ describe("MarkdownContent embed links", () => {
     expect(container.querySelector("p")).toBeNull()
   })
 })
+
+describe("MarkdownContent ordered lists", () => {
+  it("preserves the start offset when a block splits a numbered list", () => {
+    const content = [
+      "1. step one",
+      "2. step two",
+      "",
+      "```",
+      "railway up",
+      "```",
+      "",
+      "3. step three",
+      "4. step four",
+    ].join("\n")
+    const { container } = render(<MarkdownContent content={content} />)
+
+    const lists = container.querySelectorAll("ol")
+    expect(lists).toHaveLength(2)
+    // Lists that start at 1 must stay attribute-free (byte parity with prod).
+    expect(lists[0].getAttribute("start")).toBeNull()
+    expect(lists[1].getAttribute("start")).toBe("3")
+  })
+})
