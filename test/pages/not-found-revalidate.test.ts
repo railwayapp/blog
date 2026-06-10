@@ -21,7 +21,7 @@ jest.mock("@components/Code", () => ({
 // its post is published would pin the URL at 404 forever.
 describe("post page getStaticProps", () => {
   it("gives a missing post's 404 the same lease as the success path", async () => {
-    ;(getPostBySlug as jest.Mock).mockResolvedValue(null)
+    (getPostBySlug as jest.Mock).mockResolvedValue(null)
 
     const result = await getPostStaticProps({
       params: { slug: "not-published-yet" },
@@ -48,7 +48,7 @@ describe("post page getStaticProps", () => {
 
 describe("category page getStaticProps", () => {
   it("gives an unknown category's 404 the same lease as the success path", async () => {
-    ;(getCategories as jest.Mock).mockResolvedValue([])
+    (getCategories as jest.Mock).mockResolvedValue([])
 
     const result = await getCategoryStaticProps({
       params: { category: "not-created-yet" },
