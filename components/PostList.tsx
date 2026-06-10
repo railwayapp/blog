@@ -32,6 +32,9 @@ export const PostList: React.FC<{
   const [showMore, setShowMore] = useState(false)
   const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH
 
+  // Category pages have no other h1; the homepage's h1 lives elsewhere.
+  const ListHeading = category == null ? "h2" : "h1"
+
   return (
     <>
       <div className="px-5 md:px-8">
@@ -57,9 +60,9 @@ export const PostList: React.FC<{
 
         {otherPosts.length > 0 && (
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
-            <h2 className="text-3xl font-bold mb-12">
+            <ListHeading className="text-3xl font-bold mb-12">
               {category == null ? "Everything" : getCategoryLabel(category)}
-            </h2>
+            </ListHeading>
 
             <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
               {otherPosts
@@ -79,6 +82,21 @@ export const PostList: React.FC<{
                 </button>
               )}
             </div>
+
+            {/* Crawlable links for the posts hidden behind "Load more" so
+                every post is reachable in the server-rendered HTML. Plain
+                <a> (never visible or clickable); unmounts once the full
+                cards render. Kept outside the cards grid so its
+                nth-last-child border CSS keeps counting correctly. */}
+            {!showMore && hasMorePosts && (
+              <ul className="hidden">
+                {otherPosts.slice(DEFAULT_POSTS_LENGTH).map((post) => (
+                  <li key={post.id}>
+                    <a href={`/p/${post.slug}`}>{post.title}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>

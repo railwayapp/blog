@@ -27,8 +27,8 @@ const Footer: React.FC = () => {
             <FooterListLink href={railwayUrl("pricing")}>
               Pricing
             </FooterListLink>
-            <FooterListLink href={railwayUrl("starters")}>
-              Starters
+            <FooterListLink href={railwayUrl("deploy")}>
+              Templates
             </FooterListLink>
             <FooterListLink href={"https://station.railway.com/feedback"}>
               Feedback
@@ -80,8 +80,8 @@ const Footer: React.FC = () => {
             Legal
           </p>
           <ul className="text-gray-500 space-y-4">
-            <FooterListLink href={railwayUrl("legal/fair-use")}>
-              Fair Use
+            <FooterListLink href={railwayUrl("legal/acceptable-use")}>
+              Acceptable Use
             </FooterListLink>
             <FooterListLink href={railwayUrl("legal/privacy")}>
               Privacy Policy

@@ -2,8 +2,5 @@
 User-agent: *
 Allow: /
 
-# Host
-Host: https://blog.railway.app/
-
 # Sitemaps
-Sitemap: https://blog.railway.app/sitemap.xml
+Sitemap: https://blog.railway.com/sitemap.xml

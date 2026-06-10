@@ -275,7 +275,7 @@ exports[`Home page matches snapshot 1`] = `
                 class="flex -space-x-2"
               >
                 <img
-                  alt=""
+                  alt="Bilt avatar"
                   class="w-10 h-10 rounded-full"
                   decoding="async"
                   height="40"
@@ -301,7 +301,7 @@ exports[`Home page matches snapshot 1`] = `
               class="w-[250%] h-full relative -rotate-6"
             >
               <img
-                alt="Product image for [object Object]"
+                alt="Product image for Bilt"
                 class="absolute top-0 md:top-[initial] md:bottom-0 left-0"
                 data-nimg="1"
                 decoding="async"
@@ -325,7 +325,7 @@ exports[`Home page matches snapshot 1`] = `
                 class="flex -space-x-2"
               >
                 <img
-                  alt=""
+                  alt="MindFort avatar"
                   class="w-10 h-10 rounded-full"
                   decoding="async"
                   height="40"
@@ -350,7 +350,7 @@ exports[`Home page matches snapshot 1`] = `
               class="w-[250%] h-full relative -rotate-6"
             >
               <img
-                alt="Product image for [object Object]"
+                alt="Product image for MindFort"
                 class="absolute top-0 md:top-[initial] md:bottom-0 left-0"
                 data-nimg="1"
                 decoding="async"
@@ -445,11 +445,11 @@ exports[`Home page matches snapshot 1`] = `
           <li>
             <a
               class="hover:text-foreground"
-              href="https://railway.com/starters"
+              href="https://railway.com/deploy"
               rel="noreferrer noopener"
               target="_blank"
             >
-              Starters
+              Templates
             </a>
           </li>
           <li>
@@ -590,11 +590,11 @@ exports[`Home page matches snapshot 1`] = `
           <li>
             <a
               class="hover:text-foreground"
-              href="https://railway.com/legal/fair-use"
+              href="https://railway.com/legal/acceptable-use"
               rel="noreferrer noopener"
               target="_blank"
             >
-              Fair Use
+              Acceptable Use
             </a>
           </li>
           <li>

@@ -40,9 +40,6 @@ const config: DefaultSeoProps = {
     url,
     site_name: title,
     images: [{ url: image }],
-    article: {
-      authors: [],
-    },
   },
   twitter: {
     handle: "@Railway_App",
@@ -51,7 +48,6 @@ const config: DefaultSeoProps = {
 }
 
 const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...props }) => {
-  const title = props.title ?? config.title
   const description = props.description || config.description
   const fullUrl = currentUrl || url
 
@@ -73,45 +69,30 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
 
       <NextSeo
         {...props}
+        // Explicit so exactly one keyed description tag wins the next/head
+        // dedupe; an un-keyed copy of this tag is what Ahrefs flagged as
+        // "Multiple meta description tags" on every page.
+        description={description}
         canonical={fullUrl}
         // next-seo only emits og:url when an openGraph config is present, so
-        // always pass one to keep og:url aligned with the canonical.
-        openGraph={
-          postImage == null
-            ? { url: fullUrl }
-            : {
-                url: fullUrl,
-                images: [{ url: postImage }],
-                article: {
-                  authors: postAuthors,
-                  publishedTime: publishedTime,
-                  modifiedTime: modifiedTime,
-                  section: section,
-                },
-              }
-        }
+        // always pass one to keep og:url aligned with the canonical. The
+        // article block requires type:"article" or next-seo drops it.
+        openGraph={{
+          url: fullUrl,
+          ...(postImage != null && { images: [{ url: postImage }] }),
+          ...(post != null && {
+            type: "article",
+            article: {
+              authors: postAuthors,
+              publishedTime: publishedTime,
+              modifiedTime: modifiedTime,
+              section: section,
+            },
+          }),
+        }}
       />
 
       <Head>
-        <title>{title}</title>
-
-        <meta name="description" content={description} />
-
-        <link rel="canonical" href={fullUrl} />
-
-        {publishedTime && (
-          <meta property="article:published_time" content={publishedTime} />
-        )}
-        {modifiedTime && (
-          <meta property="article:modified_time" content={modifiedTime} />
-        )}
-        {postAuthors.map((postAuthor) => (
-          <meta key={postAuthor} property="article:author" content={postAuthor} />
-        ))}
-        {section && (
-          <meta property="article:section" content={section} />
-        )}
-
         {blogPostSchema && (
           <script
             type="application/ld+json"
