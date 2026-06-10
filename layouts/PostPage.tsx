@@ -3,13 +3,12 @@ import { url } from "@components/Seo"
 import { HiddenTableOfContents, extractTableOfContents } from "@lib/seo-components"
 import Page from "@layouts/Page"
 import { BlogPost } from "@lib/types"
-import dayjs from "dayjs"
 import React, { useMemo } from "react"
 import { BottomCTA } from "../components/BottomCTA"
 import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
-import { cn } from "../utils"
+import { cn, formatPostDate } from "../utils"
 
 export interface Props {
   post: BlogPost
@@ -18,7 +17,7 @@ export interface Props {
 
 export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
   const formattedDate = useMemo(
-    () => dayjs(post.publishedAt).format("MMM D, YYYY"),
+    () => formatPostDate(post.publishedAt),
     [post.publishedAt]
   )
 

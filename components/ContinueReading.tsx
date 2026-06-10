@@ -1,8 +1,7 @@
 import { getCategoryLabel, getCategoryPath } from "@lib/cms"
 import { BlogCategory, BlogPost } from "@lib/types"
-import dayjs from "dayjs"
 import React, { useMemo } from "react"
-import { cn } from "../utils"
+import { cn, formatPostDate } from "../utils"
 import { Divider } from "./Divider"
 import Link from "./Link"
 import { PostCategory } from "./PostCategory"
@@ -38,7 +37,7 @@ export const ContinueReading: React.FC<{
 
 const RelatedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
   const formattedDate = useMemo(
-    () => dayjs(post.publishedAt).format("MMM D, YYYY"),
+    () => formatPostDate(post.publishedAt),
     [post.publishedAt]
   )
   const authorsWithAvatars = post.authors.filter((author) => author.avatarUrl)

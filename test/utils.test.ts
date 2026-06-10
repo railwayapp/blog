@@ -1,4 +1,4 @@
-import { extractTweetId, extractYoutubeId } from "../utils"
+import { extractTweetId, extractYoutubeId, formatPostDate } from "../utils"
 
 describe("extractYoutubeId", () => {
   it.each([
@@ -34,6 +34,23 @@ describe("extractYoutubeId", () => {
     "not a url",
   ])("returns null for %s", (url) => {
     expect(extractYoutubeId(url)).toBeNull()
+  })
+})
+
+// Regression: CMS publish dates are midnight-UTC timestamps. Formatting them
+// in local time rendered "May 5" for visitors west of UTC while the server
+// said "May 6", breaking hydration. These must pass regardless of the TZ the
+// test process runs in.
+describe("formatPostDate", () => {
+  it.each([
+    ["2024-05-06T00:00:00.000Z", "May 6, 2024"],
+    ["2021-04-29T00:00:00.000Z", "Apr 29, 2021"],
+    // Timestamps with an offset format as their UTC calendar day, matching
+    // what the (UTC) server has always emitted.
+    ["2021-05-28T14:00:00.000-07:00", "May 28, 2021"],
+    ["2021-05-28T20:00:00.000-07:00", "May 29, 2021"],
+  ])("formats %s as %s in every timezone", (iso, expected) => {
+    expect(formatPostDate(iso)).toBe(expected)
   })
 })
 

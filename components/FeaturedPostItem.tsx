@@ -1,14 +1,14 @@
 import Link from "@components/Link"
 import { BlogPost } from "@lib/types"
-import dayjs from "dayjs"
 import Image from "next/image"
 import React, { useMemo } from "react"
+import { formatPostDate } from "../utils"
 import { Divider } from "./Divider"
 import { PostCategory } from "./PostCategory"
 
 export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
   const formattedDate = useMemo(
-    () => dayjs(post.publishedAt).format("MMM D, YYYY"),
+    () => formatPostDate(post.publishedAt),
     [post.publishedAt]
   )
   const authorsWithAvatars = post.authors.filter((author) => author.avatarUrl)
