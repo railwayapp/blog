@@ -26,7 +26,11 @@ const Home: NextPage<Props> = ({ categories = [], posts = [] }) => {
 export const getStaticProps: GetStaticProps = async () => {
   const [posts, categories] = await Promise.all([getPosts(), getCategories()])
 
-  await generateRssFeed(posts)
+  // A failed feed rebuild keeps serving the previous rss.xml; it should
+  // never block the homepage from revalidating.
+  await generateRssFeed().catch((error) => {
+    console.error("RSS feed generation failed:", error)
+  })
 
   return {
     props: { posts, categories },

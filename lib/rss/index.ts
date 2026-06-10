@@ -1,5 +1,5 @@
 import { MarkdownContent } from "@components/MarkdownContent"
-import { getPostBySlug } from "@lib/cms"
+import { getPosts } from "@lib/cms"
 import { BlogPost } from "@lib/types"
 import { Feed } from "feed"
 import { writeFileSync } from "fs"
@@ -51,7 +51,7 @@ const renderPostContent = (post: BlogPost) => {
   return html
 }
 
-export const generateRssFeed = async (posts: BlogPost[]) => {
+export const generateRssFeed = async () => {
   if (process.env.NODE_ENV === "development") return
 
   const feed = new Feed({
@@ -68,17 +68,19 @@ export const generateRssFeed = async (posts: BlogPost[]) => {
     copyright: `Copyright (c) ${new Date().getFullYear()} Railway Corp.`,
   })
 
-  const includedPosts = posts.filter(
-    (post) => post.featured || post.category?.slug === "guide"
-  )
+  // One paginated query with content included, instead of a follow-up
+  // request per post (the feed holds 100+ posts).
+  const includedPosts: BlogPost[] = await getPosts({
+    includeContent: true,
+    where: {
+      or: [
+        { featured: { equals: true } },
+        { "category.slug": { equals: "guide" } },
+      ],
+    },
+  })
 
-  for (const listPost of includedPosts) {
-    const post = listPost.content
-      ? listPost
-      : await getPostBySlug(listPost.slug).catch((error) => {
-          console.error(`Error fetching content for post ${listPost.id}:`, error)
-          return listPost
-        })
+  for (const post of includedPosts) {
     const link = `${baseUrl}/p/${post.slug}`
     const image = post.featuredImage?.url ?? post.socialImage?.url
 

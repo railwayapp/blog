@@ -64,7 +64,12 @@ ${postsContent.join("\n")}
   )
 
   res.setHeader("Content-Type", "text/markdown; charset=utf-8")
-  res.setHeader("Content-Encoding", "utf-8")
+  // Every render pulls all posts with content from the CMS; let shared
+  // caches absorb repeat crawler traffic.
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=3600, stale-while-revalidate=86400"
+  )
   res.write(header + categoryContents.join("\n"))
   res.end()
 

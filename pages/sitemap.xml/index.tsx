@@ -10,6 +10,11 @@ import { getServerSideSitemap } from "next-sitemap"
 const ROOT_URL = "https://blog.railway.com"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  ctx.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=900, stale-while-revalidate=3600"
+  )
+
   const [posts, categories] = await Promise.all([getPosts(), getCategories()])
   const now = new Date().toISOString()
 

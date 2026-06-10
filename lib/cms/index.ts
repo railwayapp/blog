@@ -41,6 +41,7 @@ interface PayloadCategory {
 
 interface PayloadPost {
   _status?: "draft" | "published" | null
+  archivedAt?: string | null
   authors?: Array<number | PayloadAuthor> | null
   category?: number | PayloadCategory | null
   content?: string | null
@@ -137,6 +138,11 @@ const publishedWhere = {
   _status: {
     equals: "published",
   },
+  // Defense in depth: the readonly API key already hides archived posts at
+  // the CMS access layer, but a staff-level key would not.
+  archivedAt: {
+    exists: false,
+  },
 }
 
 const visibleCategoryWhere = {
@@ -145,25 +151,52 @@ const visibleCategoryWhere = {
   },
 }
 
+const REQUEST_TIMEOUT_MS = 30_000
+const RETRY_DELAYS_MS = [500, 1500]
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504])
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const cmsRequest = async <T>(path: string, params: URLSearchParams) => {
   const url = `${getCMSBaseURL()}${path}?${params.toString()}`
+  const headers = { Authorization: `Bearer ${getCMSAPIKey()}` }
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${getCMSAPIKey()}`,
-    },
-  })
+  for (let attempt = 0; ; attempt++) {
+    const retryDelay = RETRY_DELAYS_MS[attempt]
+    let response: Response | undefined
 
-  if (!response.ok) {
-    const message = await response.text().catch(() => "")
-    throw new Error(
-      `Railway CMS request failed (${response.status}) for ${path}${
-        message ? `: ${message}` : ""
-      }`
+    try {
+      response = await fetch(url, {
+        headers,
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      })
+    } catch (error) {
+      // Network failure or timeout; rethrow once retries are exhausted.
+      if (retryDelay == null) throw error
+    }
+
+    if (response) {
+      if (response.ok) {
+        return (await response.json()) as T
+      }
+
+      if (retryDelay == null || !RETRYABLE_STATUSES.has(response.status)) {
+        const message = await response.text().catch(() => "")
+        throw new Error(
+          `Railway CMS request failed (${response.status}) for ${path}${
+            message ? `: ${message}` : ""
+          }`
+        )
+      }
+    }
+
+    console.warn(
+      `Railway CMS request for ${path} failed${
+        response ? ` (${response.status})` : ""
+      }; retrying in ${retryDelay}ms`
     )
+    await sleep(retryDelay + Math.random() * 250)
   }
-
-  return (await response.json()) as T
 }
 
 const listCollection = async <T>(
@@ -299,6 +332,7 @@ export const mapCMSPost = (post: PayloadPost): BlogPost | null => {
   if (
     !post ||
     (post._status != null && post._status !== "published") ||
+    post.archivedAt != null ||
     typeof post.title !== "string" ||
     typeof post.slug !== "string" ||
     typeof post.description !== "string" ||
