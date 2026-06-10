@@ -235,6 +235,16 @@ const MarkdownSegmentRenderer: React.FC<{
         return <Code language={language}>{code}</Code>
       }
 
+      // Fenced blocks without a language are still blocks: hast always
+      // gives block code a trailing newline, inline code never has one.
+      if (String(children).includes("\n")) {
+        return (
+          <pre className="mb-6">
+            <code>{code}</code>
+          </pre>
+        )
+      }
+
       return (
         <code className="text-pink-600 whitespace-normal break-words">
           {children}
