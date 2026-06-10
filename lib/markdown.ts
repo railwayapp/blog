@@ -80,7 +80,12 @@ export const stripMarkdown = (content: string) =>
     .replace(/!\[([^\]]*)]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
     .replace(/<[^>]+>/g, " ")
-    .replace(/[#>*_~|`-]/g, " ")
+    // Hyphens are only markdown when they are line-level markers (list
+    // bullets, horizontal rules); anywhere else they are part of a word
+    // ("pre-built", "PCI-DSS") and must survive.
+    .replace(/^[ \t]*[-+*][ \t]+/gm, " ")
+    .replace(/^[ \t]*-{3,}[ \t]*$/gm, " ")
+    .replace(/[#>*_~|`]/g, " ")
     .replace(/\s+/g, " ")
     .trim()
 
@@ -139,28 +144,48 @@ export const extractTableOfContents = (
   return items
 }
 
+/**
+ * Questions may only come from h2/h3 headings or callouts ending in "?";
+ * body text can only ever answer a pending question. Letting arbitrary
+ * paragraphs become questions turns rhetorical prose into fabricated
+ * FAQPage structured data.
+ */
 export const extractFAQs = (content: string): FAQItem[] => {
   const faqs: FAQItem[] = []
   let currentQuestion: string | null = null
 
-  const processText = (text: string) => {
+  const answerWith = (text: string) => {
+    if (!currentQuestion) return
+
     const stripped = stripMarkdown(text)
     if (!stripped) return
 
-    if (stripped.endsWith("?")) {
-      currentQuestion = stripped
-      return
-    }
-
-    if (currentQuestion) {
-      faqs.push({ question: currentQuestion, answer: stripped })
-      currentQuestion = null
-    }
+    faqs.push({ question: currentQuestion, answer: stripped })
+    currentQuestion = null
   }
 
   for (const segment of segmentMarkdown(content)) {
     if (segment.type === "callout") {
-      processText(segment.content)
+      // A callout maps to a Notion callout block: its first paragraph is the
+      // callout's own text (a question candidate), any following paragraphs
+      // were child blocks (answer material only).
+      const [first, ...rest] = segment.content
+        .split(/\n{2,}/)
+        .map((chunk) => chunk.trim())
+        .filter(Boolean)
+
+      if (first) {
+        const stripped = stripMarkdown(first)
+        if (stripped.endsWith("?")) {
+          currentQuestion = stripped
+        } else {
+          answerWith(first)
+        }
+      }
+
+      for (const chunk of rest) {
+        answerWith(chunk)
+      }
       continue
     }
 
@@ -170,8 +195,17 @@ export const extractFAQs = (content: string): FAQItem[] => {
       .filter(Boolean)
 
     for (const chunk of chunks) {
-      const heading = chunk.match(/^#{2,3}\s+(.+)$/)
-      processText(heading?.[1] ?? chunk)
+      const heading = chunk.match(/^(#{1,3})\s+(.+)$/)
+
+      if (heading) {
+        const stripped = stripMarkdown(heading[2])
+        if (heading[1].length >= 2 && stripped.endsWith("?")) {
+          currentQuestion = stripped
+        }
+        continue
+      }
+
+      answerWith(chunk)
     }
   }
 
