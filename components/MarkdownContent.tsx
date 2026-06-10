@@ -34,8 +34,20 @@ const isTemplateURL = (href?: string | null) =>
         href.includes("https://railway.com/template/"))
   )
 
-const isBlockLink = (href?: string | null) =>
-  isVideoURL(href) || Boolean(href && extractYoutubeId(href)) || isTemplateURL(href)
+// YouTube/template links are embeds only when the label is the URL itself
+// (`[url](url)` or a bare autolink) — the shape Notion embed blocks export
+// as; labeled ones are prose links and must stay inline. Video links are the
+// opposite: Notion exported video blocks as `[caption](file.mp4)`, so a
+// label does not make them inline (the corpus has captioned video embeds
+// but no prose video links). The render branches below must follow the same
+// rules, or unwrapped paragraphs and inline embeds get mismatched.
+const isEmbedLink = (href: string | null | undefined, label: string) =>
+  Boolean(
+    href &&
+      (isVideoURL(href) ||
+        (label === href &&
+          (extractYoutubeId(href) != null || isTemplateURL(href))))
+  )
 
 // A tweet link is only an embed when its label is the URL itself: that shape
 // covers both `[url](url)` and bare GFM autolinks, i.e. what was an embed
@@ -57,10 +69,8 @@ const hasBlockMarkdownChild = (node: any) =>
 
       if (child?.tagName === "a") {
         const href = child.properties?.href
-        return (
-          isBlockLink(href) ||
-          Boolean(getTweetEmbedId(href, getHastText(child)))
-        )
+        const label = getHastText(child)
+        return isEmbedLink(href, label) || Boolean(getTweetEmbedId(href, label))
       }
 
       return false
@@ -153,7 +163,7 @@ const MarkdownSegmentRenderer: React.FC<{
         )
       }
 
-      const youtubeId = href ? extractYoutubeId(href) : null
+      const youtubeId = href && label === href ? extractYoutubeId(href) : null
       if (youtubeId) {
         return (
           <span

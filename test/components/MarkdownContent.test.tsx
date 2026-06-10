@@ -70,3 +70,80 @@ describe("MarkdownContent tweet embeds", () => {
     expect(blockquote?.querySelector(`a[href="${url}"]`)).not.toBeNull()
   })
 })
+
+describe("MarkdownContent embed links", () => {
+  // Regression: labeled YouTube links in prose (marathon-tv-app's [*Shogun*],
+  // how-we-write-changelogs) were unwrapped and rendered as 550px iframes
+  // mid-sentence. Prod rendered them as plain links.
+  it("keeps a labeled YouTube link inline within its styled paragraph", () => {
+    const url = "https://www.youtube.com/watch?v=yAN5uspO_hk"
+    const { container } = render(
+      <MarkdownContent
+        content={`We were checking out [*Shogun*](${url}), which was popular.`}
+      />
+    )
+
+    expect(container.querySelector("iframe")).toBeNull()
+    const link = container.querySelector(`a[href="${url}"]`)
+    expect(link?.textContent).toBe("Shogun")
+    const paragraph = container.querySelector("p")
+    expect(paragraph?.className).toContain("mb-4")
+    expect(paragraph?.textContent).toContain("which was popular.")
+  })
+
+  it("renders a standalone [url](url) YouTube link as a block embed", () => {
+    const url = "https://www.youtube.com/watch?v=yAN5uspO_hk"
+    const { container } = render(<MarkdownContent content={`[${url}](${url})`} />)
+
+    const iframe = container.querySelector("iframe")
+    expect(iframe?.getAttribute("src")).toBe(
+      "https://youtube.com/embed/yAN5uspO_hk"
+    )
+    expect(container.querySelector("p")).toBeNull()
+  })
+
+  it("renders a bare autolinked YouTube URL as a block embed", () => {
+    const { container } = render(
+      <MarkdownContent content="https://youtu.be/tB2ZWBFEL-Y" />
+    )
+
+    expect(container.querySelector("iframe")).not.toBeNull()
+    expect(container.querySelector("p")).toBeNull()
+  })
+
+  // Notion exported video blocks as [caption](file.mp4) — a label must NOT
+  // demote them to inline links (46 captioned video embeds in the corpus).
+  it("keeps a labeled video link as a block player", () => {
+    const url = "https://cms.railway.com/media/abc123.mp4"
+    const { container } = render(
+      <MarkdownContent content={`[Undo volume deletion](${url})`} />
+    )
+
+    expect(container.querySelector("video")?.getAttribute("src")).toBe(url)
+    expect(container.querySelector(`a[href="${url}"]`)).toBeNull()
+    expect(container.querySelector("p")).toBeNull()
+  })
+
+  it("keeps a labeled template link inline within its styled paragraph", () => {
+    const url = "https://railway.com/template/yDom4a"
+    const { container } = render(
+      <MarkdownContent content={`Deploy [Next.js](${url}) today.`} />
+    )
+
+    expect(container.querySelector("img")).toBeNull()
+    const link = container.querySelector(`a[href="${url}"]`)
+    expect(link?.textContent).toBe("Next.js")
+    const paragraph = container.querySelector("p")
+    expect(paragraph?.className).toContain("mb-4")
+    expect(paragraph?.textContent).toContain("today.")
+  })
+
+  it("renders a standalone template link as the deploy button", () => {
+    const url = "https://railway.com/template/yDom4a"
+    const { container } = render(<MarkdownContent content={`[${url}](${url})`} />)
+
+    const img = container.querySelector("img")
+    expect(img?.getAttribute("alt")).toBe("Deploy on Railway")
+    expect(container.querySelector("p")).toBeNull()
+  })
+})
