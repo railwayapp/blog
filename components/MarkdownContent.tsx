@@ -9,9 +9,10 @@ import {
 } from "@lib/markdown"
 import React from "react"
 import ReactMarkdown from "react-markdown"
+import { TwitterTweetEmbed } from "react-twitter-embed"
 import rehypeSanitize from "rehype-sanitize"
 import remarkGfm from "remark-gfm"
-import { extractYoutubeId } from "utils"
+import { extractTweetId, extractYoutubeId } from "utils"
 
 type RenderMode = "page" | "rss"
 
@@ -36,13 +37,30 @@ const isTemplateURL = (href?: string | null) =>
 const isBlockLink = (href?: string | null) =>
   isVideoURL(href) || Boolean(href && extractYoutubeId(href)) || isTemplateURL(href)
 
+// A tweet link is only an embed when its label is the URL itself: that shape
+// covers both `[url](url)` and bare GFM autolinks, i.e. what was an embed
+// block before the CMS migration. Labeled tweet links stay inline links.
+const getTweetEmbedId = (href: string | null | undefined, label: string) =>
+  href && label === href ? extractTweetId(href) : null
+
+const getHastText = (node: any): string =>
+  (node?.children ?? [])
+    .map((child: any) =>
+      child?.type === "text" ? child.value ?? "" : getHastText(child)
+    )
+    .join("")
+
 const hasBlockMarkdownChild = (node: any) =>
   Boolean(
     node?.children?.some((child: any) => {
       if (child?.tagName === "img") return true
 
       if (child?.tagName === "a") {
-        return isBlockLink(child.properties?.href)
+        const href = child.properties?.href
+        return (
+          isBlockLink(href) ||
+          Boolean(getTweetEmbedId(href, getHastText(child)))
+        )
       }
 
       return false
@@ -149,6 +167,23 @@ const MarkdownSegmentRenderer: React.FC<{
               title={label || "YouTube video"}
               allowFullScreen
             />
+          </span>
+        )
+      }
+
+      const tweetId = getTweetEmbedId(href, label)
+      if (tweetId) {
+        if (mode === "rss") {
+          return (
+            <blockquote className="twitter-tweet" data-markdown-block="true">
+              <a href={href}>{href}</a>
+            </blockquote>
+          )
+        }
+
+        return (
+          <span className="block mb-6" data-markdown-block="true">
+            <TwitterTweetEmbed tweetId={tweetId} />
           </span>
         )
       }

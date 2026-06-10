@@ -1,4 +1,4 @@
-import { extractYoutubeId } from "../utils"
+import { extractTweetId, extractYoutubeId } from "../utils"
 
 describe("extractYoutubeId", () => {
   it.each([
@@ -34,5 +34,35 @@ describe("extractYoutubeId", () => {
     "not a url",
   ])("returns null for %s", (url) => {
     expect(extractYoutubeId(url)).toBeNull()
+  })
+})
+
+describe("extractTweetId", () => {
+  it.each([
+    [
+      "https://twitter.com/Altimor/status/1660725218925776896",
+      "1660725218925776896",
+    ],
+    [
+      "https://x.com/cramforce/status/1975656443954274780",
+      "1975656443954274780",
+    ],
+    ["https://x.com/lifeof_jer/status/2048576568109527407?s=20", "2048576568109527407"],
+    ["https://www.twitter.com/JustJake/status/1667492928758095872", "1667492928758095872"],
+    ["https://twitter.com/jack/statuses/20", "20"],
+  ])("extracts the tweet id from %s", (url, id) => {
+    expect(extractTweetId(url)).toBe(id)
+  })
+
+  it.each([
+    "https://twitter.com/paulgb",
+    "https://x.com/resend",
+    "https://twitter.com/i/lists/123456",
+    "https://nitter.net/user/status/1660725218925776896",
+    "https://railway.com/x.com/user/status/123",
+    "https://x.community/user/status/123",
+    "not a url",
+  ])("returns null for %s", (url) => {
+    expect(extractTweetId(url)).toBeNull()
   })
 })

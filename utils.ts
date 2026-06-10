@@ -9,3 +9,10 @@ export const extractYoutubeId = (url: string): string | null => {
   )
   return matched?.[1] ?? null
 }
+
+export const extractTweetId = (url: string): string | null => {
+  const matched = url.match(
+    /^https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/[A-Za-z0-9_]+\/status(?:es)?\/(\d+)/
+  )
+  return matched?.[1] ?? null
+}
