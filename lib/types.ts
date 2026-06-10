@@ -23,6 +23,7 @@ export interface BlogCategory {
   order?: number | null
   seoDescription?: string | null
   seoTitle?: string | null
+  showInNavigation?: boolean | null
   slug: string
   title: string
   visible?: boolean | null

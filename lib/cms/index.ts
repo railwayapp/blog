@@ -34,6 +34,7 @@ interface PayloadCategory {
   order?: number | null
   seoDescription?: string | null
   seoTitle?: string | null
+  showInNavigation?: boolean | null
   slug?: string | null
   title?: string | null
   visible?: boolean | null
@@ -321,6 +322,10 @@ export const mapCMSCategory = (
         : null,
     seoTitle:
       typeof category.seoTitle === "string" ? category.seoTitle : null,
+    showInNavigation:
+      typeof category.showInNavigation === "boolean"
+        ? category.showInNavigation
+        : null,
     slug: category.slug,
     title: category.title,
     visible:
