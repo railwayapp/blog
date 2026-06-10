@@ -27,11 +27,16 @@ const VIDEO_URL_PATTERN = /\.(mp4|mov|webm|ogg)(?:[?#].*)?$/i
 const isVideoURL = (href?: string | null) =>
   Boolean(href && VIDEO_URL_PATTERN.test(href))
 
+// Templates live under railway.com/deploy/<slug>; the other two prefixes are
+// legacy forms kept for older content. Marketplace browse links
+// (railway.com/deploy and railway.com/deploy?category=…) must NOT match,
+// hence the trailing slash.
 const isTemplateURL = (href?: string | null) =>
   Boolean(
     href &&
-      (href.includes("https://railway.com/new/template") ||
-        href.includes("https://railway.com/template/"))
+      (href.startsWith("https://railway.com/deploy/") ||
+        href.startsWith("https://railway.com/new/template") ||
+        href.startsWith("https://railway.com/template/"))
   )
 
 // YouTube/template links are embeds only when the label is the URL itself

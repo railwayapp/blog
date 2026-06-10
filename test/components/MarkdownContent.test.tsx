@@ -125,7 +125,7 @@ describe("MarkdownContent embed links", () => {
   })
 
   it("keeps a labeled template link inline within its styled paragraph", () => {
-    const url = "https://railway.com/template/yDom4a"
+    const url = "https://railway.com/deploy/hermes-agent-railway"
     const { container } = render(
       <MarkdownContent content={`Deploy [Next.js](${url}) today.`} />
     )
@@ -139,12 +139,45 @@ describe("MarkdownContent embed links", () => {
   })
 
   it("renders a standalone template link as the deploy button", () => {
-    const url = "https://railway.com/template/yDom4a"
+    const url = "https://railway.com/deploy/hermes-agent-railway"
     const { container } = render(<MarkdownContent content={`[${url}](${url})`} />)
 
     const img = container.querySelector("img")
     expect(img?.getAttribute("alt")).toBe("Deploy on Railway")
     expect(container.querySelector("p")).toBeNull()
+  })
+
+  it("renders the deploy button for legacy template URL forms", () => {
+    for (const url of [
+      "https://railway.com/template/yDom4a",
+      "https://railway.com/new/template?code=abc",
+    ]) {
+      const { container } = render(
+        <MarkdownContent content={`[${url}](${url})`} />
+      )
+
+      expect(container.querySelector("img")?.getAttribute("alt")).toBe(
+        "Deploy on Railway"
+      )
+    }
+  })
+
+  it("keeps a marketplace browse link inline instead of embedding it", () => {
+    const url = "https://railway.com/deploy?category=Storage"
+    const { container } = render(<MarkdownContent content={`[${url}](${url})`} />)
+
+    expect(container.querySelector("img")).toBeNull()
+    expect(container.querySelector(`a[href="${url}"]`)?.textContent).toBe(url)
+  })
+
+  it("does not render the deploy button for a URL that merely contains a template URL", () => {
+    const url =
+      "https://evil.example.com/?next=https://railway.com/deploy/hermes-agent-railway"
+    const { container } = render(<MarkdownContent content={`[${url}](${url})`} />)
+
+    expect(container.querySelector("img")).toBeNull()
+    const link = container.querySelector(`a[href="${url}"]`)
+    expect(link?.textContent).toBe(url)
   })
 })
 
