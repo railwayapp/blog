@@ -89,13 +89,40 @@ export const stripMarkdown = (content: string) =>
     .replace(/\s+/g, " ")
     .trim()
 
+/**
+ * Unwraps inline markdown syntax while preserving literal characters
+ * ("&", "#", parentheses, apostrophes) — they are part of the anchor ids
+ * the old Notion renderer generated.
+ */
+const unwrapInlineMarkdown = (value: string) =>
+  value
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/!\[([^\]]*)]\([^)]*\)/g, "$1")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/(\*\*|__)(.+?)\1/g, "$2")
+    .replace(/~~(.+?)~~/g, "$1")
+    .replace(/(^|\W)\*([^*\s][^*]*)\*(?=\W|$)/g, "$1$2")
+    .replace(/(^|\W)_([^_\s][^_]*)_(?=\W|$)/g, "$1$2")
+    .replace(/<[^>]+>/g, " ")
+
+/** Plain display text of a heading, whitespace normalized. */
+const headingPlainText = (value: string) =>
+  unwrapInlineMarkdown(value).replace(/\s+/g, " ").trim()
+
+/**
+ * Mirrors the anchor algorithm of the pre-CMS Notion renderer (lowercase,
+ * every whitespace char to "-", drop only "?!:") so heading ids — and the
+ * deep links Google and readers already hold — survive the migration
+ * unchanged. Punctuation like apostrophes, commas, and parentheses is
+ * deliberately kept, and interior whitespace runs are NOT collapsed:
+ * both are part of the anchors live on the site today.
+ */
 const slugify = (content: string) => {
-  const slug = stripMarkdown(content)
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
+  const slug = unwrapInlineMarkdown(content)
     .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
+    .toLowerCase()
+    .replace(/\s/g, "-")
+    .replace(/[?!:]/g, "")
 
   return slug || "section"
 }
@@ -115,7 +142,7 @@ export const createMarkdownSlugger = (): MarkdownSlugger => {
 }
 
 export const getHeadingId = (text: string, slugger: MarkdownSlugger) =>
-  slugger.slug(stripMarkdown(text))
+  slugger.slug(text)
 
 export const extractTableOfContents = (
   content: string
@@ -124,13 +151,17 @@ export const extractTableOfContents = (
   const items: TableOfContentsItem[] = []
 
   for (const segment of segmentMarkdown(content)) {
-    const lines = segment.content.split(/\r?\n/)
+    // Drop fenced code first: a bash comment like "# install" inside a
+    // code block is not a heading and must not become a TOC entry.
+    const lines = segment.content
+      .replace(/```[\s\S]*?```/g, " ")
+      .split(/\r?\n/)
 
     for (const line of lines) {
       const match = line.match(/^(#{1,3})\s+(.+)$/)
       if (!match) continue
 
-      const text = stripMarkdown(match[2])
+      const text = headingPlainText(match[2])
       if (!text) continue
 
       items.push({

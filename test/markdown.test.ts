@@ -116,14 +116,53 @@ describe("stripMarkdown", () => {
 })
 
 describe("extractTableOfContents", () => {
-  it("keeps hyphenated heading text without changing the anchor id", () => {
+  // Anchor ids must match the pre-CMS Notion renderer exactly — they are
+  // what Google and existing deep links have indexed: lowercase, whitespace
+  // to "-", drop only "?!:", keep all other punctuation.
+  it("generates the same anchor ids as the old Notion renderer", () => {
     const toc = extractTableOfContents(
-      "## Multi-region deployments\n\ntext\n\n### What's next\n\nmore"
+      [
+        "## Multi-region deployments",
+        "",
+        "### What's next",
+        "",
+        "## Goodbye Ansible, Hello `hikari-keeper`",
+        "",
+        "## Case 2: Framework preset (SSG)",
+        "",
+        "## **Why Work at Railway?**",
+      ].join("\n")
     )
-    expect(toc).toEqual([
-      // id must stay identical to the pre-fix slugger output
-      { id: "multi-region-deployments", level: 2, text: "Multi-region deployments" },
-      { id: "whats-next", level: 3, text: "What's next" },
+    expect(toc.map((item) => item.id)).toEqual([
+      "multi-region-deployments",
+      "what's-next",
+      "goodbye-ansible,-hello-hikari-keeper",
+      "case-2-framework-preset-(ssg)",
+      "why-work-at-railway",
     ])
+    expect(toc.map((item) => item.text)).toEqual([
+      "Multi-region deployments",
+      "What's next",
+      "Goodbye Ansible, Hello hikari-keeper",
+      "Case 2: Framework preset (SSG)",
+      "Why Work at Railway?",
+    ])
+  })
+
+  it("suffixes repeated headings so anchors stay unique", () => {
+    const toc = extractTableOfContents(
+      "## General procedure\n\ntext\n\n## General procedure\n\nmore"
+    )
+    expect(toc.map((item) => item.id)).toEqual([
+      "general-procedure",
+      "general-procedure-1",
+    ])
+  })
+
+  it("ignores comment lines inside fenced code blocks", () => {
+    const toc = extractTableOfContents(
+      "## Real heading\n\n```bash\n# install dependencies\nyarn install\n```"
+    )
+    expect(toc.map((item) => item.id)).toEqual(["real-heading"])
   })
 })
