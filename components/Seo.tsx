@@ -19,6 +19,13 @@ export interface Props extends NextSeoProps {
   currentUrl?: string
 }
 
+// Raw JSON.stringify output is unsafe inside a <script>: a CMS-authored
+// string containing "</script>" would close the tag and execute whatever
+// follows. Escaping "<" to its unicode form parses back to the same string,
+// so crawlers see identical JSON-LD.
+export const serializeSchema = (schema: object) =>
+  JSON.stringify(schema).replace(/</g, "\\u003c")
+
 const title = "Railway Blog"
 export const url = "https://blog.railway.com"
 const description = "Blog posts from the Railway team"
@@ -108,21 +115,21 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
         {blogPostSchema && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostSchema) }}
+            dangerouslySetInnerHTML={{ __html: serializeSchema(blogPostSchema) }}
           />
         )}
 
         {breadcrumbSchema && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema) }}
           />
         )}
 
         {faqSchema && (
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            dangerouslySetInnerHTML={{ __html: serializeSchema(faqSchema) }}
           />
         )}
       </Head>
