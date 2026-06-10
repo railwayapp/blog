@@ -27,6 +27,15 @@ const VIDEO_URL_PATTERN = /\.(mp4|mov|webm|ogg)(?:[?#].*)?$/i
 const isVideoURL = (href?: string | null) =>
   Boolean(href && VIDEO_URL_PATTERN.test(href))
 
+// Notion carried media captions in the alt text (images) or link label
+// (videos). Filenames like "image.png" are upload artifacts, not captions.
+const FILENAME_CAPTION_PATTERN = /\.(avif|gif|jpe?g|mov|mp4|png|svg|webp)$/i
+
+const getMediaCaption = (text?: string | null) => {
+  const caption = text?.trim()
+  return caption && !FILENAME_CAPTION_PATTERN.test(caption) ? caption : null
+}
+
 // Templates live under railway.com/deploy/<slug>; the other two prefixes are
 // legacy forms kept for older content. Marketplace browse links
 // (railway.com/deploy and railway.com/deploy?category=…) must NOT match,
@@ -152,6 +161,8 @@ const MarkdownSegmentRenderer: React.FC<{
       const label = getNodeText(children)
 
       if (isVideoURL(href)) {
+        const caption = label !== href ? getMediaCaption(label) : null
+
         return (
           <span
             className="block my-8"
@@ -164,6 +175,11 @@ const MarkdownSegmentRenderer: React.FC<{
               src={href}
               className="w-full rounded-lg"
             />
+            {caption && (
+              <span className="block text-gray-600 mt-3 text-sm">
+                {caption}
+              </span>
+            )}
           </span>
         )
       }
@@ -229,6 +245,8 @@ const MarkdownSegmentRenderer: React.FC<{
     img: ({ alt, src, title }) => {
       if (!src) return null
 
+      const caption = title ?? getMediaCaption(alt)
+
       return (
         <figure className="flex flex-col my-8 space-y-2">
           <img
@@ -238,7 +256,11 @@ const MarkdownSegmentRenderer: React.FC<{
             loading="lazy"
             decoding="async"
           />
-          {title && <figcaption className="text-gray-600 mt-3 text-sm">{title}</figcaption>}
+          {caption && (
+            <figcaption className="text-gray-600 mt-3 text-sm">
+              {caption}
+            </figcaption>
+          )}
         </figure>
       )
     },

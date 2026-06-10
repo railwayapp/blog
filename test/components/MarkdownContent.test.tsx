@@ -113,15 +113,54 @@ describe("MarkdownContent embed links", () => {
 
   // Notion exported video blocks as [caption](file.mp4) — a label must NOT
   // demote them to inline links (46 captioned video embeds in the corpus).
-  it("keeps a labeled video link as a block player", () => {
+  it("keeps a labeled video link as a block player with the label as caption", () => {
     const url = "https://cms.railway.com/media/abc123.mp4"
-    const { container } = render(
+    const { container, getByText } = render(
       <MarkdownContent content={`[Undo volume deletion](${url})`} />
     )
 
     expect(container.querySelector("video")?.getAttribute("src")).toBe(url)
     expect(container.querySelector(`a[href="${url}"]`)).toBeNull()
     expect(container.querySelector("p")).toBeNull()
+    expect(getByText("Undo volume deletion")).toBeTruthy()
+  })
+
+  it("does not caption videos whose label is a filename or the URL itself", () => {
+    const url = "https://cms.railway.com/media/abc123.mp4"
+    const { container } = render(
+      <MarkdownContent
+        content={`[Screen_Recording.mov](${url})\n\n[${url}](${url})`}
+      />
+    )
+
+    expect(container.querySelectorAll("video").length).toBe(2)
+    expect(container.textContent).not.toContain("Screen_Recording.mov")
+  })
+
+  it("renders a meaningful image alt as a visible figcaption", () => {
+    const { container } = render(
+      <MarkdownContent content="![Our CDN POPs as displayed by our DCIM tooling](https://cms.railway.com/media/map.png)" />
+    )
+
+    const caption = container.querySelector("figcaption")
+    expect(caption?.textContent).toBe("Our CDN POPs as displayed by our DCIM tooling")
+  })
+
+  it("does not render filename alt text as a caption", () => {
+    const { container } = render(
+      <MarkdownContent content="![image.png](https://cms.railway.com/media/x.png)" />
+    )
+
+    expect(container.querySelector("img")).toBeTruthy()
+    expect(container.querySelector("figcaption")).toBeNull()
+  })
+
+  it("prefers an explicit markdown title over the alt for the caption", () => {
+    const { container } = render(
+      <MarkdownContent content={'![Alt text here](https://cms.railway.com/media/x.png "The real title")'} />
+    )
+
+    expect(container.querySelector("figcaption")?.textContent).toBe("The real title")
   })
 
   it("keeps a labeled template link inline within its styled paragraph", () => {
