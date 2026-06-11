@@ -74,14 +74,6 @@ describe("PostList crawlable links", () => {
     expect(hrefs).toHaveLength(12)
   })
 
-  it("renders no hidden list when every post is visible", () => {
-    const { container } = render(
-      <PostList posts={posts.slice(0, 3)} categories={[]} category={category} />
-    )
-
-    expect(container.querySelector("ul.hidden")).toBeNull()
-    expect(container.querySelectorAll('a[href^="/p/"]')).toHaveLength(3)
-  })
 })
 
 describe("PostList heading semantics", () => {

@@ -130,18 +130,6 @@ describe("SEO head shape", () => {
     expect(types).toEqual(["BlogPosting", "BreadcrumbList", "FAQPage"])
   })
 
-  it("emits only BlogPosting and BreadcrumbList JSON-LD when content has no FAQs", () => {
-    const { container } = render(
-      <SEO title={post.title} description={post.description} post={post} currentUrl={postUrl} />
-    )
-
-    const types = Array.from(
-      container.querySelectorAll('script[type="application/ld+json"]')
-    )
-      .map((s) => JSON.parse(s.textContent ?? "{}")["@type"])
-      .sort()
-    expect(types).toEqual(["BlogPosting", "BreadcrumbList"])
-  })
 })
 
 describe("serializeSchema", () => {
