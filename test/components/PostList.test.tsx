@@ -93,6 +93,24 @@ describe("PostList heading semantics", () => {
     expect(getByRole("heading", { level: 1 }).textContent).toBeTruthy()
   })
 
+  it("renders the h1 even when every post in the category is featured", () => {
+    const featuredOnly = posts.slice(0, 2).map((post) => ({
+      ...post,
+      featured: true,
+      featuredImage: {
+        id: "m1",
+        url: "https://cms.railway.com/media/cover.png",
+        alt: "cover",
+      },
+    }))
+    const { getByRole, container } = render(
+      <PostList posts={featuredOnly} categories={[]} category={category} />
+    )
+
+    expect(getByRole("heading", { level: 1 }).textContent).toBeTruthy()
+    expect(container.querySelector("ul.hidden")).toBeNull()
+  })
+
   it("keeps an h2 on the homepage, which has its own h1", () => {
     const { getByRole, queryByRole } = render(
       <PostList posts={posts} categories={[]} />

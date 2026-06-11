@@ -58,12 +58,16 @@ export const PostList: React.FC<{
           <hr className="max-w-6xl mx-auto border-gray-100" />
         )}
 
-        {otherPosts.length > 0 && (
+        {/* Category pages always render the heading — it is their only h1 —
+            even when every post is featured and the card list is empty
+            (e.g. a new category whose posts are all featured). */}
+        {(otherPosts.length > 0 || category != null) && (
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
             <ListHeading className="text-3xl font-bold mb-12">
               {category == null ? "Everything" : getCategoryLabel(category)}
             </ListHeading>
 
+            {otherPosts.length > 0 && (
             <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
               {otherPosts
                 .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
@@ -82,6 +86,7 @@ export const PostList: React.FC<{
                 </button>
               )}
             </div>
+            )}
 
             {/* Crawlable links for the posts hidden behind "Load more" so
                 every post is reachable in the server-rendered HTML. Plain
