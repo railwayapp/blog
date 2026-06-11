@@ -68,24 +68,24 @@ export const PostList: React.FC<{
             </ListHeading>
 
             {otherPosts.length > 0 && (
-            <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
-              {otherPosts
-                .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
-                .map((post) => (
-                  <PostItem key={post.id} post={post} />
-                ))}
+              <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
+                {otherPosts
+                  .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
+                  .map((post) => (
+                    <PostItem key={post.id} post={post} />
+                  ))}
 
-              {showMore || !hasMorePosts ? (
-                <div />
-              ) : (
-                <button
-                  className="md:col-span-2 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
-                  onClick={() => setShowMore(true)}
-                >
-                  Load more posts...
-                </button>
-              )}
-            </div>
+                {showMore || !hasMorePosts ? (
+                  <div />
+                ) : (
+                  <button
+                    className="md:col-span-2 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
+                    onClick={() => setShowMore(true)}
+                  >
+                    Load more posts...
+                  </button>
+                )}
+              </div>
             )}
 
             {/* Crawlable links for the posts hidden behind "Load more" so

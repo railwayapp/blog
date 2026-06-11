@@ -42,4 +42,3 @@ public/rss.xml
 .blog_index_data
 .blog_index_data_previews
 *.tsbuildinfo
-__pycache__/
