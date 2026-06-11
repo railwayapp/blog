@@ -10,7 +10,7 @@ export default function Document() {
   })
 
   return (
-    <Html>
+    <Html lang="en">
       <Head>
         <style dangerouslySetInnerHTML={{ __html: bodyCSS }} />
       </Head>

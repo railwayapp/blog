@@ -44,6 +44,7 @@ export const CustomerStories: React.FC = () => {
               Engineering Team Delivers at Scale with Railway
             </>
           }
+          customer="Bilt"
           slug={"/p/bilt-deliver-scale"}
           image="/customers/product-image--bilt.webp"
           avatars={["/customers/bilt-avatar.webp"]}
@@ -56,6 +57,7 @@ export const CustomerStories: React.FC = () => {
               Testing Agents Without Their Previous $10k AWS Bill
             </>
           }
+          customer="MindFort"
           slug={"/p/mindfort-railway"}
           image="/customers/product-image--mindfort.webp"
           avatars={["/customers/mindfort-avatar.webp"]}
@@ -67,12 +69,13 @@ export const CustomerStories: React.FC = () => {
 
 const CustomerStoryPostItem: React.FC<{
   title: React.ReactElement
+  customer: string
   slug?: string
   drops?: string
   image: string
   className?: string
   avatars?: string[]
-}> = ({ title, avatars, drops, slug, image, className }) => {
+}> = ({ title, customer, avatars, drops, slug, image, className }) => {
   const Wrapper = slug ? Link : "div"
   const isMounted = useIsMounted()
 
@@ -101,7 +104,7 @@ const CustomerStoryPostItem: React.FC<{
               key={a}
               className="w-10 h-10 rounded-full"
               src={a}
-              alt=""
+              alt={`${customer} avatar`}
               style={{ zIndex: 10 - i }}
               loading="lazy"
               decoding="async"
@@ -125,7 +128,7 @@ const CustomerStoryPostItem: React.FC<{
         <div className="w-[250%] h-full relative -rotate-6">
           <Image
             src={`${image}`}
-            alt={`Product image for ${title}`}
+            alt={`Product image for ${customer}`}
             className={cn(
               "absolute top-0 md:top-[initial] md:bottom-0 left-0",
               slug == null ? "opacity-40" : ""
