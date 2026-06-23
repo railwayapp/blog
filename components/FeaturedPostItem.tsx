@@ -1,6 +1,6 @@
 import Link from "@components/Link"
+import { buildCMSImageSrcSet, buildCMSImageURL } from "@lib/cms/image"
 import { BlogPost } from "@lib/types"
-import Image from "next/image"
 import React, { useMemo } from "react"
 import { formatPostDate } from "../utils"
 import { Divider } from "./Divider"
@@ -18,12 +18,20 @@ export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
     <Link href={`/p/${post.slug}`} className="group">
       {featuredImage != null ? (
         <div className="w-full aspect-[2.25/1] relative border border-black border-opacity-10 rounded-xl overflow-hidden">
-          <Image
-            src={featuredImage.url}
-            fill
-            priority
+          <img
+            src={buildCMSImageURL(featuredImage.url, {
+              format: "webp",
+              width: 1200,
+            })}
+            srcSet={buildCMSImageSrcSet(featuredImage.url, {
+              format: "webp",
+              maxWidth: 1200,
+            })}
+            sizes="(max-width: 768px) 100vw, 560px"
             alt={featuredImage.alt || post.title}
-            className="object-cover transition-transform group-hover:scale-[1.05]"
+            className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-[1.05]"
+            decoding="async"
+            fetchPriority="high"
           />
         </div>
       ) : (
