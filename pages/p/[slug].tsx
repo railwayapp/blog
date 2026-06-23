@@ -38,7 +38,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   if (typeof slug !== "string") {
     return {
       notFound: true,
-      revalidate: 60,
+      revalidate: 5,
     }
   }
 
@@ -50,7 +50,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     // otherwise pin the URL at 404 after the post goes live.
     return {
       notFound: true,
-      revalidate: 60,
+      revalidate: 5,
     }
   }
 
@@ -66,7 +66,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
       page: post,
       relatedPosts,
     },
-    revalidate: 60,
+    revalidate: 5,
   }
 }
 
