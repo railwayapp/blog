@@ -9,8 +9,12 @@ const Footer: React.FC = () => {
     <footer className="px-5 md:px-8 py-12 border-t border-gray-100">
       <div className="grid grid-cols-2 sm:grid-cols-12 gap-8 sm:gap-4 lg:gap-16 max-w-6xl mx-auto">
         <div className="hidden sm:flex col-span-3 lg:col-span-4 flex-col justify-between">
-          <Link href="https://railway.com">
+          <Link 
+            href="https://railway.com"
+            className="w-fit"
+          >
             <Logo />
+            <span className="sr-only">Home</span>
           </Link>
 
           <Copyright />
