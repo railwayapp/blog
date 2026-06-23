@@ -51,7 +51,7 @@ export const getStaticProps: GetStaticProps = async (props) => {
   if (typeof categorySlug !== "string") {
     return {
       notFound: true,
-      revalidate: 900,
+      revalidate: 5,
     }
   }
 
@@ -64,7 +64,7 @@ export const getStaticProps: GetStaticProps = async (props) => {
     // otherwise stay a cached 404 until the next deploy.
     return {
       notFound: true,
-      revalidate: 900,
+      revalidate: 5,
     }
   }
 
@@ -72,7 +72,7 @@ export const getStaticProps: GetStaticProps = async (props) => {
 
   return {
     props: { posts, categories, category },
-    revalidate: 900,
+    revalidate: 5,
   }
 }
 
