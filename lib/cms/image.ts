@@ -12,6 +12,11 @@ export const CMS_IMAGE_WIDTHS = [
   320, 480, 640, 768, 960, 1200, 1440, 1600, 1920, 2400, 3200,
 ] as const
 
+// High quality — the resize + WebP conversion already yields ~90–98% byte
+// reduction vs the original, so we keep quality high to preserve text/UI
+// clarity. Must be one of the gateway's allowed values {60,70,75,80,85,90,95}.
+export const CMS_IMAGE_QUALITY = 90
+
 type ImageFormat = "webp" | "avif" | "jpg" | "png"
 
 interface CMSImageOptions {
@@ -63,7 +68,7 @@ export const buildCMSImageURL = (
   if (opts.height !== undefined) params.set("h", String(opts.height))
   if (opts.fit === "cover") params.set("fit", opts.fit)
   if (opts.format !== undefined) params.set("format", opts.format)
-  if (opts.quality !== undefined) params.set("q", String(opts.quality))
+  params.set("q", String(opts.quality ?? CMS_IMAGE_QUALITY))
 
   parsed.search = params.toString()
   return parsed.toString()

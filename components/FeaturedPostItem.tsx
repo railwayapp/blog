@@ -25,7 +25,7 @@ export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
             })}
             srcSet={buildCMSImageSrcSet(featuredImage.url, {
               format: "webp",
-              maxWidth: 1200,
+              maxWidth: 1440,
             })}
             sizes="(max-width: 768px) 100vw, 560px"
             alt={featuredImage.alt || post.title}
