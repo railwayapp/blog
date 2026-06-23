@@ -1,5 +1,6 @@
 import Link from "@components/Link"
 import { Code } from "@components/Code"
+import { buildCMSImageSrcSet, buildCMSImageURL } from "@lib/cms/image"
 import {
   createMarkdownSlugger,
   getHeadingId,
@@ -252,7 +253,12 @@ const MarkdownSegmentRenderer: React.FC<{
       return (
         <figure className="flex flex-col my-8 space-y-2">
           <img
-            src={src}
+            src={buildCMSImageURL(src, { format: "webp", width: 768 })}
+            srcSet={buildCMSImageSrcSet(src, {
+              format: "webp",
+              maxWidth: 1600,
+            })}
+            sizes="(max-width: 768px) 100vw, 736px"
             alt={alt ?? ""}
             className="w-full rounded-lg"
             loading="lazy"
