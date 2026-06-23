@@ -27,10 +27,10 @@ describe("post page getStaticProps", () => {
       params: { slug: "not-published-yet" },
     })
 
-    expect(result).toEqual({ notFound: true, revalidate: 60 })
+    expect(result).toEqual({ notFound: true, revalidate: 5 })
   })
 
-  it("keeps the 60s lease on rendered posts", async () => {
+  it("keeps the 5s lease on rendered posts", async () => {
     const post = { slug: "hello-world", category: null }
     ;(getPostBySlug as jest.Mock).mockResolvedValue(post)
     ;(getRelatedPosts as jest.Mock).mockResolvedValue([])
@@ -41,7 +41,7 @@ describe("post page getStaticProps", () => {
 
     expect(result).toEqual({
       props: { page: post, relatedPosts: [] },
-      revalidate: 60,
+      revalidate: 5,
     })
   })
 })
@@ -54,6 +54,6 @@ describe("category page getStaticProps", () => {
       params: { category: "not-created-yet" },
     })
 
-    expect(result).toEqual({ notFound: true, revalidate: 900 })
+    expect(result).toEqual({ notFound: true, revalidate: 5 })
   })
 })
