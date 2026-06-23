@@ -14,11 +14,7 @@ export interface Props {
 const Home: NextPage<Props> = ({ categories = [], posts = [] }) => {
   return (
     <Page>
-      <PostList
-        posts={posts}
-        categories={categories}
-        showCustomerStories
-      />
+      <PostList posts={posts} categories={categories} />
     </Page>
   )
 }
