@@ -256,6 +256,14 @@ const listAllCollection = async <T>(
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === "object")
 
+// The CMS returns optional SEO fields as empty strings ("") when left blank,
+// not null. An empty string is truthy enough to defeat `?? fallback` (nullish
+// coalescing only falls back on null/undefined), which let blank seoTitle /
+// seoDescription override the post title/description and surface the generic
+// site defaults on every social card. Normalize blank/whitespace to null.
+const nonEmptyString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim() !== "" ? value : null
+
 export const mapCMSMedia = (media: number | PayloadMedia | null | undefined) => {
   if (!isRecord(media) || typeof media.url !== "string" || !media.url) {
     return null
@@ -316,12 +324,8 @@ export const mapCMSCategory = (
       typeof category.description === "string" ? category.description : null,
     id: String(category.id),
     order: typeof category.order === "number" ? category.order : null,
-    seoDescription:
-      typeof category.seoDescription === "string"
-        ? category.seoDescription
-        : null,
-    seoTitle:
-      typeof category.seoTitle === "string" ? category.seoTitle : null,
+    seoDescription: nonEmptyString(category.seoDescription),
+    seoTitle: nonEmptyString(category.seoTitle),
     showInNavigation:
       typeof category.showInNavigation === "boolean"
         ? category.showInNavigation
@@ -361,9 +365,8 @@ export const mapCMSPost = (post: PayloadPost): BlogPost | null => {
     featuredImage: mapCMSMedia(post.featuredImage),
     id: String(post.id),
     publishedAt: post.publishedAt,
-    seoDescription:
-      typeof post.seoDescription === "string" ? post.seoDescription : null,
-    seoTitle: typeof post.seoTitle === "string" ? post.seoTitle : null,
+    seoDescription: nonEmptyString(post.seoDescription),
+    seoTitle: nonEmptyString(post.seoTitle),
     slug: post.slug,
     socialImage: mapCMSMedia(post.socialImage),
     title: post.title,
