@@ -40,10 +40,12 @@ const config: DefaultSeoProps = {
     type: "website",
     url,
     site_name: title,
-    images: [{ url: image }],
+    images: [{ url: image, width: 1200, height: 630, type: "image/png" }],
   },
   twitter: {
-    handle: "@Railway_App",
+    // Railway's X account is @Railway (x.com/Railway); @Railway_App is stale.
+    site: "@Railway",
+    handle: "@Railway",
     cardType: "summary_large_image",
   },
 }
@@ -72,6 +74,39 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
     ? buildCMSImageURL(rawImage, { width: 1200 })
     : undefined
 
+  // The CMS media behind the OG image, so we can declare its dimensions/type.
+  // Slack and X render the large-image card more reliably when og:image:width/
+  // height are present (and skip a fetch round-trip to detect them).
+  const ogMedia =
+    post?.socialImage?.url === rawImage
+      ? post?.socialImage
+      : post?.featuredImage?.url === rawImage
+        ? post?.featuredImage
+        : null
+  // Every OG image we serve is 1200 wide: the gateway transform caps width at
+  // 1200, and the dynamic og.railway.com card renders at 1200×630. Height is
+  // scaled from the source aspect ratio; the dynamic card defaults to 630.
+  const isDynamicCard = rawImage?.startsWith("https://og.railway.com") ?? false
+  const ogImageMeta =
+    ogMedia?.width && ogMedia?.height
+      ? {
+          width: 1200,
+          height: Math.round((1200 * ogMedia.height) / ogMedia.width),
+          type: ogMedia.mimeType ?? "image/png",
+        }
+      : isDynamicCard
+        ? { width: 1200, height: 630, type: "image/png" }
+        : null
+
+  // next-seo's `twitter` config only emits card/site/creator; Twitter falls
+  // back to og:* for the rest. Mirror title/description/image explicitly so the
+  // card is unambiguous across scrapers (Slack reads these too).
+  const twitterMetaTags = [
+    { name: "twitter:title", content: props.title || title },
+    { name: "twitter:description", content: description },
+    ...(postImage ? [{ name: "twitter:image", content: postImage }] : []),
+  ]
+
   return (
     <>
       <DefaultSeo {...config} />
@@ -83,12 +118,15 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
         // "Multiple meta description tags" on every page.
         description={description}
         canonical={fullUrl}
+        additionalMetaTags={twitterMetaTags}
         // next-seo only emits og:url when an openGraph config is present, so
         // always pass one to keep og:url aligned with the canonical. The
         // article block requires type:"article" or next-seo drops it.
         openGraph={{
           url: fullUrl,
-          ...(postImage != null && { images: [{ url: postImage }] }),
+          ...(postImage != null && {
+            images: [{ url: postImage, ...(ogImageMeta ?? {}) }],
+          }),
           ...(post != null && {
             type: "article",
             article: {
