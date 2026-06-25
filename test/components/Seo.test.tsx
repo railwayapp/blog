@@ -96,12 +96,70 @@ describe("SEO head shape", () => {
     const props = mockNextSeoCalls[0] as {
       openGraph?: { type?: string; images?: { url: string }[]; article?: unknown }
     }
+    // The dynamic og.railway.com card renders at a known 1200×630, so we
+    // declare its dimensions/type for Slack/X large-image rendering.
     expect(props.openGraph?.images).toEqual([
-      { url: "https://og.railway.com/api/image?x=1" },
+      {
+        url: "https://og.railway.com/api/image?x=1",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+      },
     ])
     // no post → no article semantics
     expect(props.openGraph?.type).toBeUndefined()
     expect(props.openGraph?.article).toBeUndefined()
+  })
+
+  it("mirrors title/description/image into explicit twitter:* tags", () => {
+    render(
+      <SEO
+        title={post.title}
+        description={post.description}
+        image="https://og.railway.com/api/image?x=1"
+        post={post}
+        currentUrl={postUrl}
+      />
+    )
+
+    const props = mockNextSeoCalls[0] as {
+      additionalMetaTags?: { name: string; content: string }[]
+    }
+    const byName = Object.fromEntries(
+      (props.additionalMetaTags ?? []).map((t) => [t.name, t.content])
+    )
+    expect(byName["twitter:title"]).toBe(post.title)
+    expect(byName["twitter:description"]).toBe(post.description)
+    expect(byName["twitter:image"]).toBe("https://og.railway.com/api/image?x=1")
+  })
+
+  it("declares og:image dimensions from the source social image", () => {
+    render(
+      <SEO
+        image="https://cms.railway.com/media/card.png"
+        post={{
+          ...post,
+          socialImage: {
+            id: "m1",
+            url: "https://cms.railway.com/media/card.png",
+            alt: "",
+            width: 2400,
+            height: 1260,
+            mimeType: "image/png",
+          },
+        }}
+        currentUrl={postUrl}
+      />
+    )
+
+    const props = mockNextSeoCalls[0] as {
+      openGraph?: { images?: { width?: number; height?: number; type?: string }[] }
+    }
+    const img = props.openGraph?.images?.[0]
+    // 2400×1260 scaled to width 1200 → height 630
+    expect(img?.width).toBe(1200)
+    expect(img?.height).toBe(630)
+    expect(img?.type).toBe("image/png")
   })
 
   it("renders no head tags of its own besides JSON-LD (no duplicate description/canonical/title/article)", () => {
