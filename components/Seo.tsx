@@ -8,6 +8,7 @@ import {
   extractFAQs,
 } from "@lib/seo-components"
 import { BlogPost } from "@lib/types"
+import { buildCMSImageURL } from "@lib/cms/image"
 
 export interface Props extends NextSeoProps {
   title?: string
@@ -61,7 +62,15 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
     ? [author]
     : post?.authors.map((a) => a.name) || []
   const section = post?.category?.title
-  const postImage = image || post?.socialImage?.url || post?.featuredImage?.url
+  // A raw CMS media URL (cms.railway.com/media/…) 307-redirects to a
+  // short-lived signed storage URL, which social scrapers (Discord, X) fail to
+  // render. Route it through the imgproxy gateway to get a stable, CDN-cached
+  // 200. Non-CMS URLs (the og.railway.com dynamic card, manual escape hatches)
+  // pass through untouched.
+  const rawImage = image || post?.socialImage?.url || post?.featuredImage?.url
+  const postImage = rawImage
+    ? buildCMSImageURL(rawImage, { width: 1200 })
+    : undefined
 
   return (
     <>
