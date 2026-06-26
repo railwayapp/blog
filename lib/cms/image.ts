@@ -35,6 +35,17 @@ const getCMSHost = (): string | null => {
   }
 }
 
+// imgproxy resizes/reformats raster images; running an SVG through it produces
+// a broken response, so SVGs must be passed through untouched even when served
+// from the CMS gateway.
+const isSVGURL = (url: string): boolean => {
+  try {
+    return new URL(url).pathname.toLowerCase().endsWith(".svg")
+  } catch {
+    return false
+  }
+}
+
 // Only transform first-party CMS media. Everything else (GitHub avatars,
 // /public assets, SVGs, og.railway) is passed through untouched.
 export const isCMSMediaURL = (url: string): boolean => {
@@ -43,7 +54,11 @@ export const isCMSMediaURL = (url: string): boolean => {
 
   try {
     const parsed = new URL(url)
-    return parsed.host === host && parsed.pathname.startsWith("/media/")
+    return (
+      parsed.host === host &&
+      parsed.pathname.startsWith("/media/") &&
+      !isSVGURL(url)
+    )
   } catch {
     return false
   }
