@@ -44,10 +44,11 @@ const Nav: React.FC = () => {
 
           {isMounted && (
             <button
-              className="hover:text-pink-600"
+              className="hover:text-pink-600 outline-offset-4"
               onClick={() => setTheme(theme === "light" ? "dark" : "light")}
             >
               {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+              <span className="sr-only" aria-live="polite">Toggle {theme === "dark" ? "light" : "dark"} mode</span>
             </button>
           )}
         </div>
