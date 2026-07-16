@@ -16,16 +16,20 @@ export const Code: React.FC<{ children: string; language?: string }> = ({
     null
   )
 
+  // The CMS editor's language picker writes display names into fences
+  // ("TypeScript", "Shell"); shiki ids and aliases are all lowercase.
+  const shikiLanguage = language.toLowerCase()
+
   useAsyncEffect(async () => {
     // Load just this block's grammar: any language shiki bundles works
     // (tsx, sql, diff, ...) and unknown languages reject, leaving the
     // plain <pre> fallback below.
     setMarkupToHighlight(
       await createHighlighter({
-        langs: [language],
+        langs: [shikiLanguage],
         themes: [theme === "light" ? LIGHT_THEME : DARK_THEME],
       }).then((highlighter) =>
-        highlighter.codeToHtml(children, { lang: language, theme: theme === "light" ? LIGHT_THEME : DARK_THEME })
+        highlighter.codeToHtml(children, { lang: shikiLanguage, theme: theme === "light" ? LIGHT_THEME : DARK_THEME })
       )
     )
   }, [theme])
