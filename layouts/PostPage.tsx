@@ -1,6 +1,11 @@
 import { MarkdownContent } from "@components/MarkdownContent"
 import { url } from "@components/Seo"
-import { HiddenTableOfContents, extractTableOfContents } from "@lib/seo-components"
+import {
+  HiddenTableOfContents,
+  buildMetaDescription,
+  buildSeoTitle,
+  extractTableOfContents,
+} from "@lib/seo-components"
 import Page from "@layouts/Page"
 import { BlogPost } from "@lib/types"
 import React, { useMemo } from "react"
@@ -41,8 +46,9 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
   return (
     <Page
       seo={{
-        title: post.seoTitle ?? post.title,
-        description: post.seoDescription ?? post.description,
+        title: post.seoTitle ?? buildSeoTitle(post.title),
+        description:
+          post.seoDescription ?? buildMetaDescription(post.description),
         image: ogImage,
         author: authorName,
         post,
