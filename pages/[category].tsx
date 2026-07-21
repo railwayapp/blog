@@ -8,6 +8,7 @@ import {
   getCategoryRouteSlug,
   getPostsByCategorySlug,
 } from "@lib/cms"
+import { buildSeoTitle } from "@lib/seo-components"
 import { BlogCategory, BlogPost } from "@lib/types"
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 
@@ -27,7 +28,9 @@ const CategoryPage: NextPage<Props> = ({
       seo={{
         title:
           category?.seoTitle ??
-          `${category ? getCategoryLabel(category) : "Blog"} - Railway Blog`,
+          buildSeoTitle(
+            category ? getCategoryLabel(category) : "Blog"
+          ),
         description: category?.seoDescription ?? category?.description ?? undefined,
         // The canonical is derived from the category, so the legacy /guide
         // alias canonicalizes to /guides instead of duplicating it.
