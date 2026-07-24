@@ -176,6 +176,61 @@ export const extractTableOfContents = (
 }
 
 /**
+ * Demotes headings by two levels (H1→H3, …, capped at H6) so a post body can
+ * nest under an existing H1/H2 hierarchy (e.g. llms-blog.md's
+ * `# Category` → `## Blog:` structure). Fenced code is left untouched: a bash
+ * comment like "# install" is not a heading.
+ */
+export const demoteHeadings = (content: string) => {
+  let inFence = false
+
+  return content
+    .split(/\r?\n/)
+    .map((line) => {
+      if (/^\s*```/.test(line)) {
+        inFence = !inFence
+        return line
+      }
+
+      if (inFence) return line
+
+      return line.replace(
+        /^(#{1,6})(\s)/,
+        (_, hashes: string, space: string) =>
+          `${"#".repeat(Math.min(hashes.length + 2, 6))}${space}`
+      )
+    })
+    .join("\n")
+}
+
+/**
+ * Truncates markdown to roughly `maxWords`, cutting at a paragraph boundary
+ * so we never emit half a sentence. If the cut leaves a code fence open, it
+ * is closed so following markdown survives. A truncation notice is appended
+ * whenever content was dropped.
+ */
+export const truncateMarkdown = (content: string, maxWords: number) => {
+  const paragraphs = content.split(/\n{2,}/)
+  const kept: string[] = []
+  let words = 0
+
+  for (const paragraph of paragraphs) {
+    words += paragraph.split(/\s+/).filter(Boolean).length
+
+    if (words > maxWords && kept.length > 0) {
+      const fences = kept.join("\n\n").match(/^\s*```/gm)?.length ?? 0
+      if (fences % 2 === 1) kept.push("```")
+      kept.push("*[Content truncated. Read the full post at the link above.]*")
+      break
+    }
+
+    kept.push(paragraph)
+  }
+
+  return kept.join("\n\n")
+}
+
+/**
  * Questions may only come from h2/h3 headings or callouts ending in "?";
  * body text can only ever answer a pending question. Letting arbitrary
  * paragraphs become questions turns rhetorical prose into fabricated
