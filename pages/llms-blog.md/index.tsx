@@ -1,9 +1,15 @@
 import { getBlogLink, getPosts } from "@lib/cms"
-import { extractTableOfContents } from "@lib/markdown"
+import {
+  demoteHeadings,
+  extractTableOfContents,
+  truncateMarkdown,
+} from "@lib/markdown"
 import { BlogPost } from "@lib/types"
 import { GetServerSideProps } from "next"
 
 const ROOT_URL = "https://blog.railway.com"
+
+const MAX_CONTENT_WORDS = 1500
 
 const groupPostsByCategory = (posts: BlogPost[]) =>
   posts.reduce(
@@ -25,7 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const header = `# Railway Blog Content
 
 This document contains all blog posts from the Railway blog, organized by category.
-Each post includes its metadata, description, and key points from the content.
+Each post includes its metadata, description, key points, and content
+(truncated for very long posts).
 
 Last updated: ${new Date().toISOString().split("T")[0]}
 
@@ -41,6 +48,10 @@ Last updated: ${new Date().toISOString().split("T")[0]}
           .filter((item) => item.level <= 2)
           .map((item) => `- ${item.text}`)
           .join("\n")
+        const body = truncateMarkdown(
+          demoteHeadings(post.content ?? ""),
+          MAX_CONTENT_WORDS
+        )
 
         return `## Blog: ${post.title}
 
@@ -51,7 +62,7 @@ Last updated: ${new Date().toISOString().split("T")[0]}
 ${post.description}
 
 ${headers ? `\n### Key points:\n${headers}\n` : ""}
-
+${body ? `\n${body}\n` : ""}
 ---
 `
       })

@@ -1,7 +1,9 @@
 import {
+  demoteHeadings,
   extractFAQs,
   extractTableOfContents,
   stripMarkdown,
+  truncateMarkdown,
 } from "../lib/markdown"
 
 describe("extractFAQs", () => {
@@ -164,5 +166,71 @@ describe("extractTableOfContents", () => {
       "## Real heading\n\n```bash\n# install dependencies\nyarn install\n```"
     )
     expect(toc.map((item) => item.id)).toEqual(["real-heading"])
+  })
+})
+
+describe("demoteHeadings", () => {
+  it("demotes headings by two levels", () => {
+    expect(demoteHeadings("# Title\n## Section\n### Sub")).toBe(
+      "### Title\n#### Section\n##### Sub"
+    )
+  })
+
+  it("caps demotion at h6", () => {
+    expect(demoteHeadings("##### Deep\n###### Deeper")).toBe(
+      "###### Deep\n###### Deeper"
+    )
+  })
+
+  it("does not demote comments inside fenced code blocks", () => {
+    const content = "# Real\n\n```bash\n# install\nnpm i\n```\n\n## Also real"
+    expect(demoteHeadings(content)).toBe(
+      "### Real\n\n```bash\n# install\nnpm i\n```\n\n#### Also real"
+    )
+  })
+
+  it("leaves non-heading text untouched", () => {
+    const content = "Plain paragraph\n#hashtag without space"
+    expect(demoteHeadings(content)).toBe(content)
+  })
+})
+
+describe("truncateMarkdown", () => {
+  it("returns short content unchanged", () => {
+    const content = "First paragraph.\n\nSecond paragraph."
+    expect(truncateMarkdown(content, 100)).toBe(content)
+  })
+
+  it("cuts at a paragraph boundary and appends a truncation notice", () => {
+    const content = ["one two three", "four five six", "seven eight nine"].join(
+      "\n\n"
+    )
+    const result = truncateMarkdown(content, 6)
+    expect(result).toContain("one two three")
+    expect(result).toContain("four five six")
+    expect(result).not.toContain("seven")
+    expect(result).toMatch(/Content truncated/)
+  })
+
+  it("always keeps the first paragraph even when it exceeds the budget", () => {
+    const first = Array(20).fill("word").join(" ")
+    const result = truncateMarkdown(`${first}\n\nsecond paragraph`, 5)
+    expect(result).toContain(first)
+    expect(result).not.toContain("second paragraph")
+  })
+
+  it("closes a code fence left open by the cut", () => {
+    const content = [
+      "intro paragraph here",
+      "```bash\necho hi",
+      "echo bye\n```",
+      Array(50).fill("word").join(" "),
+    ].join("\n\n")
+    // Budget allows the intro and the fence opener but not the fence closer.
+    const result = truncateMarkdown(content, 6)
+    expect(result).toContain("```bash")
+    const fences = result.match(/^\s*```/gm)?.length ?? 0
+    expect(fences % 2).toBe(0)
+    expect(result).toMatch(/Content truncated/)
   })
 })
