@@ -54,6 +54,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
         post,
         content: post.content,
         currentUrl,
+        alternateMarkdownHref: `/p/${post.slug}.md`,
       }}
     >
       <div className="mt-10 mb-5 px-5 md:px-8 mx-auto">
