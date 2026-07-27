@@ -18,6 +18,7 @@ export const useOgImage = ({
   avatarUrl,
   eyebrow,
   subtitle,
+  readTime,
   image,
 }: {
   title: string
@@ -26,6 +27,7 @@ export const useOgImage = ({
   avatarUrl?: string
   eyebrow?: string
   subtitle?: string
+  readTime?: string
   image?: string
 }): string => {
   // Manual escape hatch: a CMS social image URL always wins.
@@ -37,6 +39,7 @@ export const useOgImage = ({
     Theme: "plum",
     Title: title,
     Author: authorName,
+    ReadTime: readTime ?? "",
     // Always send Role (even empty) so the layout's "Founding Engineer"
     // default never leaks onto a card with no resolved role.
     Role: role ?? "",
