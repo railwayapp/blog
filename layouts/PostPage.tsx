@@ -13,7 +13,7 @@ import { BottomCTA } from "../components/BottomCTA"
 import { ContinueReading } from "../components/ContinueReading"
 import { Divider } from "../components/Divider"
 import { useOgImage } from "../hooks/useOGImage"
-import { cn, formatPostDate } from "../utils"
+import { cn, formatPostDate, getReadingTime } from "../utils"
 
 export interface Props {
   post: BlogPost
@@ -34,6 +34,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
     role: singleAuthor?.title ?? undefined,
     avatarUrl: singleAuthor?.avatarUrl ?? undefined,
     eyebrow: post.category?.title,
+    readTime: getReadingTime(post.content),
     image: post.socialImage?.url ?? undefined,
   })
 

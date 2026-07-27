@@ -5,6 +5,8 @@ import { twMerge } from "tailwind-merge"
 
 dayjs.extend(utc)
 
+const WORDS_PER_MINUTE = 200
+
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
 // CMS publish dates are ISO timestamps (usually midnight UTC). Format them in
@@ -12,6 +14,13 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 // local-time formatting shifts the date west of UTC and breaks hydration.
 export const formatPostDate = (isoDate: string): string =>
   dayjs.utc(isoDate).format("MMM D, YYYY")
+
+export const getReadingTime = (content?: string | null): string => {
+  const wordCount = content?.match(/\S+/g)?.length ?? 0
+  if (wordCount === 0) return ""
+
+  return `${Math.ceil(wordCount / WORDS_PER_MINUTE)} min read`
+}
 
 export const extractYoutubeId = (url: string): string | null => {
   const matched = url.match(
