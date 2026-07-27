@@ -18,6 +18,7 @@ export interface Props extends NextSeoProps {
   post?: BlogPost
   content?: string | null
   currentUrl?: string
+  alternateMarkdownHref?: string
 }
 
 // Raw JSON.stringify output is unsafe inside a <script>: a CMS-authored
@@ -50,7 +51,7 @@ const config: DefaultSeoProps = {
   },
 }
 
-const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...props }) => {
+const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, alternateMarkdownHref, ...props }) => {
   const description = props.description || config.description
   const fullUrl = currentUrl || url
 
@@ -159,6 +160,10 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, ...pro
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: serializeSchema(faqSchema) }}
           />
+        )}
+
+        {alternateMarkdownHref && (
+          <link rel="alternate" type="text/markdown" href={alternateMarkdownHref} />
         )}
       </Head>
     </>
