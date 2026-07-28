@@ -1,4 +1,5 @@
 import { getCategoryPath } from "@lib/cms"
+import { buildCMSImageURL } from "@lib/cms/image"
 import {
   extractFAQs,
   extractTableOfContents,
@@ -60,13 +61,17 @@ export const generateBlogPostSchema = (post: BlogPost, url: string): object => {
           }))
         : undefined
 
+  // Route schema image through the CMS gateway so crawlers get a stable
+  // CDN-cached 200 instead of a 307 → short-lived signed URL.
+  const schemaImage = image ? buildCMSImageURL(image, { width: 1200 }) : undefined
+
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description:
       post.seoDescription ?? buildMetaDescription(post.description),
-    image: image ? [image] : undefined,
+    image: schemaImage ? [schemaImage] : undefined,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
     author: authorSchema,
@@ -75,7 +80,7 @@ export const generateBlogPostSchema = (post: BlogPost, url: string): object => {
       name: "Railway",
       logo: {
         "@type": "ImageObject",
-        url: "https://blog.railway.com/railway.svg",
+        url: "https://railway.com/brand/logo-dark.png",
       },
     },
     mainEntityOfPage: {
