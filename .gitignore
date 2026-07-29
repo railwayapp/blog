@@ -36,7 +36,6 @@ yarn-error.log*
 # dynamically generated files
 public/sitemap*.xml
 public/robots.txt
-public/rss.xml
 
 # notion
 .blog_index_data
