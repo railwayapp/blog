@@ -13,6 +13,12 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <style dangerouslySetInnerHTML={{ __html: bodyCSS }} />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Railway Blog"
+          href="https://blog.railway.com/rss.xml"
+        />
       </Head>
 
       <body>

@@ -2,11 +2,13 @@ import { MarkdownContent } from "@components/MarkdownContent"
 import { getPosts } from "@lib/cms"
 import { BlogPost } from "@lib/types"
 import { Feed } from "feed"
-import { writeFileSync } from "fs"
 import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 
 const baseUrl = "https://blog.railway.com"
+
+/** Cap the feed at the N most-recent posts — keeps the payload fast. */
+const FEED_LIMIT = 50
 
 const author = {
   name: "Railway",
@@ -51,9 +53,13 @@ const renderPostContent = (post: BlogPost) => {
   return html
 }
 
-export const generateRssFeed = async () => {
-  if (process.env.NODE_ENV === "development") return
-
+/**
+ * Build the RSS 2.0 XML string for the blog.
+ *
+ * Returns all published posts (no category filter) capped to FEED_LIMIT,
+ * sorted newest-first by the CMS default.
+ */
+export const buildRssFeed = async (): Promise<string> => {
   const feed = new Feed({
     title: "Railway Blog",
     description:
@@ -68,19 +74,12 @@ export const generateRssFeed = async () => {
     copyright: `Copyright (c) ${new Date().getFullYear()} Railway Corp.`,
   })
 
-  // One paginated query with content included, instead of a follow-up
-  // request per post (the feed holds 100+ posts).
-  const includedPosts: BlogPost[] = await getPosts({
+  const posts: BlogPost[] = await getPosts({
     includeContent: true,
-    where: {
-      or: [
-        { featured: { equals: true } },
-        { "category.slug": { equals: "guide" } },
-      ],
-    },
+    limit: FEED_LIMIT,
   })
 
-  for (const post of includedPosts) {
+  for (const post of posts) {
     const link = `${baseUrl}/p/${post.slug}`
     const image = post.featuredImage?.url ?? post.socialImage?.url
 
@@ -115,5 +114,5 @@ export const generateRssFeed = async () => {
     }
   }
 
-  writeFileSync("public/rss.xml", feed.rss2())
+  return feed.rss2()
 }
