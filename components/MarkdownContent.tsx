@@ -236,9 +236,8 @@ const MarkdownSegmentRenderer: React.FC<{
             data-markdown-block="true"
           >
             <iframe
-              className="w-full rounded-lg"
+              className="w-full aspect-video rounded-lg"
               src={`https://youtube.com/embed/${youtubeId}`}
-              height={550}
               title={caption || "YouTube video"}
               allowFullScreen
             />
