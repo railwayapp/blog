@@ -64,6 +64,38 @@ const isEmbedLink = (href: string | null | undefined, label: string) =>
           (extractYoutubeId(href) != null || isTemplateURL(href))))
   )
 
+const isWhitespaceHastText = (node: any) =>
+  node?.type === "text" && !String(node.value ?? "").trim()
+
+// The CMS Milkdown editor serializes a YouTube embed as `[caption](watch-url)`
+// (or `[](watch-url)` when uncaptioned) in a paragraph of its own — never as
+// `[url](url)`. Only a paragraph-level pass can tell that shape apart from a
+// labeled prose link mid-sentence (marathon-tv-app's [*Shogun*]), so mark the
+// link here and let the `a` renderer read the mark. Must run AFTER
+// rehypeSanitize, which strips unknown data attributes.
+const markStandaloneYoutubeLinks = () => (tree: any) => {
+  const walk = (node: any) => {
+    node?.children?.forEach(walk)
+
+    if (node?.tagName !== "p") return
+
+    const children = (node.children ?? []).filter(
+      (child: any) => !isWhitespaceHastText(child)
+    )
+    const link = children.length === 1 ? children[0] : null
+    const href = link?.tagName === "a" ? link.properties?.href : null
+
+    if (typeof href === "string" && extractYoutubeId(href)) {
+      link.properties.dataYoutubeEmbed = "true"
+    }
+  }
+
+  walk(tree)
+}
+
+const isMarkedYoutubeEmbed = (node: any) =>
+  Boolean(node?.properties?.dataYoutubeEmbed)
+
 // A tweet link is only an embed when its label is the URL itself: that shape
 // covers both `[url](url)` and bare GFM autolinks, i.e. what was an embed
 // block before the CMS migration. Labeled tweet links stay inline links.
@@ -85,7 +117,11 @@ const hasBlockMarkdownChild = (node: any) =>
       if (child?.tagName === "a") {
         const href = child.properties?.href
         const label = getHastText(child)
-        return isEmbedLink(href, label) || Boolean(getTweetEmbedId(href, label))
+        return (
+          isEmbedLink(href, label) ||
+          isMarkedYoutubeEmbed(child) ||
+          Boolean(getTweetEmbedId(href, label))
+        )
       }
 
       return false
@@ -160,7 +196,7 @@ const MarkdownSegmentRenderer: React.FC<{
 
       return <p className="mb-4 leading-8 text-gray-800">{children}</p>
     },
-    a: ({ href, children }) => {
+    a: ({ href, children, node }) => {
       const label = getNodeText(children)
 
       if (isVideoURL(href)) {
@@ -187,8 +223,13 @@ const MarkdownSegmentRenderer: React.FC<{
         )
       }
 
-      const youtubeId = href && label === href ? extractYoutubeId(href) : null
+      const youtubeId =
+        href && (label === href || isMarkedYoutubeEmbed(node))
+          ? extractYoutubeId(href)
+          : null
       if (youtubeId) {
+        const caption = label !== href ? getMediaCaption(label) : null
+
         return (
           <span
             className="block my-8"
@@ -198,9 +239,14 @@ const MarkdownSegmentRenderer: React.FC<{
               className="w-full rounded-lg"
               src={`https://youtube.com/embed/${youtubeId}`}
               height={550}
-              title={label || "YouTube video"}
+              title={caption || "YouTube video"}
               allowFullScreen
             />
+            {caption && (
+              <span className="block text-gray-600 mt-3 text-sm">
+                {caption}
+              </span>
+            )}
           </span>
         )
       }
@@ -342,7 +388,7 @@ const MarkdownSegmentRenderer: React.FC<{
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeSanitize]}
+      rehypePlugins={[rehypeSanitize, markStandaloneYoutubeLinks]}
       skipHtml
     >
       {content}

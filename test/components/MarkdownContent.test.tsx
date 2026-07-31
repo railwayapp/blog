@@ -111,6 +111,49 @@ describe("MarkdownContent embed links", () => {
     expect(container.querySelector("p")).toBeNull()
   })
 
+  // The CMS Milkdown editor serializes YouTube embeds as [caption](watch-url)
+  // in a paragraph of their own (how-to-make-viral-commercial), never as
+  // [url](url) — a standalone labeled link is an embed, not a prose link.
+  it("renders a standalone captioned YouTube link as a block embed with caption", () => {
+    const url = "https://www.youtube.com/watch?v=HtmvvzNphB8"
+    const { container, getByText } = render(
+      <MarkdownContent
+        content={`Intro paragraph.\n\n[The peaceful way to ship software](${url})`}
+      />
+    )
+
+    const iframe = container.querySelector("iframe")
+    expect(iframe?.getAttribute("src")).toBe(
+      "https://youtube.com/embed/HtmvvzNphB8"
+    )
+    expect(getByText("The peaceful way to ship software")).toBeTruthy()
+    expect(container.querySelector(`a[href="${url}"]`)).toBeNull()
+    expect(container.querySelectorAll("p").length).toBe(1)
+  })
+
+  // Uncaptioned CMS embeds serialize as [](watch-url): an empty-label link
+  // that renders as nothing at all without the standalone-paragraph rule.
+  it("renders a standalone empty-label YouTube link as an uncaptioned embed", () => {
+    const url = "https://www.youtube.com/watch?v=HtmvvzNphB8"
+    const { container } = render(<MarkdownContent content={`[](${url})`} />)
+
+    const iframe = container.querySelector("iframe")
+    expect(iframe?.getAttribute("src")).toBe(
+      "https://youtube.com/embed/HtmvvzNphB8"
+    )
+    expect(iframe?.getAttribute("title")).toBe("YouTube video")
+    expect(container.querySelector("p")).toBeNull()
+  })
+
+  it("keeps a standalone-paragraph labeled YouTube link inside a blockquote as an embed", () => {
+    const url = "https://www.youtube.com/watch?v=HtmvvzNphB8"
+    const { container } = render(
+      <MarkdownContent content={`> [Watch the keynote](${url})`} />
+    )
+
+    expect(container.querySelector("blockquote iframe")).not.toBeNull()
+  })
+
   // Notion exported video blocks as [caption](file.mp4) — a label must NOT
   // demote them to inline links (46 captioned video embeds in the corpus).
   it("keeps a labeled video link as a block player with the label as caption", () => {
