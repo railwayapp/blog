@@ -4,13 +4,21 @@ import "@styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import type { AppProps } from "next/app"
 import Head from "next/head"
-import { Inter, IBM_Plex_Serif } from "next/font/google"
+import { Inter, IBM_Plex_Serif, JetBrains_Mono } from "next/font/google"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 const ibmPlexSerif = IBM_Plex_Serif({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-serif",
+})
+const jetBrainsMono = JetBrains_Mono({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-mono",
 })
 
 const RailwayBlog = ({ Component, pageProps }: AppProps) => {
@@ -32,7 +40,9 @@ const RailwayBlog = ({ Component, pageProps }: AppProps) => {
         `}</style>
       </Head>
 
-      <div className={ibmPlexSerif.variable}>
+      <div
+        className={`${inter.variable} ${ibmPlexSerif.variable} ${jetBrainsMono.variable} font-sans`}
+      >
         <Component {...pageProps} />
       </div>
     </ThemeProvider>

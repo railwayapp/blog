@@ -285,3 +285,25 @@ describe("MarkdownContent ordered lists", () => {
     expect(lists[1].getAttribute("start")).toBe("3")
   })
 })
+
+describe("MarkdownContent typography", () => {
+  it("uses the brand heading scale and weights", () => {
+    render(
+      <MarkdownContent
+        content={
+          "# Primary heading\n\n## Secondary heading\n\n### Tertiary heading"
+        }
+      />
+    )
+
+    expect(
+      screen.getByRole("heading", { name: "Primary heading" }).className
+    ).toEqual(expect.stringContaining("text-h1 font-semibold"))
+    expect(
+      screen.getByRole("heading", { name: "Secondary heading" }).className
+    ).toEqual(expect.stringContaining("text-h2 font-semibold"))
+    expect(
+      screen.getByRole("heading", { name: "Tertiary heading" }).className
+    ).toEqual(expect.stringContaining("text-h3 font-semibold"))
+  })
+})
