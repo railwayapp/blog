@@ -96,11 +96,13 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
             <time dateTime={post.publishedAt}>{formattedDate}</time>
           </div>
 
-          <header className="mt-5 mb-16 max-w-[736px] mx-auto">
-            <h1 className="text-6xl font-medium font-serif">{post.title}</h1>
+          <header className="mt-5 mb-10 max-w-[736px] mx-auto">
+            <h1 className="font-serif font-semibold text-[40px] leading-[50px] tracking-[-0.8px] sm:text-[48px] sm:leading-[60px] sm:tracking-[-0.96px] md:text-display-h1">
+              {post.title}
+            </h1>
           </header>
 
-          <section className="max-w-[736px] mx-auto text-base sm:text-lg leading-8">
+          <section className="max-w-[736px] mx-auto text-base sm:text-lg">
             <HiddenTableOfContents items={tableOfContents} />
             <MarkdownContent content={post.content ?? ""} />
           </section>
