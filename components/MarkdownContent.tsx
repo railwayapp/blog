@@ -179,14 +179,14 @@ const MarkdownSegmentRenderer: React.FC<{
     h1: ({ children }) =>
       renderHeading(
         "h2",
-        "text-h1 font-semibold mt-16 mb-8",
+        "text-4xl font-bold leading-snug mt-16 mb-8",
         slugger,
         children
       ),
     h2: ({ children }) =>
-      renderHeading("h2", "text-h2 font-semibold mt-10 mb-5", slugger, children),
+      renderHeading("h2", "text-h2 font-bold mt-10 mb-5", slugger, children),
     h3: ({ children }) =>
-      renderHeading("h3", "text-h3 font-semibold mt-6 mb-4", slugger, children),
+      renderHeading("h3", "text-xl font-bold mt-6 mb-4", slugger, children),
     p: ({ children, node }) => {
       const childArray = React.Children.toArray(children)
 
@@ -194,7 +194,7 @@ const MarkdownSegmentRenderer: React.FC<{
         return <>{children}</>
       }
 
-      return <p className="mb-4 text-gray-800">{children}</p>
+      return <p className="mb-4 leading-8 text-gray-800">{children}</p>
     },
     a: ({ href, children, node }) => {
       const label = getNodeText(children)
@@ -328,7 +328,7 @@ const MarkdownSegmentRenderer: React.FC<{
         {children}
       </ol>
     ),
-    li: ({ children }) => <li className="mb-2">{children}</li>,
+    li: ({ children }) => <li className="mb-2 leading-8">{children}</li>,
     table: ({ children }) => (
       <div className="my-8 overflow-x-auto">
         <table className="w-full border-collapse text-left text-sm">
