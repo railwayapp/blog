@@ -23,7 +23,6 @@ const customColors = {
 }
 
 const fontStack = [
-  "var(--font-sans)",
   "Inter",
   "-apple-system",
   "BlinkMacSystemFont",
@@ -40,8 +39,6 @@ const fontStack = [
 ].join(",")
 
 const monoStack = [
-  "var(--font-mono)",
-  "JetBrains Mono",
   "ui-monospace",
   "SFMono-Regular",
   "SF Mono",
@@ -88,28 +85,22 @@ module.exports = {
           "radial-gradient(80.92% 283.41% at 34.4% -121.22%, #269ACC 0%, #461B9F 46.86%, #830757 100%)",
       },
       fontSize: {
-        // Editorial display heading (IBM Plex Serif Semibold)
-        "display-h1": [
-          "64px",
-          { lineHeight: "68px", letterSpacing: "-1.28px" },
-        ],
-
         // Headings
         huge: ["clamp(48px, 6vw, 64px)", "1.25"],
         jumbo: ["clamp(40px, 5vw, 48px)", "1.25"],
         large: ["clamp(32px, 4vw, 40px)", "1.25"],
-        h1: ["32px", "40px"],
-        h2: ["28px", "38px"],
-        h3: ["24px", "33px"],
-        h4: ["20px", "28px"],
-        h5: ["18px", "26px"],
-        h6: ["16px", "24px"],
+        h1: ["clamp(28px, 2.5vw, 32px)", "1.375"],
+        h2: ["clamp(24px, 3vw, 28px)", "1.375"],
+        h3: ["clamp(22px, 2.5vw, 24px)", "1.375"],
+        h4: ["20px", "1.375"],
+        h5: ["18px", "1.5"],
+        h6: ["16px", "1.5"],
 
         // Paragraphs
         xl: ["20px", "1.5"],
-        lg: ["18px", "26px"],
+        lg: ["18px", "1.5"],
         base: ["16px", "1.5"],
-        sm: ["14px", "20px"],
+        sm: ["14px", "21px"],
         xs: ["12px", "18px"],
       },
       typography: (theme) => ({
