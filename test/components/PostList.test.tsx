@@ -135,11 +135,17 @@ describe("PostList heading semantics", () => {
     }
 
     expectHeadingAboveGrid(2)
+    expect(getByRole("heading", { level: 2 }).parentElement?.className).toContain(
+      "mt-16"
+    )
 
     rerender(
       <PostList posts={posts} categories={[]} category={category} />
     )
     expectHeadingAboveGrid(1)
+    expect(getByRole("heading", { level: 1 }).parentElement?.className).toContain(
+      "mt-24"
+    )
   })
 })
 

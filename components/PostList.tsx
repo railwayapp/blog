@@ -1,6 +1,7 @@
 import { getCategoryLabel } from "@lib/cms"
 import React, { useState } from "react"
 import { BlogCategory, BlogPost } from "../lib/types"
+import { cn } from "../utils"
 import { Categories } from "./Categories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
@@ -53,7 +54,12 @@ export const PostList: React.FC<{
         {/* Category pages always render the heading — it is their only h1 —
             even when the category does not contain any posts. */}
         {(otherPosts.length > 0 || category != null) && (
-          <div className="max-w-6xl mx-auto mb-24 mt-24">
+          <div
+            className={cn(
+              "max-w-6xl mx-auto mb-24",
+              category == null ? "mt-16" : "mt-24"
+            )}
+          >
             <ListHeading
               className={
                 category == null
