@@ -305,7 +305,7 @@ const MarkdownSegmentRenderer: React.FC<{
             })}
             sizes="(max-width: 768px) 100vw, 736px"
             alt={alt ?? ""}
-            className="w-full rounded-lg"
+            className="w-full rounded-[4px]"
             loading="lazy"
             decoding="async"
           />

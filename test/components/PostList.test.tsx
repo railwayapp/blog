@@ -144,7 +144,7 @@ describe("PostList typography", () => {
       expect(pill.className).toContain("tracking-[0.06em]")
       expect(pill.className).toContain("px-2")
       expect(pill.className).toContain("py-[3px]")
-      expect(pill.className).toContain("rounded-[6px]")
+      expect(pill.className).toContain("rounded-[4px]")
     })
 
     rerender(

@@ -24,7 +24,7 @@ export const PostCategory: React.FC<{
       categoryToStyle[pillCategory] ?? "text-gray-600 bg-gray-50",
       "font-medium max-w-max text-xs",
       variant === "homepage"
-        ? "homepage-category-pill px-2 py-[3px] rounded-[6px] tracking-[0.06em] uppercase"
+        ? "homepage-category-pill px-2 py-[3px] rounded-[4px] tracking-[0.06em] uppercase"
         : "px-1.5 py-1 rounded uppercase",
       className
     )

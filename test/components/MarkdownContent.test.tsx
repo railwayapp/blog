@@ -187,6 +187,7 @@ describe("MarkdownContent embed links", () => {
 
     const caption = container.querySelector("figcaption")
     expect(caption?.textContent).toBe("Our CDN POPs as displayed by our DCIM tooling")
+    expect(container.querySelector("img")?.className).toContain("rounded-[4px]")
   })
 
   it("does not render filename alt text as a caption", () => {
