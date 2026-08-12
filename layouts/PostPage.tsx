@@ -67,7 +67,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
               : "pb-12"
           )}
         >
-          <div className="max-w-[736px] mx-auto flex items-center text-gray-500 space-x-3">
+          <div className="max-w-[736px] mx-auto flex items-center text-sm text-gray-600 space-x-3">
             {post.authors.length > 0 && (
               <>
                 <div className="flex items-center space-x-3">
@@ -100,7 +100,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
             <h1 className="text-6xl font-medium font-serif">{post.title}</h1>
           </header>
 
-          <section className="max-w-[736px] mx-auto text-base sm:text-lg leading-8">
+          <section className="max-w-[736px] mx-auto text-base sm:text-lg">
             <HiddenTableOfContents items={tableOfContents} />
             <MarkdownContent content={post.content ?? ""} />
           </section>

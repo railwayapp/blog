@@ -285,3 +285,14 @@ describe("MarkdownContent ordered lists", () => {
     expect(lists[1].getAttribute("start")).toBe("3")
   })
 })
+
+describe("MarkdownContent typography", () => {
+  it("inherits the body token line-height for paragraphs and list items", () => {
+    const { container } = render(
+      <MarkdownContent content={"A paragraph.\n\n- A list item."} />
+    )
+
+    expect(container.querySelector("p")?.className).not.toContain("leading-")
+    expect(container.querySelector("li")?.className).not.toContain("leading-")
+  })
+})

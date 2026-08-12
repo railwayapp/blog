@@ -112,3 +112,23 @@ describe("PostList heading semantics", () => {
     expect(getByRole("heading", { level: 2 }).textContent).toBe("Everything")
   })
 })
+
+describe("PostList typography", () => {
+  it("uses the secondary tone for featured and standard descriptions", () => {
+    const featuredPost = { ...makePost(1), featured: true }
+    const standardPost = makePost(2)
+    const { getByText } = render(
+      <PostList
+        posts={[featuredPost, standardPost]}
+        categories={[]}
+      />
+    )
+
+    expect(getByText("Description 1").className).toContain(
+      "text-lg text-gray-600"
+    )
+    expect(getByText("Description 2").className).toContain(
+      "text-base text-gray-600"
+    )
+  })
+})

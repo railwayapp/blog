@@ -12,7 +12,11 @@ export const BottomCTA: React.FC = () => {
       <h3 className={cn("text-[40px] mb-4 font-bold")}>
         Your train has arrived!
       </h3>
-      <p className={cn("text-xl text-center max-w-xl text-opacity-90")}>
+      <p
+        className={cn(
+          "text-xl font-medium text-center max-w-xl text-opacity-90"
+        )}
+      >
         Join millions of developers deploying millions of applications
         effortlessly on Railway.
       </p>

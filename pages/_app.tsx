@@ -3,10 +3,12 @@ import usePostHog from "@hooks/usePostHog"
 import "@styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import type { AppProps } from "next/app"
-import Head from "next/head"
 import { Inter, IBM_Plex_Serif } from "next/font/google"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+})
 const ibmPlexSerif = IBM_Plex_Serif({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
@@ -24,15 +26,7 @@ const RailwayBlog = ({ Component, pageProps }: AppProps) => {
       disableTransitionOnChange={true}
       enableSystem
     >
-      <Head>
-        <style jsx global>{`
-          html {
-            font-family: ${inter.style.fontFamily};
-          }
-        `}</style>
-      </Head>
-
-      <div className={ibmPlexSerif.variable}>
+      <div className={`${inter.variable} ${ibmPlexSerif.variable} font-sans`}>
         <Component {...pageProps} />
       </div>
     </ThemeProvider>

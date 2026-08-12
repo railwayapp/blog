@@ -10,6 +10,7 @@ html,
 body {
   @apply antialiased;
   @apply bg-background text-foreground;
+  @apply text-base font-normal tracking-normal;
 
   min-height: 100vh;
 }

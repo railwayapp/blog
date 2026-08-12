@@ -23,6 +23,7 @@ const customColors = {
 }
 
 const fontStack = [
+  "var(--font-inter)",
   "Inter",
   "-apple-system",
   "BlinkMacSystemFont",

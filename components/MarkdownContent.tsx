@@ -194,7 +194,7 @@ const MarkdownSegmentRenderer: React.FC<{
         return <>{children}</>
       }
 
-      return <p className="mb-4 leading-8 text-gray-800">{children}</p>
+      return <p className="mb-4 text-gray-800">{children}</p>
     },
     a: ({ href, children, node }) => {
       const label = getNodeText(children)
@@ -328,7 +328,7 @@ const MarkdownSegmentRenderer: React.FC<{
         {children}
       </ol>
     ),
-    li: ({ children }) => <li className="mb-2 leading-8">{children}</li>,
+    li: ({ children }) => <li className="mb-2">{children}</li>,
     table: ({ children }) => (
       <div className="my-8 overflow-x-auto">
         <table className="w-full border-collapse text-left text-sm">

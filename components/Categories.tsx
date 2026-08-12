@@ -40,7 +40,7 @@ const CategoryItem: React.FC<{
     <li className={className}>
       <Link
         className={`text-base font-medium ${
-          isActive ? "text-foreground" : "text-gray-500"
+          isActive ? "text-foreground" : "text-gray-600"
         } hover:text-foreground`}
         href={slug}
       >

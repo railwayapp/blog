@@ -30,7 +30,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
           {post.title}
         </h4>
 
-        <p className="text-base text-gray-800 line-clamp-2">
+        <p className="text-base text-gray-600 line-clamp-2">
           {post.description}
         </p>
       </div>
@@ -55,13 +55,13 @@ const PostItem: React.FC<Props> = ({ post }) => {
                 ))}
               </div>
             )}
-            <span className="font-medium text-sm text-gray-500">
+            <span className="text-sm text-gray-600">
               {post.authors.map((author) => author.name).join(" & ")}
             </span>
             <Divider />
           </>
         )}
-        <span className="font-medium text-sm text-gray-500">
+        <span className="text-sm text-gray-600">
           {formattedDate}
         </span>
       </div>
