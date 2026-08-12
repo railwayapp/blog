@@ -323,14 +323,18 @@ const MarkdownSegmentRenderer: React.FC<{
       </blockquote>
     ),
     ul: ({ children }) => (
-      <ul className="list-disc pl-6 mb-4 text-gray-800">{children}</ul>
+      <ul className="list-disc pl-6 mb-4 space-y-4 text-gray-800">
+        {children}
+      </ul>
     ),
     ol: ({ children, start }) => (
-      <ol start={start} className="list-decimal pl-6 mb-4 text-gray-800">
+      <ol
+        start={start}
+        className="list-decimal pl-6 mb-4 space-y-4 text-gray-800"
+      >
         {children}
       </ol>
     ),
-    li: ({ children }) => <li className="mb-2">{children}</li>,
     table: ({ children }) => (
       <div className="my-8 overflow-x-auto">
         <table className="w-full border-collapse text-left text-sm">

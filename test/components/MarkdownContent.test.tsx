@@ -298,6 +298,9 @@ describe("MarkdownContent typography", () => {
     expect(container.querySelector("li")?.className).not.toContain("leading-")
     expect(container.querySelector("ul")?.className).toContain("text-gray-800")
     expect(container.querySelector("ol")?.className).toContain("text-gray-800")
+    expect(container.querySelector("ul")?.className).toContain("space-y-4")
+    expect(container.querySelector("ol")?.className).toContain("space-y-4")
+    expect(container.querySelector("li")?.className).not.toContain("mb-")
   })
 
   it("uses the H2 and H3 type tokens for article headings", () => {
