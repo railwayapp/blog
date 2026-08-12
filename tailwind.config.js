@@ -78,6 +78,13 @@ module.exports = {
         current: "currentColor",
         black: colors.black,
         white: colors.white,
+        plum: {
+          200: "#C0C0D0",
+          300: "#A667E4",
+          400: "#7156AA",
+          500: "#5D487D",
+          600: "#37334C",
+        },
         ...customColors,
       },
       backgroundImage: {

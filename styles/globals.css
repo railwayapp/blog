@@ -50,6 +50,34 @@ h6 {
   border-color: #2f2547;
 }
 
+.markdown-inline-link {
+  color: #5d487d;
+  font-weight: 400;
+  text-decoration-line: underline;
+  text-decoration-color: rgb(93 72 125 / 45%);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.dark .markdown-inline-link {
+  color: #a667e4;
+  text-decoration-color: rgb(166 103 228 / 45%);
+}
+
+.markdown-inline-link:hover {
+  color: #37334c;
+  text-decoration-color: currentColor;
+}
+
+.dark .markdown-inline-link:hover {
+  color: #c0c0d0;
+}
+
+.markdown-inline-link:focus-visible {
+  outline: 2px solid #7156aa;
+  outline-offset: 2px;
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */

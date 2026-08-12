@@ -285,7 +285,7 @@ const MarkdownSegmentRenderer: React.FC<{
       }
 
       return (
-        <Link href={href ?? "#"} className="underline hover:text-pink-600">
+        <Link href={href ?? "#"} className="markdown-inline-link">
           {children}
         </Link>
       )

@@ -287,6 +287,16 @@ describe("MarkdownContent ordered lists", () => {
 })
 
 describe("MarkdownContent typography", () => {
+  it("uses the themed inline-link treatment", () => {
+    const { getByRole } = render(
+      <MarkdownContent content={"Read the [Railway docs](https://docs.railway.com)."} />
+    )
+
+    expect(getByRole("link", { name: "Railway docs" }).className).toContain(
+      "markdown-inline-link"
+    )
+  })
+
   it("uses the inline-code treatment without affecting fenced blocks", () => {
     const { container } = render(
       <MarkdownContent
