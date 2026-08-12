@@ -102,7 +102,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
             </h1>
           </header>
 
-          <section className="max-w-[672px] mx-auto text-base sm:text-lg">
+          <section className="max-w-[704px] mx-auto text-base sm:text-lg">
             <HiddenTableOfContents items={tableOfContents} />
             <MarkdownContent content={post.content ?? ""} />
           </section>
