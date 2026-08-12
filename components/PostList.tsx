@@ -40,7 +40,6 @@ export const PostList: React.FC<{
                 <FeaturedPostItem
                   key={post.id}
                   post={post}
-                  categoryVariant={category == null ? "homepage" : "default"}
                 />
               ))}
             </div>
@@ -78,9 +77,6 @@ export const PostList: React.FC<{
                     <PostItem
                       key={post.id}
                       post={post}
-                      categoryVariant={
-                        category == null ? "homepage" : "default"
-                      }
                     />
                   ))}
 

@@ -161,24 +161,28 @@ describe("PostList typography", () => {
     expect(getByRole("heading", { level: 3 }).className).toContain("text-h3")
   })
 
-  it("uses the homepage category-pill treatment", () => {
+  it("uses one shared category-pill treatment on every listing page", () => {
     const featuredPost = { ...makePost(1), featured: true }
     const standardPost = makePost(2)
     const { container, rerender } = render(
       <PostList posts={[featuredPost, standardPost]} categories={[]} />
     )
 
-    const pills = container.querySelectorAll(".homepage-category-pill")
-    expect(pills).toHaveLength(2)
-    pills.forEach((pill) => {
-      expect(pill.className).toContain("text-xs")
-      expect(pill.className).toContain("uppercase")
-      expect(pill.className).not.toContain("font-mono")
-      expect(pill.className).toContain("tracking-[0.06em]")
-      expect(pill.className).toContain("px-2")
-      expect(pill.className).toContain("py-[3px]")
-      expect(pill.className).toContain("rounded-[4px]")
-    })
+    const expectSharedPillTreatment = () => {
+      const pills = container.querySelectorAll(".post-category-pill")
+      expect(pills).toHaveLength(2)
+      pills.forEach((pill) => {
+        expect(pill.className).toContain("text-xs")
+        expect(pill.className).toContain("uppercase")
+        expect(pill.className).not.toContain("font-mono")
+        expect(pill.className).toContain("tracking-[0.06em]")
+        expect(pill.className).toContain("px-2")
+        expect(pill.className).toContain("py-[3px]")
+        expect(pill.className).toContain("rounded-[4px]")
+      })
+    }
+
+    expectSharedPillTreatment()
 
     rerender(
       <PostList
@@ -187,9 +191,7 @@ describe("PostList typography", () => {
         category={category}
       />
     )
-    expect(container.querySelectorAll(".homepage-category-pill")).toHaveLength(
-      0
-    )
+    expectSharedPillTreatment()
   })
 
   it("uses the secondary tone for featured and standard descriptions", () => {

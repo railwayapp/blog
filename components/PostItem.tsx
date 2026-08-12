@@ -3,14 +3,13 @@ import { BlogPost } from "@lib/types"
 import React, { useMemo } from "react"
 import { formatPostDate } from "../utils"
 import { Divider } from "./Divider"
-import { PostCategory, PostCategoryVariant } from "./PostCategory"
+import { PostCategory } from "./PostCategory"
 
 export interface Props {
   post: BlogPost
-  categoryVariant?: PostCategoryVariant
 }
 
-const PostItem: React.FC<Props> = ({ post, categoryVariant }) => {
+const PostItem: React.FC<Props> = ({ post }) => {
   const formattedDate = useMemo(
     () => formatPostDate(post.publishedAt),
     [post.publishedAt]
@@ -23,7 +22,6 @@ const PostItem: React.FC<Props> = ({ post, categoryVariant }) => {
         <PostCategory
           category={post.category.title}
           isCommunity={post.externalAuthor}
-          variant={categoryVariant}
         />
       )}
 

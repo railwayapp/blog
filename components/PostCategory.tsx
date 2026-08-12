@@ -11,21 +11,15 @@ const categoryToStyle = {
   "Scaling Railway": "text-green-500 bg-green-50",
 }
 
-export type PostCategoryVariant = "default" | "homepage"
-
 export const PostCategory: React.FC<{
   category: string
   isCommunity: boolean
   className?: string
-  variant?: PostCategoryVariant
-}> = ({ category, isCommunity, className, variant = "default" }) => {
+}> = ({ category, isCommunity, className }) => {
   const getPillClassName = (pillCategory: string) =>
     cn(
       categoryToStyle[pillCategory] ?? "text-gray-600 bg-gray-50",
-      "font-medium max-w-max text-xs",
-      variant === "homepage"
-        ? "homepage-category-pill px-2 py-[3px] rounded-[4px] tracking-[0.06em] uppercase"
-        : "px-1.5 py-1 rounded uppercase",
+      "post-category-pill font-medium max-w-max text-xs px-2 py-[3px] rounded-[4px] tracking-[0.06em] uppercase",
       className
     )
 

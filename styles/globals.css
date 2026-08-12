@@ -26,7 +26,7 @@ h6 {
   @apply font-semibold;
 }
 
-.light .homepage-category-pill {
+.light .post-category-pill {
   color: #5d487d;
   background-color: #ddd7e4;
 }
