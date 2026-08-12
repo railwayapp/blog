@@ -67,7 +67,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
               : "pb-12"
           )}
         >
-          <div className="max-w-[736px] mx-auto flex items-center text-sm text-gray-600 space-x-3">
+          <div className="max-w-[704px] mx-auto flex items-center text-sm text-gray-600 space-x-3">
             {post.authors.length > 0 && (
               <>
                 <div className="flex items-center space-x-3">
@@ -96,7 +96,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
             <time dateTime={post.publishedAt}>{formattedDate}</time>
           </div>
 
-          <header className="mt-5 mb-16 max-w-[736px] mx-auto">
+          <header className="mt-5 mb-16 max-w-[704px] mx-auto">
             <h1 className="text-post-title font-medium font-serif">
               {post.title}
             </h1>
