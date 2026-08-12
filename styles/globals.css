@@ -31,6 +31,19 @@ h6 {
   background-color: #ddd7e4;
 }
 
+.inline-code {
+  color: #37334c;
+  background-color: #e4e1e8;
+  border: 1px solid #d0c8dd;
+  border-radius: 5px;
+  padding: 0.1em 0.36em;
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  font-size: 0.82em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */

@@ -3,7 +3,7 @@ import usePostHog from "@hooks/usePostHog"
 import "@styles/globals.css"
 import { ThemeProvider } from "next-themes"
 import type { AppProps } from "next/app"
-import { Inter, IBM_Plex_Serif } from "next/font/google"
+import { Inter, IBM_Plex_Serif, JetBrains_Mono } from "next/font/google"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,6 +13,11 @@ const ibmPlexSerif = IBM_Plex_Serif({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-serif",
+})
+const jetBrainsMono = JetBrains_Mono({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
 })
 
 const RailwayBlog = ({ Component, pageProps }: AppProps) => {
@@ -26,7 +31,9 @@ const RailwayBlog = ({ Component, pageProps }: AppProps) => {
       disableTransitionOnChange={true}
       enableSystem
     >
-      <div className={`${inter.variable} ${ibmPlexSerif.variable} font-sans`}>
+      <div
+        className={`${inter.variable} ${ibmPlexSerif.variable} ${jetBrainsMono.variable} font-sans`}
+      >
         <Component {...pageProps} />
       </div>
     </ThemeProvider>

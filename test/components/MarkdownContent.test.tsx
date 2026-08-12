@@ -287,6 +287,21 @@ describe("MarkdownContent ordered lists", () => {
 })
 
 describe("MarkdownContent typography", () => {
+  it("uses the inline-code treatment without affecting fenced blocks", () => {
+    const { container } = render(
+      <MarkdownContent
+        content={"Run `railway up`.\n\n```bash\nrailway up\n```"}
+      />
+    )
+
+    expect(container.querySelector("p code")?.className).toContain(
+      "inline-code"
+    )
+    expect(container.querySelector("pre code")?.className).not.toContain(
+      "inline-code"
+    )
+  })
+
   it("inherits the body token line-height for paragraphs and list items", () => {
     const { container } = render(
       <MarkdownContent

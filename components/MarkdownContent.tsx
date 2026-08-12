@@ -380,11 +380,7 @@ const MarkdownSegmentRenderer: React.FC<{
         )
       }
 
-      return (
-        <code className="text-pink-600 whitespace-normal break-words">
-          {children}
-        </code>
-      )
+      return <code className="inline-code">{children}</code>
     },
     hr: () => <hr className="my-8" />,
   }
