@@ -53,7 +53,7 @@ export const PostList: React.FC<{
             even when every post is featured and the card list is empty
             (e.g. a new category whose posts are all featured). */}
         {(otherPosts.length > 0 || category != null) && (
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
+          <div className="max-w-6xl mx-auto mb-24 mt-24">
             <ListHeading
               className={
                 category == null
@@ -65,7 +65,7 @@ export const PostList: React.FC<{
             </ListHeading>
 
             {otherPosts.length > 0 && (
-              <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent lg:[&>*:nth-last-child(4)]:border-transparent">
                 {otherPosts
                   .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
                   .map((post) => (
@@ -82,7 +82,7 @@ export const PostList: React.FC<{
                   <div />
                 ) : (
                   <button
-                    className="md:col-span-2 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
+                    className="md:col-span-2 lg:col-span-3 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
                     onClick={() => setShowMore(true)}
                   >
                     Load more posts...

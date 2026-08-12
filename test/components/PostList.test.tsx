@@ -114,6 +114,28 @@ describe("PostList heading semantics", () => {
     expect(queryByRole("heading", { level: 1 })).toBeNull()
     expect(getByRole("heading", { level: 2 }).textContent).toBe("Everything")
   })
+
+  it("places homepage and category headings above a three-column post grid", () => {
+    const { getByRole, rerender } = render(
+      <PostList posts={posts} categories={[]} />
+    )
+
+    const expectHeadingAboveGrid = (level: 1 | 2) => {
+      const heading = getByRole("heading", { level })
+      const grid = heading.nextElementSibling
+
+      expect(heading.parentElement?.className).not.toContain("lg:grid-cols-3")
+      expect(grid?.className).toContain("lg:grid-cols-3")
+      expect(grid?.className).not.toContain("lg:col-span-2")
+    }
+
+    expectHeadingAboveGrid(2)
+
+    rerender(
+      <PostList posts={posts} categories={[]} category={category} />
+    )
+    expectHeadingAboveGrid(1)
+  })
 })
 
 describe("PostList typography", () => {
