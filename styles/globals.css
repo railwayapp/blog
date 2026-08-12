@@ -44,6 +44,12 @@ h6 {
   white-space: nowrap;
 }
 
+.dark .inline-code {
+  color: #a667e4;
+  background-color: #1d182c;
+  border-color: #2f2547;
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */
