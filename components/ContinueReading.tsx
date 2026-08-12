@@ -15,7 +15,7 @@ export const ContinueReading: React.FC<{
   return (
     <div>
       <header className={cn("flex items-center justify-between mb-8")}>
-        <h3 className="text-gray-500 font-semibold text-lg">
+        <h3 className="text-gray-600 font-semibold text-lg">
           Continue Reading...
         </h3>
         <Link
@@ -59,7 +59,7 @@ const RelatedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
           {post.title}
         </header>
 
-        <p className="text-base text-gray-800 line-clamp-2">
+        <p className="text-base text-gray-600 line-clamp-2">
           {post.description}
         </p>
       </div>

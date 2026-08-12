@@ -71,8 +71,8 @@
             "message": "Body type tokens already provide the required line-height; remove the paragraph leading override."
           },
           {
-            "selector": "JSXOpeningElement[name.name='p'] JSXAttribute[name.name='className'] Literal[value=/\\btext-gray-(?:300|400|500)\\b|\\bdark:text-gray-/]",
-            "message": "Use an AA-safe body tone such as text-gray-600 without a redundant dark override."
+            "selector": "JSXOpeningElement JSXAttribute[name.name='className'] Literal[value=/\\btext-gray-(?:300|400|500)\\b|\\bdark:text-gray-/]",
+            "message": "Use the AA-safe text-gray-600 tone without a redundant dark override."
           }
         ]
       }

@@ -30,7 +30,7 @@ const renderPostContent = (post: BlogPost) => {
   let html = ""
 
   if (authors) {
-    html += `<p style="font-style: italic; margin-bottom: 1.5rem; color: #6b7280;">${
+    html += `<p style="font-style: italic; margin-bottom: 1.5rem; color: #4b5563;">${
       post.authors.length > 1 ? "Authors" : "Author"
     }: ${escapeHtml(authors)}</p>`
   }

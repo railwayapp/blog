@@ -13,7 +13,7 @@ import ReactMarkdown from "react-markdown"
 import { TwitterTweetEmbed } from "react-twitter-embed"
 import rehypeSanitize from "rehype-sanitize"
 import remarkGfm from "remark-gfm"
-import { extractTweetId, extractYoutubeId } from "utils"
+import { cn, extractTweetId, extractYoutubeId } from "utils"
 
 type RenderMode = "page" | "rss"
 
@@ -194,7 +194,7 @@ const MarkdownSegmentRenderer: React.FC<{
         return <>{children}</>
       }
 
-      return <p className="mb-4 text-gray-800">{children}</p>
+      return <p className="mb-4">{children}</p>
     },
     a: ({ href, children, node }) => {
       const label = getNodeText(children)
@@ -420,7 +420,7 @@ export const MarkdownContent: React.FC<Props> = ({
   const segments = segmentMarkdown(content)
 
   return (
-    <div className={className}>
+    <div className={cn("text-gray-600", className)}>
       {segments.map((segment, index) =>
         segment.type === "callout" ? (
           <Callout

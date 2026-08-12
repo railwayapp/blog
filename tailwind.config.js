@@ -124,7 +124,7 @@ module.exports = {
             },
 
             p: {
-              color: theme("colors.gray.800"),
+              color: theme("colors.gray.600"),
 
               a: {
                 textDecoration: "underline",
