@@ -179,6 +179,8 @@ describe("PostList typography", () => {
         expect(pill.className).toContain("px-2")
         expect(pill.className).toContain("py-[3px]")
         expect(pill.className).toContain("rounded-[4px]")
+        expect(pill.className).not.toMatch(/text-(blue|green|pink|gray)-/)
+        expect(pill.className).not.toMatch(/bg-(blue|green|pink|gray)-/)
       })
     }
 

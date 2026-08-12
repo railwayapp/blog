@@ -31,6 +31,11 @@ h6 {
   background-color: #ddd7e4;
 }
 
+.dark .post-category-pill {
+  color: #a98fce;
+  background-color: #2f2547;
+}
+
 .inline-code {
   color: #37334c;
   background-color: #e4e1e8;
