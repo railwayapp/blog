@@ -289,11 +289,15 @@ describe("MarkdownContent ordered lists", () => {
 describe("MarkdownContent typography", () => {
   it("inherits the body token line-height for paragraphs and list items", () => {
     const { container } = render(
-      <MarkdownContent content={"A paragraph.\n\n- A list item."} />
+      <MarkdownContent
+        content={"A paragraph.\n\n- A list item.\n\n1. An ordered item."}
+      />
     )
 
     expect(container.querySelector("p")?.className).not.toContain("leading-")
     expect(container.querySelector("li")?.className).not.toContain("leading-")
+    expect(container.querySelector("ul")?.className).toContain("text-gray-800")
+    expect(container.querySelector("ol")?.className).toContain("text-gray-800")
   })
 
   it("uses the H2 and H3 type tokens for article headings", () => {

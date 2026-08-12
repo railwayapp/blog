@@ -322,9 +322,11 @@ const MarkdownSegmentRenderer: React.FC<{
         {children}
       </blockquote>
     ),
-    ul: ({ children }) => <ul className="list-disc pl-6 mb-4">{children}</ul>,
+    ul: ({ children }) => (
+      <ul className="list-disc pl-6 mb-4 text-gray-800">{children}</ul>
+    ),
     ol: ({ children, start }) => (
-      <ol start={start} className="list-decimal pl-6 mb-4">
+      <ol start={start} className="list-decimal pl-6 mb-4 text-gray-800">
         {children}
       </ol>
     ),
