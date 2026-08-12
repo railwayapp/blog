@@ -50,7 +50,13 @@ export const PostList: React.FC<{
             (e.g. a new category whose posts are all featured). */}
         {(otherPosts.length > 0 || category != null) && (
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
-            <ListHeading className="text-3xl font-bold mb-12">
+            <ListHeading
+              className={
+                category == null
+                  ? "text-h2 mb-12"
+                  : "text-3xl font-bold mb-12"
+              }
+            >
               {category == null ? "Everything" : getCategoryLabel(category)}
             </ListHeading>
 

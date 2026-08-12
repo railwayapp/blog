@@ -175,18 +175,18 @@ const MarkdownSegmentRenderer: React.FC<{
 }> = ({ content, mode, slugger }) => {
   const components = {
     // Markdown `#` headings render as h2: the post title is the page's only
-    // h1. Styling keeps the original h1 scale so posts look unchanged.
+    // h1. Both Markdown h1 and h2 use the article's H2 type token.
     h1: ({ children }) =>
       renderHeading(
         "h2",
-        "text-4xl font-bold leading-snug mt-16 mb-8",
+        "text-h2 mt-16 mb-8",
         slugger,
         children
       ),
     h2: ({ children }) =>
-      renderHeading("h2", "text-h2 font-bold mt-10 mb-5", slugger, children),
+      renderHeading("h2", "text-h2 mt-10 mb-6", slugger, children),
     h3: ({ children }) =>
-      renderHeading("h3", "text-xl font-bold mt-6 mb-4", slugger, children),
+      renderHeading("h3", "text-h3 mt-6 mb-4", slugger, children),
     p: ({ children, node }) => {
       const childArray = React.Children.toArray(children)
 

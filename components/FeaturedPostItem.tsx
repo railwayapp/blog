@@ -46,7 +46,7 @@ export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
           />
         )}
 
-        <h3 className="font-medium font-serif text-2xl my-4 group-hover:opacity-60 tracking-tight">
+        <h3 className="font-serif text-h3 my-4 group-hover:opacity-60">
           {post.title}
         </h3>
 

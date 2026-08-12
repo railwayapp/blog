@@ -15,7 +15,7 @@ export const ContinueReading: React.FC<{
   return (
     <div>
       <header className={cn("flex items-center justify-between mb-8")}>
-        <h3 className="text-gray-500 font-semibold text-lg">
+        <h3 className="text-gray-500 text-h3">
           Continue Reading...
         </h3>
         <Link

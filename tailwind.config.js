@@ -95,8 +95,22 @@ module.exports = {
         jumbo: ["clamp(40px, 5vw, 48px)", "1.25"],
         large: ["clamp(32px, 4vw, 40px)", "1.25"],
         h1: ["clamp(28px, 2.5vw, 32px)", "1.375"],
-        h2: ["clamp(24px, 3vw, 28px)", "1.375"],
-        h3: ["clamp(22px, 2.5vw, 24px)", "1.375"],
+        h2: [
+          "32px",
+          {
+            lineHeight: "40px",
+            letterSpacing: "-0.02em",
+            fontWeight: "500",
+          },
+        ],
+        h3: [
+          "24px",
+          {
+            lineHeight: "32px",
+            letterSpacing: "-0.02em",
+            fontWeight: "500",
+          },
+        ],
         h4: ["20px", "1.375"],
         h5: ["18px", "1.5"],
         h6: ["16px", "1.5"],

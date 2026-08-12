@@ -295,4 +295,13 @@ describe("MarkdownContent typography", () => {
     expect(container.querySelector("p")?.className).not.toContain("leading-")
     expect(container.querySelector("li")?.className).not.toContain("leading-")
   })
+
+  it("uses the H2 and H3 type tokens for article headings", () => {
+    const { getByRole } = render(
+      <MarkdownContent content={"## Section heading\n\n### Subheading"} />
+    )
+
+    expect(getByRole("heading", { level: 2 }).className).toContain("text-h2")
+    expect(getByRole("heading", { level: 3 }).className).toContain("text-h3")
+  })
 })

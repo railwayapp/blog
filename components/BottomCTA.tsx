@@ -9,7 +9,7 @@ export const BottomCTA: React.FC = () => {
         "bg-bottomCta my-16 p-16 text-white rounded-xl flex flex-col items-center justify-center"
       )}
     >
-      <h3 className={cn("text-[40px] mb-4 font-bold")}>
+      <h3 className={cn("text-h3 mb-4")}>
         Your train has arrived!
       </h3>
       <p

@@ -114,6 +114,17 @@ describe("PostList heading semantics", () => {
 })
 
 describe("PostList typography", () => {
+  it("uses the H2 and H3 type tokens on the homepage", () => {
+    const featuredPost = { ...makePost(1), featured: true }
+    const standardPost = makePost(2)
+    const { getByRole } = render(
+      <PostList posts={[featuredPost, standardPost]} categories={[]} />
+    )
+
+    expect(getByRole("heading", { level: 2 }).className).toContain("text-h2")
+    expect(getByRole("heading", { level: 3 }).className).toContain("text-h3")
+  })
+
   it("uses the secondary tone for featured and standard descriptions", () => {
     const featuredPost = { ...makePost(1), featured: true }
     const standardPost = makePost(2)
