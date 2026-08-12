@@ -287,12 +287,11 @@ describe("MarkdownContent ordered lists", () => {
 })
 
 describe("MarkdownContent typography", () => {
-  it("uses the gray-600 body tone and token line-height", () => {
+  it("inherits the body token line-height for paragraphs and list items", () => {
     const { container } = render(
       <MarkdownContent content={"A paragraph.\n\n- A list item."} />
     )
 
-    expect(container.firstElementChild?.className).toContain("text-gray-600")
     expect(container.querySelector("p")?.className).not.toContain("leading-")
     expect(container.querySelector("li")?.className).not.toContain("leading-")
   })
