@@ -82,7 +82,10 @@ describe("PostList heading semantics", () => {
       <PostList posts={posts} categories={[]} category={category} />
     )
 
-    expect(getByRole("heading", { level: 1 }).textContent).toBeTruthy()
+    const heading = getByRole("heading", { level: 1 })
+    expect(heading.textContent).toBeTruthy()
+    expect(heading.className).toContain("font-semibold")
+    expect(heading.className).not.toContain("font-bold")
   })
 
   it("renders the h1 even when every post in the category is featured", () => {

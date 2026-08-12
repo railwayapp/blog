@@ -54,7 +54,7 @@ export const PostList: React.FC<{
               className={
                 category == null
                   ? "text-h2 mb-12"
-                  : "text-3xl font-bold mb-12"
+                  : "text-3xl font-semibold mb-12"
               }
             >
               {category == null ? "Everything" : getCategoryLabel(category)}
