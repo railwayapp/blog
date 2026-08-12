@@ -12,12 +12,13 @@ export const PostList: React.FC<{
   categories: BlogCategory[]
   category?: BlogCategory | string
 }> = ({ posts, categories, category }) => {
-  const featuredPosts = posts.filter((post) => post.featured)
+  const featuredPosts =
+    category == null ? posts.filter((post) => post.featured) : []
 
   const otherPosts =
     category == null
       ? posts.filter((post) => !post.featured && !post.externalAuthor)
-      : posts.filter((post) => !post.featured)
+      : posts
 
   const [showMore, setShowMore] = useState(false)
   const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH
@@ -50,8 +51,7 @@ export const PostList: React.FC<{
         )}
 
         {/* Category pages always render the heading — it is their only h1 —
-            even when every post is featured and the card list is empty
-            (e.g. a new category whose posts are all featured). */}
+            even when the category does not contain any posts. */}
         {(otherPosts.length > 0 || category != null) && (
           <div className="max-w-6xl mx-auto mb-24 mt-24">
             <ListHeading

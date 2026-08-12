@@ -88,7 +88,7 @@ describe("PostList heading semantics", () => {
     expect(heading.className).not.toContain("font-bold")
   })
 
-  it("renders the h1 even when every post in the category is featured", () => {
+  it("renders featured category posts as standard cards below the h1", () => {
     const featuredOnly = posts.slice(0, 2).map((post) => ({
       ...post,
       featured: true,
@@ -98,11 +98,16 @@ describe("PostList heading semantics", () => {
         alt: "cover",
       },
     }))
-    const { getByRole, container } = render(
+    const { getByRole, queryByRole, container } = render(
       <PostList posts={featuredOnly} categories={[]} category={category} />
     )
 
-    expect(getByRole("heading", { level: 1 }).textContent).toBeTruthy()
+    const heading = getByRole("heading", { level: 1 })
+    const standardGrid = heading.nextElementSibling
+
+    expect(queryByRole("heading", { level: 3 })).toBeNull()
+    expect(standardGrid?.querySelectorAll('a[href^="/p/"]')).toHaveLength(2)
+    expect(container.querySelector('img[alt="cover"]')).toBeNull()
     expect(container.querySelector("ul.hidden")).toBeNull()
   })
 
