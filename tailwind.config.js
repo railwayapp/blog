@@ -87,6 +87,7 @@ module.exports = {
       },
       fontSize: {
         // Headings
+        "post-title": ["48px", "56px"],
         huge: ["clamp(48px, 6vw, 64px)", "1.25"],
         jumbo: ["clamp(40px, 5vw, 48px)", "1.25"],
         large: ["clamp(32px, 4vw, 40px)", "1.25"],

@@ -97,7 +97,9 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
           </div>
 
           <header className="mt-5 mb-16 max-w-[736px] mx-auto">
-            <h1 className="text-6xl font-medium font-serif">{post.title}</h1>
+            <h1 className="text-post-title font-medium font-serif">
+              {post.title}
+            </h1>
           </header>
 
           <section className="max-w-[736px] mx-auto text-base sm:text-lg">
