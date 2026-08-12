@@ -35,7 +35,11 @@ export const PostList: React.FC<{
           {featuredPosts.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12">
               {featuredPosts.map((post) => (
-                <FeaturedPostItem key={post.id} post={post} />
+                <FeaturedPostItem
+                  key={post.id}
+                  post={post}
+                  categoryVariant={category == null ? "homepage" : "default"}
+                />
               ))}
             </div>
           )}
@@ -65,7 +69,13 @@ export const PostList: React.FC<{
                 {otherPosts
                   .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
                   .map((post) => (
-                    <PostItem key={post.id} post={post} />
+                    <PostItem
+                      key={post.id}
+                      post={post}
+                      categoryVariant={
+                        category == null ? "homepage" : "default"
+                      }
+                    />
                   ))}
 
                 {showMore || !hasMorePosts ? (

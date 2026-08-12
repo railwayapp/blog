@@ -1,4 +1,5 @@
 import React from "react"
+import { cn } from "../utils"
 
 const categoryToStyle = {
   News: "text-blue-500 bg-blue-50",
@@ -10,24 +11,31 @@ const categoryToStyle = {
   "Scaling Railway": "text-green-500 bg-green-50",
 }
 
+export type PostCategoryVariant = "default" | "homepage"
+
 export const PostCategory: React.FC<{
   category: string
   isCommunity: boolean
   className?: string
-}> = ({ category, isCommunity, className }) => {
+  variant?: PostCategoryVariant
+}> = ({ category, isCommunity, className, variant = "default" }) => {
+  const getPillClassName = (pillCategory: string) =>
+    cn(
+      categoryToStyle[pillCategory] ?? "text-gray-600 bg-gray-50",
+      "font-medium max-w-max text-xs",
+      variant === "homepage"
+        ? "homepage-category-pill px-2 py-[3px] rounded-[6px] tracking-[0.06em] uppercase"
+        : "px-1.5 py-1 rounded uppercase",
+      className
+    )
+
   return (
     <div className="flex gap-2">
-      <div
-        className={`${
-          categoryToStyle[category] ?? "text-gray-600 bg-gray-50"
-        } font-medium px-1.5 py-1 rounded max-w-max text-xs uppercase ${className}`}
-      >
+      <div className={getPillClassName(category)}>
         {category}
       </div>
       {isCommunity && (
-        <div
-          className={`${categoryToStyle["Community"]} font-medium px-1.5 py-1 rounded max-w-max text-xs uppercase`}
-        >
+        <div className={getPillClassName("Community")}>
           Community
         </div>
       )}

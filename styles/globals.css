@@ -26,6 +26,11 @@ h6 {
   @apply font-semibold;
 }
 
+.light .homepage-category-pill {
+  color: #5d487d;
+  background-color: #ddd7e4;
+}
+
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */

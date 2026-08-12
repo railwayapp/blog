@@ -128,14 +128,42 @@ describe("PostList typography", () => {
     expect(getByRole("heading", { level: 3 }).className).toContain("text-h3")
   })
 
+  it("uses the homepage category-pill treatment", () => {
+    const featuredPost = { ...makePost(1), featured: true }
+    const standardPost = makePost(2)
+    const { container, rerender } = render(
+      <PostList posts={[featuredPost, standardPost]} categories={[]} />
+    )
+
+    const pills = container.querySelectorAll(".homepage-category-pill")
+    expect(pills).toHaveLength(2)
+    pills.forEach((pill) => {
+      expect(pill.className).toContain("text-xs")
+      expect(pill.className).toContain("uppercase")
+      expect(pill.className).not.toContain("font-mono")
+      expect(pill.className).toContain("tracking-[0.06em]")
+      expect(pill.className).toContain("px-2")
+      expect(pill.className).toContain("py-[3px]")
+      expect(pill.className).toContain("rounded-[6px]")
+    })
+
+    rerender(
+      <PostList
+        posts={[featuredPost, standardPost]}
+        categories={[]}
+        category={category}
+      />
+    )
+    expect(container.querySelectorAll(".homepage-category-pill")).toHaveLength(
+      0
+    )
+  })
+
   it("uses the secondary tone for featured and standard descriptions", () => {
     const featuredPost = { ...makePost(1), featured: true }
     const standardPost = makePost(2)
     const { getByText } = render(
-      <PostList
-        posts={[featuredPost, standardPost]}
-        categories={[]}
-      />
+      <PostList posts={[featuredPost, standardPost]} categories={[]} />
     )
 
     expect(getByText("Description 1").className).toContain(
