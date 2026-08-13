@@ -7,6 +7,7 @@ import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
 
 const DEFAULT_POSTS_LENGTH = 8
+const POSTS_BATCH_SIZE = 6
 
 export const PostList: React.FC<{
   posts: BlogPost[]
@@ -21,8 +22,9 @@ export const PostList: React.FC<{
       ? posts.filter((post) => !post.featured && !post.externalAuthor)
       : posts
 
-  const [showMore, setShowMore] = useState(false)
-  const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH
+  const [visiblePostsLength, setVisiblePostsLength] =
+    useState(DEFAULT_POSTS_LENGTH)
+  const hasMorePosts = otherPosts.length > visiblePostsLength
 
   // Category pages have no other h1; the homepage's h1 lives elsewhere.
   const ListHeading = category == null ? "h2" : "h1"
@@ -68,33 +70,38 @@ export const PostList: React.FC<{
 
             {otherPosts.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent lg:[&>*:nth-last-child(4)]:border-transparent">
-                {otherPosts
-                  .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
-                  .map((post) => (
-                    <PostItem key={post.id} post={post} />
-                  ))}
+                {otherPosts.slice(0, visiblePostsLength).map((post) => (
+                  <PostItem key={post.id} post={post} />
+                ))}
 
-                {showMore || !hasMorePosts ? (
-                  <div />
-                ) : (
+                {hasMorePosts ? (
                   <button
                     className="load-more-posts md:col-span-2 lg:col-span-3 justify-self-center text-center border rounded-[4px] px-4 py-2 transition-colors duration-100"
-                    onClick={() => setShowMore(true)}
+                    onClick={() =>
+                      setVisiblePostsLength((currentLength) =>
+                        Math.min(
+                          currentLength + POSTS_BATCH_SIZE,
+                          otherPosts.length
+                        )
+                      )
+                    }
                   >
                     Load more posts
                   </button>
+                ) : (
+                  <div />
                 )}
               </div>
             )}
 
             {/* Crawlable links for the posts hidden behind "Load more" so
                 every post is reachable in the server-rendered HTML. Plain
-                <a> (never visible or clickable); unmounts once the full
-                cards render. Kept outside the cards grid so its
+                <a> (never visible or clickable); shrinks as each batch of
+                cards renders. Kept outside the cards grid so its
                 nth-last-child border CSS keeps counting correctly. */}
-            {!showMore && hasMorePosts && (
+            {hasMorePosts && (
               <ul className="hidden">
-                {otherPosts.slice(DEFAULT_POSTS_LENGTH).map((post) => (
+                {otherPosts.slice(visiblePostsLength).map((post) => (
                   <li key={post.id}>
                     <a href={`/p/${post.slug}`}>{post.title}</a>
                   </li>

@@ -40,18 +40,21 @@ describe("PostList crawlable links", () => {
       <PostList posts={posts} categories={[]} category={category} />
     )
 
-    const hrefs = Array.from(
-      container.querySelectorAll('a[href^="/p/"]')
-    ).map((a) => a.getAttribute("href"))
+    const hrefs = Array.from(container.querySelectorAll('a[href^="/p/"]')).map(
+      (a) => a.getAttribute("href")
+    )
     for (let i = 1; i <= 12; i++) {
       expect(hrefs).toContain(`/p/post-${i}`)
     }
 
     const hidden = container.querySelector("ul.hidden")
     expect(hidden).not.toBeNull()
-    const hiddenHrefs = Array.from(
-      hidden!.querySelectorAll("a")
-    ).map((a) => a.getAttribute("href"))
+    if (hidden == null) {
+      throw new Error("Expected hidden crawlable post links")
+    }
+    const hiddenHrefs = Array.from(hidden.querySelectorAll("a")).map((a) =>
+      a.getAttribute("href")
+    )
     expect(hiddenHrefs).toEqual([
       "/p/post-9",
       "/p/post-10",
@@ -60,20 +63,42 @@ describe("PostList crawlable links", () => {
     ])
   })
 
-  it("replaces the hidden list with full cards on Load more", () => {
-    const { container, getByText } = render(
-      <PostList posts={posts} categories={[]} category={category} />
+  it("reveals six posts at a time until every card is visible", () => {
+    const manyPosts = Array.from({ length: 22 }, (_, i) => makePost(i + 1))
+    const { container, getByRole, queryByRole } = render(
+      <PostList posts={manyPosts} categories={[]} category={category} />
     )
+    const postsGrid = getByRole("button", {
+      name: "Load more posts",
+    }).parentElement
+    if (postsGrid == null) {
+      throw new Error("Expected the posts grid")
+    }
+    const visiblePostLinks = () =>
+      Array.from(postsGrid.children).filter(
+        (child) =>
+          child instanceof HTMLAnchorElement &&
+          child.getAttribute("href")?.startsWith("/p/")
+      )
+    const hiddenPostLinks = () =>
+      container.querySelectorAll('ul.hidden a[href^="/p/"]')
 
-    fireEvent.click(getByText("Load more posts"))
+    expect(visiblePostLinks()).toHaveLength(8)
+    expect(hiddenPostLinks()).toHaveLength(14)
 
+    fireEvent.click(getByRole("button", { name: "Load more posts" }))
+    expect(visiblePostLinks()).toHaveLength(14)
+    expect(hiddenPostLinks()).toHaveLength(8)
+
+    fireEvent.click(getByRole("button", { name: "Load more posts" }))
+    expect(visiblePostLinks()).toHaveLength(20)
+    expect(hiddenPostLinks()).toHaveLength(2)
+
+    fireEvent.click(getByRole("button", { name: "Load more posts" }))
+    expect(visiblePostLinks()).toHaveLength(22)
     expect(container.querySelector("ul.hidden")).toBeNull()
-    const hrefs = Array.from(
-      container.querySelectorAll('a[href^="/p/"]')
-    ).map((a) => a.getAttribute("href"))
-    expect(hrefs).toHaveLength(12)
+    expect(queryByRole("button", { name: "Load more posts" })).toBeNull()
   })
-
 })
 
 describe("PostList heading semantics", () => {
@@ -135,17 +160,15 @@ describe("PostList heading semantics", () => {
     }
 
     expectHeadingAboveGrid(2)
-    expect(getByRole("heading", { level: 2 }).parentElement?.className).toContain(
-      "mt-16"
-    )
+    expect(
+      getByRole("heading", { level: 2 }).parentElement?.className
+    ).toContain("mt-16")
 
-    rerender(
-      <PostList posts={posts} categories={[]} category={category} />
-    )
+    rerender(<PostList posts={posts} categories={[]} category={category} />)
     expectHeadingAboveGrid(1)
-    expect(getByRole("heading", { level: 1 }).parentElement?.className).toContain(
-      "mt-24"
-    )
+    expect(
+      getByRole("heading", { level: 1 }).parentElement?.className
+    ).toContain("mt-24")
   })
 })
 
