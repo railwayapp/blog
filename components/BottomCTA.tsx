@@ -15,7 +15,7 @@ export const BottomCTA: React.FC = () => {
       </p>
       <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row">
         <Link
-          href="https://dev.new"
+          href="https://railway.com"
           className="post-bottom-cta-primary inline-flex min-h-[48px] items-center justify-center rounded-[8px] px-6 py-3 text-base font-medium no-underline transition-colors duration-100"
         >
           Deploy a new project

@@ -14,7 +14,7 @@ describe("BottomCTA", () => {
 
     expect(
       getByRole("link", { name: "Deploy a new project" }).getAttribute("href")
-    ).toBe("https://dev.new")
+    ).toBe("https://railway.com")
     expect(
       getByRole("link", { name: "Book a demo" }).getAttribute("href")
     ).toBe("https://railway.com/enterprise")

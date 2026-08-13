@@ -65,7 +65,7 @@ describe("PostList crawlable links", () => {
       <PostList posts={posts} categories={[]} category={category} />
     )
 
-    fireEvent.click(getByText("Load more posts..."))
+    fireEvent.click(getByText("Load more posts"))
 
     expect(container.querySelector("ul.hidden")).toBeNull()
     const hrefs = Array.from(

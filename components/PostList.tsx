@@ -81,7 +81,7 @@ export const PostList: React.FC<{
                     className="load-more-posts md:col-span-2 lg:col-span-3 justify-self-center text-center border rounded-[4px] px-4 py-2 transition-colors duration-100"
                     onClick={() => setShowMore(true)}
                   >
-                    Load more posts...
+                    Load more posts
                   </button>
                 )}
               </div>
