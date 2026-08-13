@@ -52,9 +52,7 @@ export const FeaturedPostItem: React.FC<{
           {post.title}
         </h3>
 
-        <p className="text-lg text-gray-600 line-clamp-2">
-          {post.description}
-        </p>
+        <p className="text-lg text-gray-600 line-clamp-2">{post.description}</p>
 
         <div className="flex items-center gap-3 mt-6">
           {post.authors.length > 0 && (
@@ -66,7 +64,7 @@ export const FeaturedPostItem: React.FC<{
                       key={author.id}
                       src={author.avatarUrl}
                       alt={`Avatar of ${author.name}`}
-                      className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                      className="w-6 h-6 rounded-full overflow-hidden border-2 border-background"
                       style={{ marginLeft: index > 0 ? "-8px" : 0 }}
                       loading="lazy"
                       decoding="async"
@@ -83,9 +81,7 @@ export const FeaturedPostItem: React.FC<{
             </>
           )}
 
-          <span className="text-sm text-gray-600">
-            {formattedDate}
-          </span>
+          <span className="text-sm text-gray-600">{formattedDate}</span>
         </div>
       </div>
     </Link>
