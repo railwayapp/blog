@@ -108,6 +108,51 @@ h6 {
   outline-offset: 2px;
 }
 
+.light .post-bottom-cta {
+  background-color: #ebe8ee;
+  border-color: #dbd7de;
+}
+
+.dark .post-bottom-cta {
+  background-color: #1d182c;
+  border-color: #3a314c;
+}
+
+.post-bottom-cta-primary {
+  color: #ffffff;
+  background-color: #5d487d;
+}
+
+.post-bottom-cta-primary:hover {
+  background-color: #7156aa;
+}
+
+.light .post-bottom-cta-secondary {
+  color: #37334c;
+  border-color: #d0c8dd;
+}
+
+.dark .post-bottom-cta-secondary {
+  color: #c0c0d0;
+  border-color: #3a314c;
+}
+
+.light .post-bottom-cta-secondary:hover {
+  background-color: #dbd7de;
+  border-color: #7156aa;
+}
+
+.dark .post-bottom-cta-secondary:hover {
+  background-color: #3a314c;
+  border-color: #b9a3d8;
+}
+
+.post-bottom-cta-primary:focus-visible,
+.post-bottom-cta-secondary:focus-visible {
+  outline: 2px solid #7156aa;
+  outline-offset: 2px;
+}
+
 .inline-code {
   color: #37334c;
   background-color: #e4e1e8;

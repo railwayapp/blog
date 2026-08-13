@@ -1,33 +1,32 @@
 import React from "react"
-import { cn } from "../utils"
 import Link from "./Link"
 
 export const BottomCTA: React.FC = () => {
   return (
-    <div
-      className={cn(
-        "bg-bottomCta my-16 p-16 text-white rounded-xl flex flex-col items-center justify-center"
-      )}
+    <section
+      className="post-bottom-cta my-16 border rounded-[16px] px-6 py-16 sm:px-12 sm:py-24 flex flex-col items-center justify-center text-center"
+      aria-labelledby="post-bottom-cta-title"
     >
-      <h3 className={cn("text-h3 mb-4")}>
-        Your train has arrived!
+      <h3 id="post-bottom-cta-title" className="text-h2 font-serif font-medium">
+        Ready to get started?
       </h3>
-      <p
-        className={cn(
-          "text-xl font-medium text-center max-w-xl text-opacity-90"
-        )}
-      >
-        Join millions of developers deploying millions of applications
-        effortlessly on Railway.
+      <p className="mt-4 text-base sm:text-lg text-gray-600">
+        Join millions of developers deploying applications on Railway
       </p>
-      <Link
-        href="https://dev.new"
-        className={cn(
-          "no-underline bg-white text-pink-500 py-3 px-5 rounded-lg mt-8 font-semibold text-xl"
-        )}
-      >
-        Start a New Project
-      </Link>
-    </div>
+      <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row">
+        <Link
+          href="https://dev.new"
+          className="post-bottom-cta-primary inline-flex min-h-[48px] items-center justify-center rounded-[8px] px-6 py-3 text-base font-medium no-underline transition-colors duration-100"
+        >
+          Deploy a new project
+        </Link>
+        <Link
+          href="https://railway.com/enterprise"
+          className="post-bottom-cta-secondary inline-flex min-h-[48px] items-center justify-center rounded-[8px] border px-6 py-3 text-base font-medium no-underline transition-colors duration-100"
+        >
+          Book a demo
+        </Link>
+      </div>
+    </section>
   )
 }
