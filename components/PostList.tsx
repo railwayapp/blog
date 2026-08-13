@@ -37,10 +37,7 @@ export const PostList: React.FC<{
           {featuredPosts.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12">
               {featuredPosts.map((post) => (
-                <FeaturedPostItem
-                  key={post.id}
-                  post={post}
-                />
+                <FeaturedPostItem key={post.id} post={post} />
               ))}
             </div>
           )}
@@ -74,17 +71,14 @@ export const PostList: React.FC<{
                 {otherPosts
                   .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
                   .map((post) => (
-                    <PostItem
-                      key={post.id}
-                      post={post}
-                    />
+                    <PostItem key={post.id} post={post} />
                   ))}
 
                 {showMore || !hasMorePosts ? (
                   <div />
                 ) : (
                   <button
-                    className="md:col-span-2 lg:col-span-3 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
+                    className="load-more-posts md:col-span-2 lg:col-span-3 justify-self-center text-center border rounded-[4px] px-4 py-2 transition-colors duration-100"
                     onClick={() => setShowMore(true)}
                   >
                     Load more posts...

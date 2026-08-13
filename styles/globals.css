@@ -81,6 +81,33 @@ h6 {
   --category-badge-text: #cc93a5;
 }
 
+.light .load-more-posts {
+  color: #5d487d;
+  background-color: #dbd7de;
+  border-color: #dbd7de;
+}
+
+.dark .load-more-posts {
+  color: #b9a3d8;
+  background-color: #3a314c;
+  border-color: #3a314c;
+}
+
+.light .load-more-posts:hover {
+  color: #37334c;
+  border-color: #7156aa;
+}
+
+.dark .load-more-posts:hover {
+  color: #c0c0d0;
+  border-color: #b9a3d8;
+}
+
+.load-more-posts:focus-visible {
+  outline: 2px solid #7156aa;
+  outline-offset: 2px;
+}
+
 .inline-code {
   color: #37334c;
   background-color: #e4e1e8;
