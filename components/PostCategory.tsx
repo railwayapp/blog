@@ -1,6 +1,22 @@
 import React from "react"
 import { cn } from "../utils"
 
+type PostCategoryTone = "plum" | "gold" | "teal" | "blue" | "wine"
+
+const categoryToTone: Record<string, PostCategoryTone> = {
+  Engineering: "plum",
+  "Scaling Railway": "plum",
+  News: "gold",
+  AI: "teal",
+  Community: "teal",
+  Guide: "blue",
+  Company: "wine",
+  "User Stories": "wine",
+}
+
+const getCategoryTone = (category: string): PostCategoryTone =>
+  categoryToTone[category] ?? "plum"
+
 export const PostCategory: React.FC<{
   category: string
   isCommunity: boolean
@@ -14,8 +30,20 @@ export const PostCategory: React.FC<{
 
   return (
     <div className="flex gap-2">
-      <div className={getPillClassName()}>{category}</div>
-      {isCommunity && <div className={getPillClassName()}>Community</div>}
+      <div
+        className={getPillClassName()}
+        data-category-tone={getCategoryTone(category)}
+      >
+        {category}
+      </div>
+      {isCommunity && (
+        <div
+          className={getPillClassName()}
+          data-category-tone={getCategoryTone("Community")}
+        >
+          Community
+        </div>
+      )}
     </div>
   )
 }
