@@ -6,7 +6,9 @@ import { formatPostDate } from "../utils"
 import { Divider } from "./Divider"
 import { PostCategory } from "./PostCategory"
 
-export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
+export const FeaturedPostItem: React.FC<{
+  post: BlogPost
+}> = ({ post }) => {
   const formattedDate = useMemo(
     () => formatPostDate(post.publishedAt),
     [post.publishedAt]
@@ -46,13 +48,11 @@ export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
           />
         )}
 
-        <h3 className="font-medium font-serif text-2xl my-4 group-hover:opacity-60 tracking-tight">
+        <h3 className="font-serif text-h3 my-4 group-hover:opacity-60">
           {post.title}
         </h3>
 
-        <p className="text-lg text-gray-800 line-clamp-2">
-          {post.description}
-        </p>
+        <p className="text-lg text-gray-600 line-clamp-2">{post.description}</p>
 
         <div className="flex items-center gap-3 mt-6">
           {post.authors.length > 0 && (
@@ -64,7 +64,7 @@ export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
                       key={author.id}
                       src={author.avatarUrl}
                       alt={`Avatar of ${author.name}`}
-                      className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                      className="w-6 h-6 rounded-full overflow-hidden border-2 border-background"
                       style={{ marginLeft: index > 0 ? "-8px" : 0 }}
                       loading="lazy"
                       decoding="async"
@@ -74,16 +74,14 @@ export const FeaturedPostItem: React.FC<{ post: BlogPost }> = ({ post }) => {
                   ))}
                 </div>
               )}
-              <span className="font-medium text-sm text-gray-500">
+              <span className="text-sm text-gray-600">
                 {post.authors.map((author) => author.name).join(" & ")}
               </span>
               <Divider />
             </>
           )}
 
-          <span className="font-medium text-sm text-gray-500">
-            {formattedDate}
-          </span>
+          <span className="text-sm text-gray-600">{formattedDate}</span>
         </div>
       </div>
     </Link>

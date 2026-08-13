@@ -1,26 +1,30 @@
 import { getCategoryLabel } from "@lib/cms"
 import React, { useState } from "react"
 import { BlogCategory, BlogPost } from "../lib/types"
+import { cn } from "../utils"
 import { Categories } from "./Categories"
 import { FeaturedPostItem } from "./FeaturedPostItem"
 import PostItem from "./PostItem"
 
 const DEFAULT_POSTS_LENGTH = 8
+const POSTS_BATCH_SIZE = 6
 
 export const PostList: React.FC<{
   posts: BlogPost[]
   categories: BlogCategory[]
   category?: BlogCategory | string
 }> = ({ posts, categories, category }) => {
-  const featuredPosts = posts.filter((post) => post.featured)
+  const featuredPosts =
+    category == null ? posts.filter((post) => post.featured) : []
 
   const otherPosts =
     category == null
       ? posts.filter((post) => !post.featured && !post.externalAuthor)
-      : posts.filter((post) => !post.featured)
+      : posts
 
-  const [showMore, setShowMore] = useState(false)
-  const hasMorePosts = otherPosts.length > DEFAULT_POSTS_LENGTH
+  const [visiblePostsLength, setVisiblePostsLength] =
+    useState(DEFAULT_POSTS_LENGTH)
+  const hasMorePosts = otherPosts.length > visiblePostsLength
 
   // Category pages have no other h1; the homepage's h1 lives elsewhere.
   const ListHeading = category == null ? "h2" : "h1"
@@ -46,43 +50,58 @@ export const PostList: React.FC<{
         )}
 
         {/* Category pages always render the heading — it is their only h1 —
-            even when every post is featured and the card list is empty
-            (e.g. a new category whose posts are all featured). */}
+            even when the category does not contain any posts. */}
         {(otherPosts.length > 0 || category != null) && (
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 mb-24 mt-24">
-            <ListHeading className="text-3xl font-bold mb-12">
+          <div
+            className={cn(
+              "max-w-6xl mx-auto mb-24",
+              category == null ? "mt-16" : "mt-24"
+            )}
+          >
+            <ListHeading
+              className={
+                category == null
+                  ? "text-h2 mb-12"
+                  : "text-3xl font-semibold mb-12"
+              }
+            >
               {category == null ? "Everything" : getCategoryLabel(category)}
             </ListHeading>
 
             {otherPosts.length > 0 && (
-              <div className="col-span-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent">
-                {otherPosts
-                  .slice(0, showMore ? undefined : DEFAULT_POSTS_LENGTH)
-                  .map((post) => (
-                    <PostItem key={post.id} post={post} />
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 [&>*:nth-last-child(2)]:border-transparent md:[&>*:nth-last-child(3)]:border-transparent lg:[&>*:nth-last-child(4)]:border-transparent">
+                {otherPosts.slice(0, visiblePostsLength).map((post) => (
+                  <PostItem key={post.id} post={post} />
+                ))}
 
-                {showMore || !hasMorePosts ? (
-                  <div />
-                ) : (
+                {hasMorePosts ? (
                   <button
-                    className="md:col-span-2 w-full text-center text-pink-700 border border-pink-200 rounded-md px-4 py-2 hover:text-pink-800 hover:border-pink-500 transition-colors duration-100"
-                    onClick={() => setShowMore(true)}
+                    className="load-more-posts md:col-span-2 lg:col-span-3 justify-self-center text-center border rounded-[4px] px-4 py-2 transition-colors duration-100"
+                    onClick={() =>
+                      setVisiblePostsLength((currentLength) =>
+                        Math.min(
+                          currentLength + POSTS_BATCH_SIZE,
+                          otherPosts.length
+                        )
+                      )
+                    }
                   >
-                    Load more posts...
+                    Load more posts
                   </button>
+                ) : (
+                  <div />
                 )}
               </div>
             )}
 
             {/* Crawlable links for the posts hidden behind "Load more" so
                 every post is reachable in the server-rendered HTML. Plain
-                <a> (never visible or clickable); unmounts once the full
-                cards render. Kept outside the cards grid so its
+                <a> (never visible or clickable); shrinks as each batch of
+                cards renders. Kept outside the cards grid so its
                 nth-last-child border CSS keeps counting correctly. */}
-            {!showMore && hasMorePosts && (
+            {hasMorePosts && (
               <ul className="hidden">
-                {otherPosts.slice(DEFAULT_POSTS_LENGTH).map((post) => (
+                {otherPosts.slice(visiblePostsLength).map((post) => (
                   <li key={post.id}>
                     <a href={`/p/${post.slug}`}>{post.title}</a>
                   </li>

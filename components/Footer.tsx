@@ -17,10 +17,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="col-span-1 sm:col-span-2">
-          <p className="text-xs font-bold uppercase text-gray-500 mb-4">
+          <p className="text-xs font-medium uppercase text-gray-600 mb-4">
             Product
           </p>
-          <ul className="text-gray-500 space-y-4">
+          <ul className="text-gray-600 space-y-4">
             <FooterListLink href={railwayUrl("changelog")}>
               Changelog
             </FooterListLink>
@@ -40,10 +40,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="col-span-1 sm:col-span-2">
-          <p className="text-xs font-bold uppercase text-gray-500 mb-4">
+          <p className="text-xs font-medium uppercase text-gray-600 mb-4">
             Company
           </p>
-          <ul className="text-gray-500 space-y-4">
+          <ul className="text-gray-600 space-y-4">
             <FooterListLink href={railwayUrl("about")}>About</FooterListLink>
             <FooterListLink href={railwayUrl("careers")}>
               Careers
@@ -56,10 +56,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="col-span-1 sm:col-span-2">
-          <p className="text-xs font-bold uppercase text-gray-500 mb-4">
+          <p className="text-xs font-medium uppercase text-gray-600 mb-4">
             Contact
           </p>
-          <ul className="text-gray-500 space-y-4">
+          <ul className="text-gray-600 space-y-4">
             <FooterListLink href={"https://discord.gg/railway"}>
               Discord
             </FooterListLink>
@@ -76,10 +76,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="col-span-1 sm:col-span-2">
-          <p className="text-xs font-bold uppercase text-gray-500 mb-4">
+          <p className="text-xs font-medium uppercase text-gray-600 mb-4">
             Legal
           </p>
-          <ul className="text-gray-500 space-y-4">
+          <ul className="text-gray-600 space-y-4">
             <FooterListLink href={railwayUrl("legal/acceptable-use")}>
               Acceptable Use
             </FooterListLink>
@@ -110,7 +110,7 @@ const FooterListLink: React.FC<{
 )
 
 const Copyright: React.FC = () => (
-  <div className="text-xs text-gray-500 w-full">
+  <div className="text-xs font-medium text-gray-600 w-full">
     Copyright © {new Date().getFullYear()} Railway Corp. <br />
     All rights reserved.
   </div>

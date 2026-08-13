@@ -10,8 +10,194 @@ html,
 body {
   @apply antialiased;
   @apply bg-background text-foreground;
+  @apply text-base font-normal tracking-normal;
 
   min-height: 100vh;
+}
+
+b,
+strong,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-semibold;
+}
+
+.post-category-pill {
+  color: var(--category-badge-text);
+  background-color: var(--category-badge-fill);
+}
+
+.light .post-category-pill[data-category-tone="plum"] {
+  --category-badge-fill: #dbd7de;
+  --category-badge-text: #5d487d;
+}
+
+.dark .post-category-pill[data-category-tone="plum"] {
+  --category-badge-fill: #3a314c;
+  --category-badge-text: #b9a3d8;
+}
+
+.light .post-category-pill[data-category-tone="gold"] {
+  --category-badge-fill: #e8e1d5;
+  --category-badge-text: #795e2f;
+}
+
+.dark .post-category-pill[data-category-tone="gold"] {
+  --category-badge-fill: #4c4032;
+  --category-badge-text: #d5b886;
+}
+
+.light .post-category-pill[data-category-tone="teal"] {
+  --category-badge-fill: #d7e6e7;
+  --category-badge-text: #2b6c73;
+}
+
+.dark .post-category-pill[data-category-tone="teal"] {
+  --category-badge-fill: #2d4951;
+  --category-badge-text: #66c2cc;
+}
+
+.light .post-category-pill[data-category-tone="blue"] {
+  --category-badge-fill: #d9dce4;
+  --category-badge-text: #4c5d94;
+}
+
+.dark .post-category-pill[data-category-tone="blue"] {
+  --category-badge-fill: #31364c;
+  --category-badge-text: #93a1cc;
+}
+
+.light .post-category-pill[data-category-tone="wine"] {
+  --category-badge-fill: #e6d8db;
+  --category-badge-text: #8d495d;
+}
+
+.dark .post-category-pill[data-category-tone="wine"] {
+  --category-badge-fill: #48313d;
+  --category-badge-text: #cc93a5;
+}
+
+.light .load-more-posts {
+  color: #5d487d;
+  background-color: #dbd7de;
+  border-color: #dbd7de;
+}
+
+.dark .load-more-posts {
+  color: #b9a3d8;
+  background-color: #3a314c;
+  border-color: #3a314c;
+}
+
+.light .load-more-posts:hover {
+  color: #37334c;
+  border-color: #7156aa;
+}
+
+.dark .load-more-posts:hover {
+  color: #c0c0d0;
+  border-color: #b9a3d8;
+}
+
+.load-more-posts:focus-visible {
+  outline: 2px solid #7156aa;
+  outline-offset: 2px;
+}
+
+.light .post-bottom-cta {
+  background-color: #ebe8ee;
+  border-color: #dbd7de;
+}
+
+.dark .post-bottom-cta {
+  background-color: #1d182c;
+  border-color: #3a314c;
+}
+
+.post-bottom-cta-primary {
+  color: #ffffff;
+  background-color: #5d487d;
+}
+
+.post-bottom-cta-primary:hover {
+  background-color: #7156aa;
+}
+
+.light .post-bottom-cta-secondary {
+  color: #37334c;
+  border-color: #d0c8dd;
+}
+
+.dark .post-bottom-cta-secondary {
+  color: #c0c0d0;
+  border-color: #3a314c;
+}
+
+.light .post-bottom-cta-secondary:hover {
+  background-color: #dbd7de;
+  border-color: #7156aa;
+}
+
+.dark .post-bottom-cta-secondary:hover {
+  background-color: #3a314c;
+  border-color: #b9a3d8;
+}
+
+.post-bottom-cta-primary:focus-visible,
+.post-bottom-cta-secondary:focus-visible {
+  outline: 2px solid #7156aa;
+  outline-offset: 2px;
+}
+
+.inline-code {
+  color: #37334c;
+  background-color: #e4e1e8;
+  border: 1px solid #d0c8dd;
+  border-radius: 5px;
+  padding: 0.1em 0.36em;
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  font-size: 0.82em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.dark .inline-code {
+  color: #a667e4;
+  background-color: #1d182c;
+  border-color: #2f2547;
+}
+
+.markdown-inline-link {
+  color: #5d487d;
+  font-weight: 400;
+  text-decoration-line: underline;
+  text-decoration-color: rgb(93 72 125 / 45%);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.dark .markdown-inline-link {
+  color: #a98fce;
+  text-decoration-color: rgb(169 143 206 / 45%);
+}
+
+.markdown-inline-link:hover {
+  color: #37334c;
+  text-decoration-color: currentColor;
+}
+
+.dark .markdown-inline-link:hover {
+  color: #c0c0d0;
+}
+
+.markdown-inline-link:focus-visible {
+  outline: 2px solid #7156aa;
+  outline-offset: 2px;
 }
 
 /* Start purging... */

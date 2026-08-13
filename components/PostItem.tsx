@@ -17,7 +17,10 @@ const PostItem: React.FC<Props> = ({ post }) => {
   const authorsWithAvatars = post.authors.filter((author) => author.avatarUrl)
 
   return (
-    <Link href={`/p/${post.slug}`} className="flex flex-col border-b border-gray-100 group">
+    <Link
+      href={`/p/${post.slug}`}
+      className="flex flex-col border-b border-gray-100 group"
+    >
       {post.category != null && (
         <PostCategory
           category={post.category.title}
@@ -30,7 +33,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
           {post.title}
         </h4>
 
-        <p className="text-base text-gray-800 line-clamp-2">
+        <p className="text-base text-gray-600 line-clamp-2">
           {post.description}
         </p>
       </div>
@@ -45,7 +48,7 @@ const PostItem: React.FC<Props> = ({ post }) => {
                     key={author.id}
                     src={author.avatarUrl}
                     alt={`Avatar of ${author.name}`}
-                    className="w-6 h-6 rounded-full overflow-hidden border-2 border-white"
+                    className="w-6 h-6 rounded-full overflow-hidden border-2 border-background"
                     style={{ marginLeft: index > 0 ? "-8px" : 0 }}
                     loading="lazy"
                     decoding="async"
@@ -55,15 +58,13 @@ const PostItem: React.FC<Props> = ({ post }) => {
                 ))}
               </div>
             )}
-            <span className="font-medium text-sm text-gray-500">
+            <span className="text-sm text-gray-600">
               {post.authors.map((author) => author.name).join(" & ")}
             </span>
             <Divider />
           </>
         )}
-        <span className="font-medium text-sm text-gray-500">
-          {formattedDate}
-        </span>
+        <span className="text-sm text-gray-600">{formattedDate}</span>
       </div>
     </Link>
   )

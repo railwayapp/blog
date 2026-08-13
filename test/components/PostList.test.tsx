@@ -40,18 +40,21 @@ describe("PostList crawlable links", () => {
       <PostList posts={posts} categories={[]} category={category} />
     )
 
-    const hrefs = Array.from(
-      container.querySelectorAll('a[href^="/p/"]')
-    ).map((a) => a.getAttribute("href"))
+    const hrefs = Array.from(container.querySelectorAll('a[href^="/p/"]')).map(
+      (a) => a.getAttribute("href")
+    )
     for (let i = 1; i <= 12; i++) {
       expect(hrefs).toContain(`/p/post-${i}`)
     }
 
     const hidden = container.querySelector("ul.hidden")
     expect(hidden).not.toBeNull()
-    const hiddenHrefs = Array.from(
-      hidden!.querySelectorAll("a")
-    ).map((a) => a.getAttribute("href"))
+    if (hidden == null) {
+      throw new Error("Expected hidden crawlable post links")
+    }
+    const hiddenHrefs = Array.from(hidden.querySelectorAll("a")).map((a) =>
+      a.getAttribute("href")
+    )
     expect(hiddenHrefs).toEqual([
       "/p/post-9",
       "/p/post-10",
@@ -60,20 +63,42 @@ describe("PostList crawlable links", () => {
     ])
   })
 
-  it("replaces the hidden list with full cards on Load more", () => {
-    const { container, getByText } = render(
-      <PostList posts={posts} categories={[]} category={category} />
+  it("reveals six posts at a time until every card is visible", () => {
+    const manyPosts = Array.from({ length: 22 }, (_, i) => makePost(i + 1))
+    const { container, getByRole, queryByRole } = render(
+      <PostList posts={manyPosts} categories={[]} category={category} />
     )
+    const postsGrid = getByRole("button", {
+      name: "Load more posts",
+    }).parentElement
+    if (postsGrid == null) {
+      throw new Error("Expected the posts grid")
+    }
+    const visiblePostLinks = () =>
+      Array.from(postsGrid.children).filter(
+        (child) =>
+          child instanceof HTMLAnchorElement &&
+          child.getAttribute("href")?.startsWith("/p/")
+      )
+    const hiddenPostLinks = () =>
+      container.querySelectorAll('ul.hidden a[href^="/p/"]')
 
-    fireEvent.click(getByText("Load more posts..."))
+    expect(visiblePostLinks()).toHaveLength(8)
+    expect(hiddenPostLinks()).toHaveLength(14)
 
+    fireEvent.click(getByRole("button", { name: "Load more posts" }))
+    expect(visiblePostLinks()).toHaveLength(14)
+    expect(hiddenPostLinks()).toHaveLength(8)
+
+    fireEvent.click(getByRole("button", { name: "Load more posts" }))
+    expect(visiblePostLinks()).toHaveLength(20)
+    expect(hiddenPostLinks()).toHaveLength(2)
+
+    fireEvent.click(getByRole("button", { name: "Load more posts" }))
+    expect(visiblePostLinks()).toHaveLength(22)
     expect(container.querySelector("ul.hidden")).toBeNull()
-    const hrefs = Array.from(
-      container.querySelectorAll('a[href^="/p/"]')
-    ).map((a) => a.getAttribute("href"))
-    expect(hrefs).toHaveLength(12)
+    expect(queryByRole("button", { name: "Load more posts" })).toBeNull()
   })
-
 })
 
 describe("PostList heading semantics", () => {
@@ -82,10 +107,13 @@ describe("PostList heading semantics", () => {
       <PostList posts={posts} categories={[]} category={category} />
     )
 
-    expect(getByRole("heading", { level: 1 }).textContent).toBeTruthy()
+    const heading = getByRole("heading", { level: 1 })
+    expect(heading.textContent).toBeTruthy()
+    expect(heading.className).toContain("font-semibold")
+    expect(heading.className).not.toContain("font-bold")
   })
 
-  it("renders the h1 even when every post in the category is featured", () => {
+  it("renders featured category posts as standard cards below the h1", () => {
     const featuredOnly = posts.slice(0, 2).map((post) => ({
       ...post,
       featured: true,
@@ -95,11 +123,16 @@ describe("PostList heading semantics", () => {
         alt: "cover",
       },
     }))
-    const { getByRole, container } = render(
+    const { getByRole, queryByRole, container } = render(
       <PostList posts={featuredOnly} categories={[]} category={category} />
     )
 
-    expect(getByRole("heading", { level: 1 }).textContent).toBeTruthy()
+    const heading = getByRole("heading", { level: 1 })
+    const standardGrid = heading.nextElementSibling
+
+    expect(queryByRole("heading", { level: 3 })).toBeNull()
+    expect(standardGrid?.querySelectorAll('a[href^="/p/"]')).toHaveLength(2)
+    expect(container.querySelector('img[alt="cover"]')).toBeNull()
     expect(container.querySelector("ul.hidden")).toBeNull()
   })
 
@@ -110,5 +143,94 @@ describe("PostList heading semantics", () => {
 
     expect(queryByRole("heading", { level: 1 })).toBeNull()
     expect(getByRole("heading", { level: 2 }).textContent).toBe("Everything")
+  })
+
+  it("places homepage and category headings above a three-column post grid", () => {
+    const { getByRole, rerender } = render(
+      <PostList posts={posts} categories={[]} />
+    )
+
+    const expectHeadingAboveGrid = (level: 1 | 2) => {
+      const heading = getByRole("heading", { level })
+      const grid = heading.nextElementSibling
+
+      expect(heading.parentElement?.className).not.toContain("lg:grid-cols-3")
+      expect(grid?.className).toContain("lg:grid-cols-3")
+      expect(grid?.className).not.toContain("lg:col-span-2")
+    }
+
+    expectHeadingAboveGrid(2)
+    expect(
+      getByRole("heading", { level: 2 }).parentElement?.className
+    ).toContain("mt-16")
+
+    rerender(<PostList posts={posts} categories={[]} category={category} />)
+    expectHeadingAboveGrid(1)
+    expect(
+      getByRole("heading", { level: 1 }).parentElement?.className
+    ).toContain("mt-24")
+  })
+})
+
+describe("PostList typography", () => {
+  it("uses the H2 and H3 type tokens on the homepage", () => {
+    const featuredPost = { ...makePost(1), featured: true }
+    const standardPost = makePost(2)
+    const { getByRole } = render(
+      <PostList posts={[featuredPost, standardPost]} categories={[]} />
+    )
+
+    expect(getByRole("heading", { level: 2 }).className).toContain("text-h2")
+    expect(getByRole("heading", { level: 3 }).className).toContain("text-h3")
+  })
+
+  it("uses one shared category-pill treatment on every listing page", () => {
+    const featuredPost = { ...makePost(1), featured: true }
+    const standardPost = makePost(2)
+    const { container, rerender } = render(
+      <PostList posts={[featuredPost, standardPost]} categories={[]} />
+    )
+
+    const expectSharedPillTreatment = () => {
+      const pills = container.querySelectorAll(".post-category-pill")
+      expect(pills).toHaveLength(2)
+      pills.forEach((pill) => {
+        expect(pill.className).toContain("text-xs")
+        expect(pill.className).toContain("uppercase")
+        expect(pill.className).not.toContain("font-mono")
+        expect(pill.className).toContain("tracking-[0.06em]")
+        expect(pill.className).toContain("px-2")
+        expect(pill.className).toContain("py-[3px]")
+        expect(pill.className).toContain("rounded-[4px]")
+        expect(pill.className).not.toMatch(/text-(blue|green|pink|gray)-/)
+        expect(pill.className).not.toMatch(/bg-(blue|green|pink|gray)-/)
+      })
+    }
+
+    expectSharedPillTreatment()
+
+    rerender(
+      <PostList
+        posts={[featuredPost, standardPost]}
+        categories={[]}
+        category={category}
+      />
+    )
+    expectSharedPillTreatment()
+  })
+
+  it("uses the secondary tone for featured and standard descriptions", () => {
+    const featuredPost = { ...makePost(1), featured: true }
+    const standardPost = makePost(2)
+    const { getByText } = render(
+      <PostList posts={[featuredPost, standardPost]} categories={[]} />
+    )
+
+    expect(getByText("Description 1").className).toContain(
+      "text-lg text-gray-600"
+    )
+    expect(getByText("Description 2").className).toContain(
+      "text-base text-gray-600"
+    )
   })
 })

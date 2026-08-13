@@ -187,6 +187,7 @@ describe("MarkdownContent embed links", () => {
 
     const caption = container.querySelector("figcaption")
     expect(caption?.textContent).toBe("Our CDN POPs as displayed by our DCIM tooling")
+    expect(container.querySelector("img")?.className).toContain("rounded-[8px]")
   })
 
   it("does not render filename alt text as a caption", () => {
@@ -283,5 +284,57 @@ describe("MarkdownContent ordered lists", () => {
     // Lists that start at 1 must stay attribute-free (byte parity with prod).
     expect(lists[0].getAttribute("start")).toBeNull()
     expect(lists[1].getAttribute("start")).toBe("3")
+  })
+})
+
+describe("MarkdownContent typography", () => {
+  it("uses the themed inline-link treatment", () => {
+    const { getByRole } = render(
+      <MarkdownContent content={"Read the [Railway docs](https://docs.railway.com)."} />
+    )
+
+    expect(getByRole("link", { name: "Railway docs" }).className).toContain(
+      "markdown-inline-link"
+    )
+  })
+
+  it("uses the inline-code treatment without affecting fenced blocks", () => {
+    const { container } = render(
+      <MarkdownContent
+        content={"Run `railway up`.\n\n```bash\nrailway up\n```"}
+      />
+    )
+
+    expect(container.querySelector("p code")?.className).toContain(
+      "inline-code"
+    )
+    expect(container.querySelector("pre code")?.className).not.toContain(
+      "inline-code"
+    )
+  })
+
+  it("inherits the body token line-height for paragraphs and list items", () => {
+    const { container } = render(
+      <MarkdownContent
+        content={"A paragraph.\n\n- A list item.\n\n1. An ordered item."}
+      />
+    )
+
+    expect(container.querySelector("p")?.className).not.toContain("leading-")
+    expect(container.querySelector("li")?.className).not.toContain("leading-")
+    expect(container.querySelector("ul")?.className).toContain("text-gray-800")
+    expect(container.querySelector("ol")?.className).toContain("text-gray-800")
+    expect(container.querySelector("ul")?.className).toContain("space-y-4")
+    expect(container.querySelector("ol")?.className).toContain("space-y-4")
+    expect(container.querySelector("li")?.className).not.toContain("mb-")
+  })
+
+  it("uses the H2 and H3 type tokens for article headings", () => {
+    const { getByRole } = render(
+      <MarkdownContent content={"## Section heading\n\n### Subheading"} />
+    )
+
+    expect(getByRole("heading", { level: 2 }).className).toContain("text-h2")
+    expect(getByRole("heading", { level: 3 }).className).toContain("text-h3")
   })
 })

@@ -51,5 +51,35 @@
         "ignore": ["jsx", "global"]
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["components/**/*.tsx", "layouts/**/*.tsx", "pages/**/*.tsx"],
+      "rules": {
+        "no-restricted-syntax": [
+          "warn",
+          {
+            "selector": "JSXOpeningElement[name.name='p'] JSXAttribute[name.name='className'] Literal[value=/\\btext-\\[[^\\]]+px\\]/]",
+            "message": "Use a body type token (text-xl/lg/base/sm/xs) instead of an arbitrary paragraph size."
+          },
+          {
+            "selector": "JSXOpeningElement[name.name='p'] JSXAttribute[name.name='className'] Literal[value=/\\btext-(?:md|s|h[1-6]|[234]xl)\\b/]",
+            "message": "Paragraphs must use the body scale, not invalid or display-size classes."
+          },
+          {
+            "selector": "JSXOpeningElement[name.name='p'] JSXAttribute[name.name='className'] Literal[value=/\\bleading-/]",
+            "message": "Body type tokens already provide the required line-height; remove the paragraph leading override."
+          },
+          {
+            "selector": "JSXOpeningElement[name.name='p'] JSXAttribute[name.name='className'] Literal[value=/\\btext-gray-(?:300|400|500)\\b|\\bdark:text-gray-/]",
+            "message": "Use an AA-safe body tone such as text-gray-600 without a redundant dark override."
+          },
+          {
+            "selector": "Literal[value=/\\bfont-bold\\b/]",
+            "message": "Use font-semibold; bold weights are not part of the blog type system."
+          }
+        ]
+      }
+    }
+  ]
 }
