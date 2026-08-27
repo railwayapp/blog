@@ -4,9 +4,9 @@ import { GetServerSideProps } from "next"
 const ROOT_URL = "https://blog.railway.com"
 
 /**
- * Markdown twin of /p/{slug}. Serves the post's full content as
- * text/markdown with YAML front-matter so LLMs and markdown-preferring
- * clients get the same payload the HTML page serves.
+ * Internal target for the public /p/{slug}.md rewrite. Serves the post's full
+ * content as text/markdown with YAML front-matter so LLMs and
+ * markdown-preferring clients get the same payload the HTML page serves.
  */
 export const getServerSideProps: GetServerSideProps = async ({
   params,
@@ -38,7 +38,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   const authors = post.authors.map((a) => a.name).filter(Boolean)
 
   const yamlQuote = (value: string) =>
-    `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`
+    `"${value
+      .replace(/\\/g, "\\\\")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, "\\n")}"`
 
   const parts: string[] = []
 
