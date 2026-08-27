@@ -15,5 +15,21 @@ module.exports = {
   outputFileTracingRoot: __dirname,
   poweredByHeader: false,
   reactStrictMode: true,
-  staticPageGenerationTimeout: 300
+  staticPageGenerationTimeout: 300,
+  async rewrites() {
+    return {
+      // A dynamic page named `[slug].md` is compiled by Next with the same
+      // route regex as `[slug]`, so `/p/example.md` is otherwise handled as an
+      // HTML post whose slug is `example.md`. Rewrite before filesystem route
+      // matching to keep the public `.md` URL while using an unambiguous page.
+      beforeFiles: [
+        {
+          source: "/p/:slug.md",
+          destination: "/p/:slug/markdown",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    }
+  },
 }
