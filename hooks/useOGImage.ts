@@ -36,6 +36,9 @@ export const useOgImage = ({
   const params = new URLSearchParams({
     fileType: "png",
     layoutName: "blog",
+    Layout: "tracks",
+    // A fresh URL bypasses the previous renderer's year-long immutable cache.
+    v: "tracks-2026-09",
     Theme: "plum",
     Title: title,
     Author: authorName,
