@@ -31,8 +31,7 @@ export const serializeSchema = (schema: object) =>
 const title = "Railway Blog"
 export const url = "https://blog.railway.com"
 const description = "Blog posts from the Railway team"
-const image =
-  "https://og.railway.com/api/image?fileType=png&layoutName=docs&Page=Railway+Blog&Url=blog.railway.com"
+const defaultImage = url + "/og-blog.png"
 
 const config: DefaultSeoProps = {
   title,
@@ -41,7 +40,7 @@ const config: DefaultSeoProps = {
     type: "website",
     url,
     site_name: title,
-    images: [{ url: image, width: 1200, height: 630, type: "image/png" }],
+    images: [{ url: defaultImage, width: 1200, height: 630, type: "image/png" }],
   },
   twitter: {
     // Railway's X account is @Railway (x.com/Railway); @Railway_App is stale.
@@ -105,7 +104,7 @@ const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, altern
   const twitterMetaTags = [
     { name: "twitter:title", content: props.title || title },
     { name: "twitter:description", content: description },
-    ...(postImage ? [{ name: "twitter:image", content: postImage }] : []),
+    { name: "twitter:image", content: postImage ?? defaultImage },
   ]
 
   return (
