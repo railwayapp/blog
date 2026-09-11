@@ -223,3 +223,25 @@ describe("serializeSchema", () => {
     expect(serializeSchema(schema)).toBe(JSON.stringify(schema))
   })
 })
+
+it("omits public metadata and draft details from preview heads", () => {
+  const { container } = render(
+    <SEO
+      preview
+      post={post}
+      title="Secret draft"
+      content="Secret content"
+      image="https://og.railway.com/secret"
+      alternateMarkdownHref="/p/secret.md"
+    />
+  )
+  expect(mockNextSeoCalls).toHaveLength(0)
+  expect(
+    document.querySelector('meta[name="robots"]')?.getAttribute("content")
+  ).toBe("noindex, nofollow")
+  expect(
+    document.querySelector('meta[name="referrer"]')?.getAttribute("content")
+  ).toBe("no-referrer")
+  expect(container.querySelector("script, link, meta[property] ")).toBeNull()
+  expect(container.innerHTML).not.toContain("Secret")
+})

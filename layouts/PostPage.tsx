@@ -18,9 +18,16 @@ import { cn, formatPostDate, getReadingTime } from "../utils"
 export interface Props {
   post: BlogPost
   relatedPosts: BlogPost[]
+  preview?: boolean
 }
 
-export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
+export const PostPage: React.FC<Props> = ({
+  post,
+  relatedPosts,
+  preview = false,
+}) => {
+  const hasPublishedDate =
+    Boolean(post.publishedAt) && Number.isFinite(Date.parse(post.publishedAt))
   const formattedDate = useMemo(
     () => formatPostDate(post.publishedAt),
     [post.publishedAt]
@@ -47,6 +54,7 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
   return (
     <Page
       seo={{
+        preview,
         title: post.seoTitle ?? buildSeoTitle(post.title),
         description:
           post.seoDescription ?? buildMetaDescription(post.description),
@@ -58,6 +66,14 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
         alternateMarkdownHref: `/p/${post.slug}.md`,
       }}
     >
+      {preview && (
+        <div
+          role="status"
+          className="fixed bottom-4 left-4 right-4 sm:right-auto z-50 rounded-lg border border-gray-200 bg-background px-4 py-3 text-sm shadow-lg"
+        >
+          Draft preview · Latest saved content
+        </div>
+      )}
       <div className="mt-10 mb-5 px-5 md:px-8 mx-auto">
         <article
           className={cn(
@@ -90,10 +106,12 @@ export const PostPage: React.FC<Props> = ({ post, relatedPosts }) => {
                   </div>
                   <span>{authorName}</span>
                 </div>
-                <Divider />
+                {hasPublishedDate && <Divider />}
               </>
             )}
-            <time dateTime={post.publishedAt}>{formattedDate}</time>
+            {hasPublishedDate && (
+              <time dateTime={post.publishedAt}>{formattedDate}</time>
+            )}
           </div>
 
           <header className="mt-5 mb-16 max-w-[704px] mx-auto">
