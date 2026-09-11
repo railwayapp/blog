@@ -337,15 +337,16 @@ export const mapCMSCategory = (
   }
 }
 
-export const mapCMSPost = (post: PayloadPost): BlogPost | null => {
+const mapPost = (post: PayloadPost, preview: boolean): BlogPost | null => {
   if (
     !post ||
-    (post._status != null && post._status !== "published") ||
+    (!preview && post._status != null && post._status !== "published") ||
     post.archivedAt != null ||
-    typeof post.title !== "string" ||
     typeof post.slug !== "string" ||
-    typeof post.description !== "string" ||
-    typeof post.publishedAt !== "string"
+    (!preview &&
+      (typeof post.title !== "string" ||
+        typeof post.description !== "string" ||
+        typeof post.publishedAt !== "string"))
   ) {
     return null
   }
@@ -358,21 +359,26 @@ export const mapCMSPost = (post: PayloadPost): BlogPost | null => {
     authors,
     category: mapCMSCategory(post.category),
     content: typeof post.content === "string" ? post.content : null,
-    createdAt: post.createdAt ?? post.publishedAt,
-    description: post.description,
+    createdAt: post.createdAt ?? post.publishedAt ?? "",
+    description: post.description ?? "",
     externalAuthor: Boolean(post.externalAuthor),
     featured: Boolean(post.featured),
     featuredImage: mapCMSMedia(post.featuredImage),
     id: String(post.id),
-    publishedAt: post.publishedAt,
+    publishedAt: post.publishedAt ?? "",
     seoDescription: nonEmptyString(post.seoDescription),
     seoTitle: nonEmptyString(post.seoTitle),
     slug: post.slug,
     socialImage: mapCMSMedia(post.socialImage),
-    title: post.title,
-    updatedAt: post.updatedAt ?? post.publishedAt,
+    title: preview ? post.title || "Untitled post" : post.title,
+    updatedAt: post.updatedAt ?? post.publishedAt ?? "",
   }
 }
+
+export const mapCMSPost = (post: PayloadPost) => mapPost(post, false)
+
+// Only use with the projection returned by the authorized content-preview endpoint.
+export const mapCMSPreviewPost = (post: PayloadPost) => mapPost(post, true)
 
 export const getBlogLink = (slug: string) => `/p/${slug}`
 

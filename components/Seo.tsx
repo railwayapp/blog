@@ -19,6 +19,7 @@ export interface Props extends NextSeoProps {
   content?: string | null
   currentUrl?: string
   alternateMarkdownHref?: string
+  preview?: boolean
 }
 
 // Raw JSON.stringify output is unsafe inside a <script>: a CMS-authored
@@ -50,7 +51,24 @@ const config: DefaultSeoProps = {
   },
 }
 
-const SEO: React.FC<Props> = ({ image, author, post, content, currentUrl, alternateMarkdownHref, ...props }) => {
+const SEO: React.FC<Props> = ({
+  image,
+  author,
+  post,
+  content,
+  currentUrl,
+  alternateMarkdownHref,
+  preview = false,
+  ...props
+}) => {
+  if (preview)
+    return (
+      <Head>
+        <title>Draft preview · Railway Blog</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="referrer" content="no-referrer" />
+      </Head>
+    )
   const description = props.description || config.description
   const fullUrl = currentUrl || url
 
