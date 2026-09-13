@@ -3,7 +3,6 @@ import { buildCMSImageSrcSet, buildCMSImageURL } from "@lib/cms/image"
 import { BlogPost } from "@lib/types"
 import React, { useMemo } from "react"
 import { formatPostDate } from "../utils"
-import { Divider } from "./Divider"
 import { PostCategory } from "./PostCategory"
 
 export const FeaturedPostItem: React.FC<{
@@ -58,7 +57,7 @@ export const FeaturedPostItem: React.FC<{
           {post.authors.length > 0 && (
             <>
               {authorsWithAvatars.length > 0 && (
-                <div className="flex items-center">
+                <div className="flex shrink-0 items-center">
                   {authorsWithAvatars.map((author, index) => (
                     <img
                       key={author.id}
@@ -74,14 +73,15 @@ export const FeaturedPostItem: React.FC<{
                   ))}
                 </div>
               )}
-              <span className="text-sm text-gray-600">
+              <span className="min-w-0 break-words text-sm text-gray-600">
                 {post.authors.map((author) => author.name).join(" & ")}
               </span>
-              <Divider />
             </>
           )}
 
-          <span className="text-sm text-gray-600">{formattedDate}</span>
+          <span className="ml-auto shrink-0 whitespace-nowrap text-sm text-gray-600">
+            {formattedDate}
+          </span>
         </div>
       </div>
     </Link>
