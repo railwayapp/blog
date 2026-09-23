@@ -448,6 +448,33 @@ export const getPostsByCategorySlug = async (slug: string) =>
     },
   })
 
+export const getAuthorPath = (slug: string) => `/author/${slug}`
+
+export const getPostsByAuthorSlug = async (slug: string) =>
+  getPosts({
+    where: {
+      "authors.slug": {
+        equals: slug,
+      },
+    },
+  })
+
+/** Every author with at least one published post, most prolific first. */
+export const getAuthorsFromPosts = (posts: BlogPost[]) => {
+  const authors = new Map<string, { author: BlogAuthor; count: number }>()
+  for (const post of posts) {
+    for (const author of post.authors) {
+      if (!author.slug) continue
+      const entry = authors.get(author.slug)
+      if (entry) entry.count += 1
+      else authors.set(author.slug, { author, count: 1 })
+    }
+  }
+  return [...authors.values()]
+    .sort((a, b) => b.count - a.count)
+    .map((entry) => entry.author)
+}
+
 export const getRelatedPosts = async (post: BlogPost, limit = 2) => {
   if (!post.category) return []
 

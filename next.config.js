@@ -27,6 +27,12 @@ module.exports = {
           source: "/p/:slug.md",
           destination: "/p/:slug/markdown",
         },
+        // /llms-full.txt is the conventional name tools look for; serve the
+        // full-text corpus there too (llms-blog.md stays for existing links).
+        {
+          source: "/llms-full.txt",
+          destination: "/llms-blog.md",
+        },
       ],
       afterFiles: [],
       fallback: [],

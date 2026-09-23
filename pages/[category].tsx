@@ -8,7 +8,12 @@ import {
   getCategoryRouteSlug,
   getPostsByCategorySlug,
 } from "@lib/cms"
-import { buildSeoTitle } from "@lib/seo-components"
+import {
+  buildSeoTitle,
+  generateCollectionPageSchema,
+  generateHubBreadcrumbSchema,
+  getCategoryDescription,
+} from "@lib/seo-components"
 import { BlogCategory, BlogPost } from "@lib/types"
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
 
@@ -23,6 +28,10 @@ const CategoryPage: NextPage<Props> = ({
   category,
   posts = [],
 }) => {
+  const pageUrl = category ? `${url}${getCategoryPath(category)}` : undefined
+  const label = category ? getCategoryLabel(category) : "Blog"
+  const description = category ? getCategoryDescription(category) : undefined
+
   return (
     <Page
       seo={{
@@ -31,10 +40,21 @@ const CategoryPage: NextPage<Props> = ({
           buildSeoTitle(
             category ? getCategoryLabel(category) : "Blog"
           ),
-        description: category?.seoDescription ?? category?.description ?? undefined,
+        description,
         // The canonical is derived from the category, so the legacy /guide
         // alias canonicalizes to /guides instead of duplicating it.
-        currentUrl: category ? `${url}${getCategoryPath(category)}` : undefined,
+        currentUrl: pageUrl,
+        schemas: pageUrl
+          ? [
+              generateCollectionPageSchema({
+                name: `${label} | Railway Blog`,
+                description,
+                url: pageUrl,
+                posts,
+              }),
+              generateHubBreadcrumbSchema(label, pageUrl),
+            ]
+          : [],
       }}
     >
       {category && (
