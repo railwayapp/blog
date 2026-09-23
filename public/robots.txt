@@ -1,6 +1,6 @@
-# *
 User-agent: *
+# Content Signals — https://contentsignals.org
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
-# Sitemaps
 Sitemap: https://blog.railway.com/sitemap.xml
