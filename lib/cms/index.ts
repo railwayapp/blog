@@ -5,6 +5,7 @@ import {
   BlogPost,
   PaginatedCMSResponse,
 } from "@lib/types"
+import { cmsTraceHeaders, traceCMS } from "@lib/tracing"
 
 const DEFAULT_CMS_API_URL = "https://cms.railway.com"
 const DEFAULT_LIMIT = 100
@@ -158,47 +159,50 @@ const RETRYABLE_STATUSES = new Set([429, 502, 503, 504])
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const cmsRequest = async <T>(path: string, params: URLSearchParams) => {
-  const url = `${getCMSBaseURL()}${path}?${params.toString()}`
-  const headers = { Authorization: `Bearer ${getCMSAPIKey()}` }
+const cmsRequest = async <T>(path: string, params: URLSearchParams) =>
+  traceCMS("cms.request", { "cms.path": path }, async (span) => {
+    const url = `${getCMSBaseURL()}${path}?${params.toString()}`
+    const headers = { Authorization: `Bearer ${getCMSAPIKey()}` }
 
-  for (let attempt = 0; ; attempt++) {
-    const retryDelay = RETRY_DELAYS_MS[attempt]
-    let response: Response | undefined
+    for (let attempt = 0; ; attempt++) {
+      span.setAttribute("cms.attempts", attempt + 1)
+      const retryDelay = RETRY_DELAYS_MS[attempt]
+      let response: Response | undefined
 
-    try {
-      response = await fetch(url, {
-        headers,
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      })
-    } catch (error) {
-      // Network failure or timeout; rethrow once retries are exhausted.
-      if (retryDelay == null) throw error
-    }
-
-    if (response) {
-      if (response.ok) {
-        return (await response.json()) as T
+      try {
+        response = await fetch(url, {
+          headers: cmsTraceHeaders(headers),
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        })
+      } catch (error) {
+        // Network failure or timeout; rethrow once retries are exhausted.
+        if (retryDelay == null) throw error
       }
 
-      if (retryDelay == null || !RETRYABLE_STATUSES.has(response.status)) {
-        const message = await response.text().catch(() => "")
-        throw new Error(
-          `Railway CMS request failed (${response.status}) for ${path}${
-            message ? `: ${message}` : ""
-          }`
-        )
-      }
-    }
+      if (response) {
+        span.setAttribute("http.response.status_code", response.status)
+        if (response.ok) {
+          return (await response.json()) as T
+        }
 
-    console.warn(
-      `Railway CMS request for ${path} failed${
-        response ? ` (${response.status})` : ""
-      }; retrying in ${retryDelay}ms`
-    )
-    await sleep(retryDelay + Math.random() * 250)
-  }
-}
+        if (retryDelay == null || !RETRYABLE_STATUSES.has(response.status)) {
+          const message = await response.text().catch(() => "")
+          throw new Error(
+            `Railway CMS request failed (${response.status}) for ${path}${
+              message ? `: ${message}` : ""
+            }`
+          )
+        }
+      }
+
+      console.warn(
+        `Railway CMS request for ${path} failed${
+          response ? ` (${response.status})` : ""
+        }; retrying in ${retryDelay}ms`
+      )
+      await sleep(retryDelay + Math.random() * 250)
+    }
+  })
 
 const listCollection = async <T>(
   collection: string,
@@ -234,24 +238,26 @@ const listCollection = async <T>(
 const listAllCollection = async <T>(
   collection: string,
   options: Omit<ListCollectionOptions, "page"> = {}
-) => {
-  const docs: T[] = []
-  let page = 1
-  let hasNextPage = false
+) =>
+  traceCMS("cms.list", { "cms.collection": collection }, async (span) => {
+    const docs: T[] = []
+    let page = 1
+    let hasNextPage = false
 
-  do {
-    const response = await listCollection<T>(collection, {
-      ...options,
-      page,
-    })
+    do {
+      const response = await listCollection<T>(collection, {
+        ...options,
+        page,
+      })
 
-    docs.push(...(response.docs ?? []))
-    hasNextPage = Boolean(response.hasNextPage)
-    page = response.nextPage ?? page + 1
-  } while (hasNextPage)
+      docs.push(...(response.docs ?? []))
+      hasNextPage = Boolean(response.hasNextPage)
+      page = response.nextPage ?? page + 1
+    } while (hasNextPage)
 
-  return docs
-}
+    span.setAttribute("cms.document_count", docs.length)
+    return docs
+  })
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === "object")
