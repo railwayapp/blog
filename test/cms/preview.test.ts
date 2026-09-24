@@ -61,7 +61,10 @@ it("reads only the authorized projection without a service key and without cachi
     token: "token",
   })
   expect(options).toMatchObject({ cache: "no-store", redirect: "error" })
-  expect(options.headers).toBeUndefined()
+  // Trace context may be sent, but preview reads must never use the service key.
+  expect(
+    Object.keys(options.headers ?? {}).map((key) => key.toLowerCase())
+  ).not.toContain("authorization")
 })
 it.each([400, 401, 403, 404, 410])(
   "does not fall back to published content on CMS %s",
