@@ -10,3 +10,14 @@ describe("markdown post rewrite", () => {
     })
   })
 })
+
+describe("llms-full.txt alias", () => {
+  it("serves the full-text corpus at the conventional path", async () => {
+    const rewrites = await nextConfig.rewrites()
+
+    expect(rewrites.beforeFiles).toContainEqual({
+      source: "/llms-full.txt",
+      destination: "/llms-blog.md",
+    })
+  })
+})

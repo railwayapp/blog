@@ -1,15 +1,9 @@
 import { getBlogLink, getPosts } from "@lib/cms"
-import {
-  demoteHeadings,
-  extractTableOfContents,
-  truncateMarkdown,
-} from "@lib/markdown"
+import { demoteHeadings, extractTableOfContents } from "@lib/markdown"
 import { BlogPost } from "@lib/types"
 import { GetServerSideProps } from "next"
 
 const ROOT_URL = "https://blog.railway.com"
-
-const MAX_CONTENT_WORDS = 1500
 
 const groupPostsByCategory = (posts: BlogPost[]) =>
   posts.reduce(
@@ -31,8 +25,9 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const header = `# Railway Blog Content
 
 This document contains all blog posts from the Railway blog, organized by category.
-Each post includes its metadata, description, key points, and content
-(truncated for very long posts).
+Each post includes its metadata, description, key points, and full content.
+Every post is also available on its own as markdown by appending \`.md\` to its
+URL (for example https://blog.railway.com/p/best-paas-providers-2026.md).
 
 Last updated: ${new Date().toISOString().split("T")[0]}
 
@@ -48,16 +43,19 @@ Last updated: ${new Date().toISOString().split("T")[0]}
           .filter((item) => item.level <= 2)
           .map((item) => `- ${item.text}`)
           .join("\n")
-        const body = truncateMarkdown(
-          demoteHeadings(post.content ?? ""),
-          MAX_CONTENT_WORDS
-        )
+        // Full text, never truncated: this file is the corpus LLMs ingest, and
+        // the long guides are exactly the posts we most want them to quote.
+        const body = demoteHeadings(post.content ?? "")
+        const authors = post.authors.map((author) => author.name).join(", ")
 
         return `## Blog: ${post.title}
 
 - **Date:** ${post.publishedAt}
+- **Updated:** ${post.updatedAt}
+${authors ? `- **Authors:** ${authors}\n` : ""}- **Category:** ${category}
 - **Slug:** ${post.slug}
 - **Link:** ${link}
+- **Markdown:** ${link}.md
 
 ${post.description}
 
