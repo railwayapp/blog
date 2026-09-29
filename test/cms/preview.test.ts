@@ -22,11 +22,18 @@ const response = (
   ok: status === 200,
   status,
   json: async () => ({
-    collection: "posts",
-    path: "/p/new-post",
-    preview: true,
-    document,
-    ...envelope,
+    data: {
+      result: {
+        collection: "posts",
+        path: "/p/new-post",
+        preview: true,
+        document: document && {
+          __typename: "CMSPostPreview",
+          ...(document as object),
+        },
+        ...envelope,
+      },
+    },
   }),
 })
 
@@ -54,13 +61,17 @@ it("reads only the authorized projection without a service key and without cachi
   })
   const [url, options] = mockFetch.mock.calls[0]
   expect(url.origin).toBe("https://cms.example")
-  expect(url.pathname).toBe("/api/content-preview")
-  expect(Object.fromEntries(url.searchParams)).toEqual({
-    collection: "posts",
-    path: "/p/new-post",
-    token: "token",
+  expect(url.pathname).toBe("/api/graphql")
+  expect(url.search).toBe("")
+  expect(JSON.parse(options.body)).toMatchObject({
+    operationName: "BlogPreview",
+    variables: { path: "/p/new-post", token: "token" },
   })
-  expect(options).toMatchObject({ cache: "no-store", redirect: "error" })
+  expect(options).toMatchObject({
+    method: "POST",
+    cache: "no-store",
+    redirect: "error",
+  })
   // Trace context may be sent, but preview reads must never use the service key.
   expect(
     Object.keys(options.headers ?? {}).map((key) => key.toLowerCase())
@@ -80,11 +91,50 @@ it("keeps temporary failures distinct from unavailable links", async () => {
     "temporarily unavailable"
   )
 })
+it.each([400, 401, 403, 404, 410])(
+  "honors preview denial with HTTP 200 and GraphQL status %s",
+  async (statusCode) => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        errors: [{ message: "Denied", extensions: { statusCode } }],
+        data: { result: null },
+      }),
+    })
+    expect(await getPreviewPost("new-post", "token")).toBeNull()
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+  }
+)
+it.each([
+  {
+    errors: [
+      { message: "Upstream unavailable", extensions: { statusCode: 503 } },
+    ],
+  },
+  { errors: [{ message: "Unknown failure" }], data: { result: null } },
+  { errors: "malformed" },
+  { data: { result: null } },
+  {
+    errors: [
+      { message: "Denied", extensions: { statusCode: 404 } },
+      { message: "Unavailable", extensions: { statusCode: 500 } },
+    ],
+  },
+])("treats an incomplete GraphQL preview as unavailable", async (body) => {
+  mockFetch.mockResolvedValue({ ok: true, status: 200, json: async () => body })
+  await expect(getPreviewPost("new-post", "token")).rejects.toThrow(
+    "temporarily unavailable"
+  )
+  expect(mockFetch).toHaveBeenCalledTimes(1)
+})
 it.each([
   { collection: "job-postings" },
   { path: "/p/other" },
   { preview: false },
+  { document: null },
   { document: [] },
+  { document: { ...draft, __typename: "CMSJobPreview" } },
   { document: { ...draft, slug: "other" } },
 ])("rejects a mismatched CMS response %j", async (envelope) => {
   mockFetch.mockResolvedValue(response(200, draft, envelope))
@@ -112,11 +162,13 @@ it("all public post consumers still filter drafts and archives", async () => {
   process.env.CMS_API_KEY = "test-published-key"
   mockFetch.mockResolvedValue({
     ok: true,
-    json: async () => ({ docs: [], hasNextPage: false }),
+    json: async () => ({ data: { result: { docs: [], hasNextPage: false } } }),
   })
   await getPosts()
-  const url = new URL(mockFetch.mock.calls[0][0])
-  expect(url.searchParams.get("where[_status][equals]")).toBe("published")
-  expect(url.searchParams.get("where[archivedAt][exists]")).toBe("false")
-  expect(url.searchParams.has("draft")).toBe(false)
+  const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+  expect(body.variables.where).toEqual({
+    _status: { equals: "published" },
+    archivedAt: { exists: false },
+  })
+  expect(body.query).toContain("draft: false")
 })

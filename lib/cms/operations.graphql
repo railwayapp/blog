@@ -1,0 +1,147 @@
+fragment BlogMediaFields on Media {
+  id
+  alt
+  height
+  mimeType
+  url
+  width
+}
+
+fragment BlogAuthorFields on Author {
+  id
+  name
+  slug
+  title
+  githubUrl
+  avatar {
+    ...BlogMediaFields
+  }
+}
+
+fragment BlogCategoryFields on Category {
+  id
+  title
+  slug
+  description
+  order
+  seoDescription
+  seoTitle
+  showInNavigation
+  visible
+}
+
+query BlogPosts(
+  $page: Int!
+  $limit: Int!
+  $sort: String!
+  $where: Post_where
+  $includeContent: Boolean!
+) {
+  result: Posts(
+    page: $page
+    limit: $limit
+    sort: $sort
+    where: $where
+    draft: false
+  ) {
+    docs {
+      id
+      _status
+      archivedAt
+      title
+      slug
+      description
+      publishedAt
+      createdAt
+      updatedAt
+      externalAuthor
+      featured
+      seoTitle
+      seoDescription
+      content @include(if: $includeContent)
+      authors {
+        ...BlogAuthorFields
+      }
+      category {
+        ...BlogCategoryFields
+      }
+      featuredImage {
+        ...BlogMediaFields
+      }
+      socialImage {
+        ...BlogMediaFields
+      }
+    }
+    hasNextPage
+    nextPage
+  }
+}
+
+query BlogCategories($page: Int!, $limit: Int!, $where: Category_where) {
+  result: Categories(page: $page, limit: $limit, sort: "order", where: $where) {
+    docs {
+      ...BlogCategoryFields
+    }
+    hasNextPage
+    nextPage
+  }
+}
+
+fragment BlogPreviewMediaFields on CMSPreviewMedia {
+  id
+  alt
+  height
+  mimeType
+  url
+  width
+}
+
+fragment BlogPreviewAuthorFields on CMSPreviewAuthor {
+  id
+  name
+  slug
+  title
+  githubUrl
+  avatar {
+    ...BlogPreviewMediaFields
+  }
+}
+
+query BlogPreview($path: String!, $token: String!) {
+  result: cmsContentPreview(collection: posts, path: $path, token: $token) {
+    collection
+    path
+    preview
+    document {
+      __typename
+      ... on CMSPostPreview {
+        id
+        title
+        slug
+        content
+        description
+        publishedAt
+        createdAt
+        updatedAt
+        externalAuthor
+        featured
+        seoTitle
+        seoDescription
+        authors {
+          ...BlogPreviewAuthorFields
+        }
+        category {
+          id
+          title
+          slug
+        }
+        featuredImage {
+          ...BlogPreviewMediaFields
+        }
+        socialImage {
+          ...BlogPreviewMediaFields
+        }
+      }
+    }
+  }
+}
