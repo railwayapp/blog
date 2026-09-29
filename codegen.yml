@@ -1,0 +1,27 @@
+schema: lib/cms/schema.graphql
+documents: lib/cms/operations.graphql
+generates:
+  lib/cms/generated/:
+    preset: client
+    presetConfig:
+      fragmentMasking: false
+    config:
+      documentMode: string
+      namingConvention: keep
+      enumType: string-literal
+      skipTypename: true
+      useTypeImports: true
+      avoidOptionals:
+        field: true
+        object: false
+        inputValue: false
+      strictScalars: true
+      scalars:
+        JSON: unknown
+        JSONObject: Record<string, unknown>
+        DateTime: string
+        EmailAddress: string
+        CMSRecordID: string | number
+        CMSIntegerInput: string | number
+        CMSNumberInput: string | number
+        CMSBooleanInput: boolean | "true" | "false"

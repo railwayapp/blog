@@ -1,142 +1,70 @@
-import {
-  BlogAuthor,
-  BlogCategory,
-  BlogMedia,
-  BlogPost,
-  PaginatedCMSResponse,
-} from "@lib/types"
-import { cmsTraceHeaders, traceCMS } from "@lib/tracing"
+import { BlogAuthor, BlogCategory, BlogMedia, BlogPost } from "@lib/types"
+import { traceCMS } from "@lib/tracing"
+import { cmsQuery } from "./graphql"
+import { blogCategoriesQuery, blogPostsQuery } from "./operations"
+import type {
+  BlogAuthorFieldsFragment,
+  BlogCategoryFieldsFragment,
+  BlogMediaFieldsFragment,
+  BlogPostsQuery,
+  BlogPostsQueryVariables,
+  BlogPreviewQuery,
+} from "./generated/graphql"
 
-const DEFAULT_CMS_API_URL = "https://cms.railway.com"
 const DEFAULT_LIMIT = 100
+// Keep populated post queries within the CMS's GraphQL request budget.
+// This is a page size; listAllCollection still reads every page.
+const MAX_POSTS_PER_PAGE = 10
 
-interface PayloadMedia {
-  alt?: string | null
-  filename?: string | null
-  height?: number | null
-  id: number | string
-  mimeType?: string | null
-  url?: string | null
-  width?: number | null
-}
-
-interface PayloadAuthor {
-  avatar?: number | PayloadMedia | null
-  githubUrl?: string | null
-  id: number | string
-  name?: string | null
-  slug?: string | null
-  title?: string | null
-}
-
-interface PayloadCategory {
-  description?: string | null
-  id: number | string
-  order?: number | null
-  seoDescription?: string | null
-  seoTitle?: string | null
-  showInNavigation?: boolean | null
-  slug?: string | null
-  title?: string | null
-  visible?: boolean | null
-}
-
-interface PayloadPost {
-  _status?: "draft" | "published" | null
-  archivedAt?: string | null
-  authors?: Array<number | PayloadAuthor> | null
-  category?: number | PayloadCategory | null
-  content?: string | null
-  createdAt?: string
-  description?: string | null
-  externalAuthor?: boolean | null
-  featured?: boolean | null
-  featuredImage?: number | PayloadMedia | null
-  id: number | string
-  publishedAt?: string | null
-  seoDescription?: string | null
-  seoTitle?: string | null
-  slug?: string | null
-  socialImage?: number | PayloadMedia | null
-  title?: string | null
-  updatedAt?: string
-}
+// Mapping remains tolerant of incomplete drafts and malformed upstream fields.
+// Field names and value types come from the generated operation selections.
+type DeepPartial<T> = T extends Array<infer Item>
+  ? Array<DeepPartial<Item>>
+  : T extends object
+  ? { [Key in keyof T]?: DeepPartial<T[Key]> }
+  : T
+type CMSMedia = DeepPartial<BlogMediaFieldsFragment>
+type CMSAuthor = DeepPartial<BlogAuthorFieldsFragment>
+type CMSCategory = DeepPartial<BlogCategoryFieldsFragment>
+type CMSPost = DeepPartial<
+  NonNullable<BlogPostsQuery["result"]>["docs"][number]
+>
+type CMSPostPreview = DeepPartial<
+  Extract<
+    NonNullable<NonNullable<BlogPreviewQuery["result"]>["document"]>,
+    { __typename: "CMSPostPreview" }
+  >
+> &
+  Pick<CMSPost, "archivedAt">
 
 type ListOptions = {
   includeContent?: boolean
   limit?: number
   sort?: string
-  where?: Record<string, unknown>
+  where?: BlogPostsQueryVariables["where"]
 }
 
-type ListCollectionOptions = {
-  depth?: number
-  limit?: number
-  page?: number
-  selectContent?: boolean
-  sort?: string
-  where?: Record<string, unknown>
-}
-
-const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "")
-
-const getCMSBaseURL = () =>
-  trimTrailingSlash(process.env.CMS_API_URL || DEFAULT_CMS_API_URL)
-
-const getCMSAPIKey = () => {
-  const key = process.env.CMS_API_KEY
-
-  if (!key) {
-    throw new Error("CMS_API_KEY is required to fetch Railway CMS content")
-  }
-
-  return key
-}
-
-const appendWhere = (
-  params: URLSearchParams,
-  where: Record<string, unknown>,
-  prefix = "where"
-) => {
-  for (const [key, value] of Object.entries(where)) {
-    if (Array.isArray(value)) {
-      value.forEach((item, index) => {
-        if (item && typeof item === "object") {
-          appendWhere(
-            params,
-            item as Record<string, unknown>,
-            `${prefix}[${key}][${index}]`
-          )
-        } else if (item !== undefined && item !== null) {
-          params.set(`${prefix}[${key}][${index}]`, String(item))
-        }
-      })
-      continue
-    }
-
-    if (value && typeof value === "object") {
-      appendWhere(params, value as Record<string, unknown>, `${prefix}[${key}]`)
-      continue
-    }
-
-    if (value !== undefined && value !== null && value !== "") {
-      params.set(`${prefix}[${key}]`, String(value))
-    }
-  }
+type CMSPage<T> = {
+  docs: T[]
+  hasNextPage: boolean
+  nextPage: number | null
 }
 
 const mergeWhere = (
-  ...clauses: Array<Record<string, unknown> | undefined>
-): Record<string, unknown> | undefined => {
-  const filtered = clauses.filter(Boolean) as Record<string, unknown>[]
+  ...clauses: Array<BlogPostsQueryVariables["where"]>
+): BlogPostsQueryVariables["where"] => {
+  const filtered = clauses.filter(
+    (clause): clause is NonNullable<BlogPostsQueryVariables["where"]> =>
+      clause != null
+  )
 
   if (filtered.length === 0) return undefined
   if (filtered.length === 1) return filtered[0]
 
-  return { and: filtered }
+  return { AND: filtered }
 }
 
-const publishedWhere = {
+const publishedWhere: BlogPostsQueryVariables["where"] = {
   _status: {
     equals: "published",
   },
@@ -153,91 +81,9 @@ const visibleCategoryWhere = {
   },
 }
 
-const REQUEST_TIMEOUT_MS = 30_000
-const RETRY_DELAYS_MS = [500, 1500]
-const RETRYABLE_STATUSES = new Set([429, 502, 503, 504])
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const cmsRequest = async <T>(path: string, params: URLSearchParams) =>
-  traceCMS("cms.request", { "cms.path": path }, async (span) => {
-    const url = `${getCMSBaseURL()}${path}?${params.toString()}`
-    const headers = { Authorization: `Bearer ${getCMSAPIKey()}` }
-
-    for (let attempt = 0; ; attempt++) {
-      span.setAttribute("cms.attempts", attempt + 1)
-      const retryDelay = RETRY_DELAYS_MS[attempt]
-      let response: Response | undefined
-
-      try {
-        response = await fetch(url, {
-          headers: cmsTraceHeaders(headers),
-          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-        })
-      } catch (error) {
-        // Network failure or timeout; rethrow once retries are exhausted.
-        if (retryDelay == null) throw error
-      }
-
-      if (response) {
-        span.setAttribute("http.response.status_code", response.status)
-        if (response.ok) {
-          return (await response.json()) as T
-        }
-
-        if (retryDelay == null || !RETRYABLE_STATUSES.has(response.status)) {
-          const message = await response.text().catch(() => "")
-          throw new Error(
-            `Railway CMS request failed (${response.status}) for ${path}${
-              message ? `: ${message}` : ""
-            }`
-          )
-        }
-      }
-
-      console.warn(
-        `Railway CMS request for ${path} failed${
-          response ? ` (${response.status})` : ""
-        }; retrying in ${retryDelay}ms`
-      )
-      await sleep(retryDelay + Math.random() * 250)
-    }
-  })
-
-const listCollection = async <T>(
-  collection: string,
-  {
-    depth = 2,
-    limit = DEFAULT_LIMIT,
-    page = 1,
-    selectContent = true,
-    sort,
-    where,
-  }: ListCollectionOptions
-) => {
-  const params = new URLSearchParams()
-  params.set("depth", String(depth))
-  params.set("limit", String(limit))
-  params.set("page", String(page))
-
-  if (sort) {
-    params.set("sort", sort)
-  }
-
-  if (!selectContent) {
-    params.set("select[content]", "false")
-  }
-
-  if (where) {
-    appendWhere(params, where)
-  }
-
-  return cmsRequest<PaginatedCMSResponse<T>>(`/api/${collection}`, params)
-}
-
 const listAllCollection = async <T>(
-  collection: string,
-  options: Omit<ListCollectionOptions, "page"> = {}
+  collection: "posts" | "categories",
+  readPage: (page: number) => Promise<CMSPage<T>>
 ) =>
   traceCMS("cms.list", { "cms.collection": collection }, async (span) => {
     const docs: T[] = []
@@ -245,12 +91,17 @@ const listAllCollection = async <T>(
     let hasNextPage = false
 
     do {
-      const response = await listCollection<T>(collection, {
-        ...options,
-        page,
-      })
+      const response = await readPage(page)
+      if (
+        !Array.isArray(response.docs) ||
+        typeof response.hasNextPage !== "boolean" ||
+        (response.hasNextPage &&
+          response.nextPage != null &&
+          (!Number.isInteger(response.nextPage) || response.nextPage <= page))
+      )
+        throw new Error("Invalid CMS pagination response")
 
-      docs.push(...(response.docs ?? []))
+      docs.push(...response.docs)
       hasNextPage = Boolean(response.hasNextPage)
       page = response.nextPage ?? page + 1
     } while (hasNextPage)
@@ -270,7 +121,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const nonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim() !== "" ? value : null
 
-export const mapCMSMedia = (media: number | PayloadMedia | null | undefined) => {
+export const mapCMSMedia = (media: number | CMSMedia | null | undefined) => {
   if (!isRecord(media) || typeof media.url !== "string" || !media.url) {
     return null
   }
@@ -292,14 +143,12 @@ const getGithubAvatarURL = (githubUrl?: string | null) => {
   return handle ? `https://github.com/${handle}.png` : null
 }
 
-export const mapCMSAuthor = (
-  author: number | PayloadAuthor
-): BlogAuthor | null => {
+export const mapCMSAuthor = (author: number | CMSAuthor): BlogAuthor | null => {
   if (!isRecord(author) || typeof author.name !== "string" || !author.name) {
     return null
   }
 
-  const avatar = mapCMSMedia(author.avatar as number | PayloadMedia | null)
+  const avatar = mapCMSMedia(author.avatar)
   const githubUrl =
     typeof author.githubUrl === "string" ? author.githubUrl : null
 
@@ -315,7 +164,7 @@ export const mapCMSAuthor = (
 }
 
 export const mapCMSCategory = (
-  category: number | PayloadCategory | null | undefined
+  category: number | CMSCategory | null | undefined
 ): BlogCategory | null => {
   if (
     !isRecord(category) ||
@@ -338,15 +187,14 @@ export const mapCMSCategory = (
         : null,
     slug: category.slug,
     title: category.title,
-    visible:
-      typeof category.visible === "boolean" ? category.visible : null,
+    visible: typeof category.visible === "boolean" ? category.visible : null,
   }
 }
 
-const mapPost = (post: PayloadPost, preview: boolean): BlogPost | null => {
+const mapPost = (post: CMSPost, preview: boolean): BlogPost | null => {
   if (
     !post ||
-    (!preview && post._status != null && post._status !== "published") ||
+    (!preview && post._status !== "published") ||
     post.archivedAt != null ||
     typeof post.slug !== "string" ||
     (!preview &&
@@ -381,10 +229,10 @@ const mapPost = (post: PayloadPost, preview: boolean): BlogPost | null => {
   }
 }
 
-export const mapCMSPost = (post: PayloadPost) => mapPost(post, false)
+export const mapCMSPost = (post: CMSPost) => mapPost(post, false)
 
-// Only use with the projection returned by the authorized content-preview endpoint.
-export const mapCMSPreviewPost = (post: PayloadPost) => mapPost(post, true)
+// Only use with the projection returned by the authorized cmsContentPreview query.
+export const mapCMSPreviewPost = (post: CMSPostPreview) => mapPost(post, true)
 
 export const getBlogLink = (slug: string) => `/p/${slug}`
 
@@ -407,13 +255,15 @@ export const getPosts = async ({
   sort = "-publishedAt",
   where,
 }: ListOptions = {}) => {
-  const docs = await listAllCollection<PayloadPost>("posts", {
-    depth: 2,
-    limit,
-    selectContent: includeContent,
-    sort,
-    where: mergeWhere(publishedWhere, where),
-  })
+  const docs = await listAllCollection("posts", (page) =>
+    cmsQuery(blogPostsQuery, {
+      page,
+      limit: Math.min(limit, MAX_POSTS_PER_PAGE),
+      includeContent,
+      sort,
+      where: mergeWhere(publishedWhere, where),
+    })
+  )
 
   return docs.map(mapCMSPost).filter((post): post is BlogPost => post != null)
 }
@@ -433,31 +283,40 @@ export const getPostBySlug = async (slug: string) => {
 }
 
 export const getCategories = async () => {
-  const docs = await listAllCollection<PayloadCategory>("categories", {
-    depth: 0,
-    limit: DEFAULT_LIMIT,
-    sort: "order",
-    where: visibleCategoryWhere,
-  })
+  const docs = await listAllCollection("categories", (page) =>
+    cmsQuery(blogCategoriesQuery, {
+      page,
+      limit: DEFAULT_LIMIT,
+      where: visibleCategoryWhere,
+    })
+  )
 
   return docs
     .map(mapCMSCategory)
     .filter((category): category is BlogCategory => category != null)
 }
 
-export const getPostsByCategorySlug = async (slug: string) =>
-  getPosts({
-    where: {
-      "category.slug": {
-        equals: getCategoryRouteSlug(slug),
-      },
-    },
-  })
+export const getPostsByCategorySlug = async (slug: string) => {
+  // GraphQL relationship filters accept IDs, rather than dotted slug paths.
+  const categories = await listAllCollection("categories", (page) =>
+    cmsQuery(blogCategoriesQuery, {
+      page,
+      limit: 1,
+      where: { slug: { equals: getCategoryRouteSlug(slug) } },
+    })
+  )
+  const category = categories[0]
+  if (!category) return []
+
+  return getPosts({ where: { category: { equals: category.id } } })
+}
 
 export const getRelatedPosts = async (post: BlogPost, limit = 2) => {
   if (!post.category) return []
 
-  const posts = await getPostsByCategorySlug(post.category.slug)
+  const posts = await getPosts({
+    where: { category: { equals: post.category.id } },
+  })
 
   return posts.filter((item) => item.slug !== post.slug).slice(0, limit)
 }

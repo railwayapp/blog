@@ -1,0 +1,42 @@
+name: CMS GraphQL contracts
+
+on:
+  pull_request:
+    paths:
+      - "lib/cms/**"
+      - "lib/types.ts"
+      - "codegen.yml"
+      - "test/cms/**"
+      - "package.json"
+      - "yarn.lock"
+      - "tsconfig.json"
+      - ".prettierrc"
+      - ".github/workflows/cms-graphql.yml"
+  push:
+    paths:
+      - "lib/cms/**"
+      - "lib/types.ts"
+      - "codegen.yml"
+      - "test/cms/**"
+      - "package.json"
+      - "yarn.lock"
+      - "tsconfig.json"
+      - ".prettierrc"
+      - ".github/workflows/cms-graphql.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: corepack enable
+      - run: corepack prepare yarn@1.22.22 --activate
+      - run: yarn install --frozen-lockfile
+      - run: yarn type-check
+      - run: yarn test --runInBand test/cms
