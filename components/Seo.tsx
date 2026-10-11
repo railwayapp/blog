@@ -6,6 +6,7 @@ import {
   generateBreadcrumbSchema,
   generateFAQSchema,
   extractFAQs,
+  BLOG_DESCRIPTION,
 } from "@lib/seo-components"
 import { BlogPost } from "@lib/types"
 import { buildCMSImageURL } from "@lib/cms/image"
@@ -20,6 +21,8 @@ export interface Props extends NextSeoProps {
   currentUrl?: string
   alternateMarkdownHref?: string
   preview?: boolean
+  /** Extra JSON-LD documents (e.g. CollectionPage on hub pages). */
+  schemas?: object[]
 }
 
 // Raw JSON.stringify output is unsafe inside a <script>: a CMS-authored
@@ -31,7 +34,7 @@ export const serializeSchema = (schema: object) =>
 
 const title = "Railway Blog"
 export const url = "https://blog.railway.com"
-const description = "Blog posts from the Railway team"
+const description = BLOG_DESCRIPTION
 const defaultImage = url + "/og-blog.png"
 
 const config: DefaultSeoProps = {
@@ -59,6 +62,7 @@ const SEO: React.FC<Props> = ({
   currentUrl,
   alternateMarkdownHref,
   preview = false,
+  schemas = [],
   ...props
 }) => {
   if (preview)
@@ -178,6 +182,14 @@ const SEO: React.FC<Props> = ({
             dangerouslySetInnerHTML={{ __html: serializeSchema(faqSchema) }}
           />
         )}
+
+        {schemas.map((schema, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: serializeSchema(schema) }}
+          />
+        ))}
 
         {alternateMarkdownHref && (
           <link rel="alternate" type="text/markdown" href={alternateMarkdownHref} />

@@ -1,4 +1,9 @@
-import { getBlogLink, getPosts } from "@lib/cms"
+import {
+  getAuthorPath,
+  getAuthorsFromPosts,
+  getBlogLink,
+  getPosts,
+} from "@lib/cms"
 import { BlogPost } from "@lib/types"
 import { GetServerSideProps } from "next"
 
@@ -30,8 +35,9 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 > ${SUMMARY}
 
 The full text of every post is available in a single file at
-${ROOT_URL}/llms-blog.md. An RSS feed of featured posts and guides is
-available at ${ROOT_URL}/rss.xml.
+${ROOT_URL}/llms-full.txt (also served at ${ROOT_URL}/llms-blog.md). Each post
+is also available as markdown by appending \`.md\` to its URL. An RSS feed of
+featured posts and guides is available at ${ROOT_URL}/rss.xml.
 
 `
 
@@ -51,6 +57,15 @@ ${links.join("\n")}
     }
   )
 
+  const authors = getAuthorsFromPosts(posts)
+    .map(
+      (author) =>
+        `- [${author.name}](${ROOT_URL}${getAuthorPath(author.slug as string)})` +
+        (author.title ? `: ${author.title}` : "")
+    )
+    .join("\n")
+  const authorSection = authors ? `\n## Authors\n\n${authors}\n` : ""
+
   res.setHeader("Content-Type", "text/plain; charset=utf-8")
   // Every render lists all posts from the CMS; let shared caches absorb
   // repeat crawler traffic.
@@ -58,7 +73,7 @@ ${links.join("\n")}
     "Cache-Control",
     "public, s-maxage=3600, stale-while-revalidate=86400"
   )
-  res.write(header + categoryContents.join("\n"))
+  res.write(header + categoryContents.join("\n") + authorSection)
   res.end()
 
   return {

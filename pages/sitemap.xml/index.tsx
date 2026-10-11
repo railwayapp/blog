@@ -1,4 +1,6 @@
 import {
+  getAuthorPath,
+  getAuthorsFromPosts,
   getBlogLink,
   getCategories,
   getCategoryPath,
@@ -44,6 +46,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   })
 
+  const authorPaths = getAuthorsFromPosts(posts).map((author) => {
+    const lastmod = latestUpdate(
+      posts.filter((post) =>
+        post.authors.some((item) => item.slug === author.slug)
+      )
+    )
+    return {
+      loc: ROOT_URL + getAuthorPath(author.slug as string),
+      ...(lastmod && { lastmod: new Date(lastmod).toISOString() }),
+    }
+  })
+
   // Homepage lastmod = most recent post update across all posts
   const homepageLastmod = latestUpdate(posts)
 
@@ -55,6 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }),
     },
     ...categoryPaths,
+    ...authorPaths,
     ...postPaths,
   ]
 

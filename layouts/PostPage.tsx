@@ -7,7 +7,9 @@ import {
   extractTableOfContents,
 } from "@lib/seo-components"
 import Page from "@layouts/Page"
+import { getAuthorPath } from "@lib/cms"
 import { BlogPost } from "@lib/types"
+import Link from "next/link"
 import React, { useMemo } from "react"
 import { BottomCTA } from "../components/BottomCTA"
 import { ContinueReading } from "../components/ContinueReading"
@@ -104,7 +106,24 @@ export const PostPage: React.FC<Props> = ({
                         />
                       ))}
                   </div>
-                  <span>{authorName}</span>
+                  <span>
+                    {post.authors.map((author, index) => (
+                      <React.Fragment key={author.id}>
+                        {index > 0 && " & "}
+                        {author.slug ? (
+                          <Link
+                            href={getAuthorPath(author.slug)}
+                            rel="author"
+                            className="hover:text-foreground"
+                          >
+                            {author.name}
+                          </Link>
+                        ) : (
+                          author.name
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </span>
                 </div>
                 {hasPublishedDate && <Divider />}
               </>

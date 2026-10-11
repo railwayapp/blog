@@ -26,7 +26,8 @@ export const PostList: React.FC<{
     useState(DEFAULT_POSTS_LENGTH)
   const hasMorePosts = otherPosts.length > visiblePostsLength
 
-  // Category pages have no other h1; the homepage's h1 lives elsewhere.
+  // Category and author pages have no other h1; the homepage renders its own
+  // (visually hidden) h1 in pages/index.tsx.
   const ListHeading = category == null ? "h2" : "h1"
 
   return (
