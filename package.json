@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "test": "jest",
-    "test-all": "yarn lint && yarn type-check && yarn test",
+    "test:seo": "python3 -m unittest discover -s scripts/seo -p 'test_*.py'",
+    "test-all": "yarn lint && yarn type-check && yarn test && yarn test:seo",
     "clean": "rm -rf .next",
     "prepare": "husky install"
   },

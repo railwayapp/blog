@@ -41,3 +41,7 @@ public/robots.txt
 .blog_index_data
 .blog_index_data_previews
 *.tsbuildinfo
+
+# Python maintenance tooling
+__pycache__/
+*.py[cod]

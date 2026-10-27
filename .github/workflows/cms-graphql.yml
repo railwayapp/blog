@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "lib/cms/**"
+      - "scripts/seo/**"
       - "lib/types.ts"
       - "codegen.yml"
       - "test/cms/**"
@@ -15,6 +16,7 @@ on:
   push:
     paths:
       - "lib/cms/**"
+      - "scripts/seo/**"
       - "lib/types.ts"
       - "codegen.yml"
       - "test/cms/**"
@@ -35,8 +37,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - run: corepack enable
       - run: corepack prepare yarn@1.22.22 --activate
       - run: yarn install --frozen-lockfile
       - run: yarn type-check
       - run: yarn test --runInBand test/cms
+      - run: yarn test:seo

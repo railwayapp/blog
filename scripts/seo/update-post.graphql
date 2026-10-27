@@ -1,0 +1,16 @@
+mutation SEOUpdatePost($id: String!, $data: CMSWritemutationPostUpdateInput!) {
+  result: cmsUpdatePost(id: $id, data: $data, depth: 0) {
+    id
+    slug
+    title
+    content
+    description
+    seoTitle
+    seoDescription
+    _status
+    archivedAt
+    publishedAt
+    updatedAt
+    _cmsFields
+  }
+}
