@@ -34,6 +34,29 @@ CMS_API_URL=https://cms.railway.com
 
 The CMS API key must stay server-only. Do not expose it through a `NEXT_PUBLIC_*` variable.
 
+### SEO maintenance helper
+
+`scripts/seo/cms.py` provides `get_post(slug)`, `all_posts()`, and
+`patch_post(id, fields)` for Python maintenance commands. It uses the current CMS
+GraphQL API for reads and updates. Set `CMS_API_KEY` with permission to read/update
+the target posts; the helper also accepts the existing `.env.local` key fallback
+and `CMS_API_URL` override. Python 3.9 or newer is required.
+
+Reads return dictionaries containing the selected post fields: ID, slug, title,
+Markdown content, description, SEO title/description, publication status and dates.
+`all_posts()` follows every page and leaves published/archive filtering to its
+caller. `patch_post()` returns a `{"doc": ...}` envelope and changes only the supplied
+fields, preserving the CMS's default draft/publication behavior. Existing local SEO
+commands can continue importing this helper; their one-off content changes are not
+included in the repository.
+
+An update is confirmed only after a complete GraphQL response. Errors stop the
+command; an uncertain outcome requires checking the post before trying again.
+Requests never fall back to REST or automatically retry updates.
+
+Run `yarn test:seo` for the Python transport tests. `yarn test --runInBand test/cms`
+also validates the helper's GraphQL documents against the committed CMS schema.
+
 ## GraphQL contracts
 
 Edit the explicit queries and reusable fragments in `lib/cms/operations.graphql`,

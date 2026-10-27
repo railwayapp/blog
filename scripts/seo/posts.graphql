@@ -1,0 +1,20 @@
+query SEOPosts($where: CMSWherePost_where, $page: Int!, $limit: Int!) {
+  result: cmsFindPost(where: $where, page: $page, limit: $limit, depth: 0) {
+    docs {
+      id
+      slug
+      title
+      content
+      description
+      seoTitle
+      seoDescription
+      _status
+      archivedAt
+      publishedAt
+      updatedAt
+      _cmsFields
+    }
+    hasNextPage
+    nextPage
+  }
+}
