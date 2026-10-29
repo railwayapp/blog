@@ -10,3 +10,29 @@ describe("markdown post rewrite", () => {
     })
   })
 })
+
+describe("moved guide redirects", () => {
+  it("permanently redirects every moved guide and the guides category", async () => {
+    const movedGuides = require("../lib/moved-guides.json")
+    const redirects = await nextConfig.redirects()
+
+    expect(redirects).toContainEqual({
+      source: "/guides",
+      destination: "https://railway.com/guides",
+      permanent: true,
+    })
+    for (const slug of movedGuides.slugs) {
+      expect(redirects).toContainEqual({
+        source: `/p/${slug}`,
+        destination: `https://railway.com/guides/${slug}`,
+        permanent: true,
+      })
+      expect(redirects).toContainEqual({
+        source: `/p/${slug}.md`,
+        destination: `https://railway.com/guides/${slug}.md`,
+        permanent: true,
+      })
+    }
+    expect(redirects.every((redirect) => redirect.permanent)).toBe(true)
+  })
+})

@@ -1,3 +1,24 @@
+const movedGuides = require("./lib/moved-guides.json")
+
+// Guides moved to railway.com/guides. Permanent redirects pass their ranking
+// to the new pages; the sitemap leaves the old URLs out.
+const guideRedirects = [
+  { source: "/guides", destination: movedGuides.destination, permanent: true },
+  { source: "/guide", destination: movedGuides.destination, permanent: true },
+  ...movedGuides.slugs.flatMap((slug) => [
+    {
+      source: `/p/${slug}`,
+      destination: `${movedGuides.destination}/${slug}`,
+      permanent: true,
+    },
+    {
+      source: `/p/${slug}.md`,
+      destination: `${movedGuides.destination}/${slug}.md`,
+      permanent: true,
+    },
+  ]),
+]
+
 module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -16,6 +37,9 @@ module.exports = {
   poweredByHeader: false,
   reactStrictMode: true,
   staticPageGenerationTimeout: 300,
+  async redirects() {
+    return guideRedirects
+  },
   async rewrites() {
     return {
       // A dynamic page named `[slug].md` is compiled by Next with the same

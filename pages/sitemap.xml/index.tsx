@@ -5,10 +5,16 @@ import {
   getPosts,
 } from "@lib/cms"
 import { BlogPost } from "@lib/types"
+import movedGuides from "@lib/moved-guides.json"
 import { GetServerSideProps } from "next"
 import { getServerSideSitemap } from "next-sitemap"
 
 const ROOT_URL = "https://blog.railway.com"
+
+// Guides now live on railway.com/guides; their old URLs redirect there, so
+// they and the guides category stay out of the sitemap.
+const MOVED_GUIDE_SLUGS = new Set(movedGuides.slugs)
+const MOVED_PATHS = new Set(["/guides", "/guide"])
 
 /** Return the most recent updatedAt ISO string across the given posts. */
 const latestUpdate = (posts: BlogPost[]): string | undefined => {
@@ -25,7 +31,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     "public, s-maxage=900, stale-while-revalidate=3600"
   )
 
-  const [posts, categories] = await Promise.all([getPosts(), getCategories()])
+  const [allPosts, allCategories] = await Promise.all([
+    getPosts(),
+    getCategories(),
+  ])
+  const posts = allPosts.filter((post) => !MOVED_GUIDE_SLUGS.has(post.slug))
+  const categories = allCategories.filter(
+    (category) => !MOVED_PATHS.has(getCategoryPath(category))
+  )
 
   const postPaths = posts.map((post) => ({
     loc: ROOT_URL + getBlogLink(post.slug),
